@@ -1,0 +1,61 @@
+﻿<Window x:Class="EPQui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EPQui"
+        xmlns:UserC="clr-namespace:EPQui.UserCon"
+        xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="800"
+        >
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" Grid.Row="0" Background="LightCoral">
+                <StackPanel x:Name="theList">
+                </StackPanel>
+            </ScrollViewer>
+            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <glWpfControl:GLWpfControl Margin="10" Name="window" Grid.Column="1" MouseDown="window_MouseDown" MouseUp="window_MouseUp"/>
+            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+
+            <ScrollViewer Grid.Column="2" Grid.Row="0" Background="CadetBlue">
+                <StackPanel >
+                </StackPanel>
+            </ScrollViewer>
+            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+
+        </Grid>
+        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="1" Background="Red"/>
+
+        <ScrollViewer Grid.Column="1" Grid.Row="2" Background="Gray">
+
+        </ScrollViewer>
+        <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Background="Red"/>
+
+    </Grid>
+</Window>
