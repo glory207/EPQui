@@ -1,0 +1,33 @@
+#version 330 core
+
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 150) out;
+
+out vec4 color;
+uniform vec3 camUp;
+uniform vec3 camRight;
+
+in DATA
+{
+    mat4 projection;
+} data_in[];
+
+
+void main()
+{
+   float size = 0.5f;
+
+	int cir = 10;
+	float cire = cir;
+	for(int i = 0 ; i < cir ; i++)
+	{
+		gl_Position = data_in[0].projection * (gl_in[0].gl_Position);
+		EmitVertex();
+		gl_Position = data_in[0].projection * (gl_in[0].gl_Position + vec4(sin(radians(((i+1)/cire)*360.0)) * camRight + cos(radians(((i+1)/cire)*360.0)) * camUp,0)*size);
+		EmitVertex();
+		gl_Position = data_in[0].projection * (gl_in[0].gl_Position + vec4(sin(radians((i/cire)*360.0)) * camRight + cos(radians((i/cire)*360.0)) * camUp,0)*size);
+		EmitVertex();
+		EndPrimitive();
+	}
+	
+}
