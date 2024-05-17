@@ -10,7 +10,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace EPQui
 {
-    internal class Shader
+    public class Shader
     {
        
 

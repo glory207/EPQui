@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EPQui
 {
-    internal class VAO
+    public class VAO
     {
 
 

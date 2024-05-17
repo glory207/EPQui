@@ -8,22 +8,19 @@ using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
-    internal class Hierarchy
+   public class Hierarchy
     {
-        public List<HierObj> Hobj;
+        public List<HierObj> Hobj = new List<HierObj>();
 
-        public string TempMeshe;
-        public Vector4 TempLight;
+        public Mesh gridMesh;
+        Shader gridshaderProgram;
+
         public Hierarchy()
         {
-            Hobj = new List<HierObj>() {
-                new MeshContainer(new Vector3(0,0,0), "Res/Cube.txt"),
-                new LightContainer(new Vector3(-1.0f, 2.8f, 0.8f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)),
-                new LightContainer(new Vector3(1.0f, 2.8f, 0.8f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f)),
-                new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f)),
-            };
-            shouldAdd[0] = false;
-            shouldAdd[1] = false;
+            
+            gridMesh = new Mesh();
+            gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
+
         }
         public void Update(Camera camera)
         {
@@ -41,16 +38,12 @@ namespace EPQui
             {
                 if (ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
             }
-            if (shouldAdd[0])
-            {
-                shouldAdd[0] = false;
-                Hobj.Add(new MeshContainer(camera.Position, TempMeshe));
-            }
-            if (shouldAdd[1])
-            {
-                shouldAdd[1] = false;
-                Hobj.Add(new LightContainer(camera.Position, TempLight));
-            }
+            gridshaderProgram.Activate();
+            Matrix4 mat = Matrix4.Identity;
+            GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
+            GL.Uniform4(GL.GetUniformLocation(gridshaderProgram.ID, "lightColor"), 1, 1, 1, 1);
+            GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
+            gridMesh.Draw(gridshaderProgram, camera);
         }
         public void UpdateClick(Camera camera)
         {
@@ -59,16 +52,9 @@ namespace EPQui
                 ob.UpdateClick(camera, Hobj.IndexOf(ob) + 1);
             }
         }
-        public bool[] shouldAdd = new bool[2];
-        public void AddMesh(string msh)
+        public void AddMesh(HierObj hierObj)
         {
-            TempMeshe = msh;
-            shouldAdd[0] = true;
-        }
-        public void AddLight(Vector3 col)
-        {
-            TempLight = new Vector4(col, 1);
-            shouldAdd[1] = true;
+            Hobj.Add(hierObj);
         }
         public void DeleteObj(int pos)
         {
@@ -81,6 +67,7 @@ namespace EPQui
             {
                 ob.destroy();
             }
+            gridshaderProgram.Delete();
         }
     }
 }

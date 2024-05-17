@@ -9,7 +9,7 @@ using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
-    internal class Camera
+    public class Camera
     {
        public FrameBuffer frameBuffer;
        public FrameBuffer ClickBuffer;

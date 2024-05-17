@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
-    internal class LightContainer : HierObj
+    public class LightContainer : HierObj
     {
 
         
@@ -65,7 +65,7 @@ namespace EPQui
         }
     }
 
-    abstract class HierObj
+    public abstract class HierObj
     {
         public Vector3 Position;
         public Vector3 objectScale;

@@ -8,7 +8,7 @@ using OpenTK.Mathematics;
 
 namespace EPQui
 {
-    internal class VBO
+    public class VBO
     {
         
 

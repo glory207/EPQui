@@ -12,7 +12,7 @@ using OpenTK.Windowing.Desktop;
 
 namespace EPQui
 {
-    struct Vertex
+    public struct Vertex
     {
         public Vertex(Vector3 a, Vector2 b)
         {
@@ -22,7 +22,7 @@ namespace EPQui
         public Vector3 position;
         public Vector2 texUV;
     }
-    internal class Mesh
+    public class Mesh
     {
        
 

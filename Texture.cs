@@ -10,7 +10,7 @@ using System.Windows.Shapes;
 
 namespace EPQui
 {
-    internal class Texture
+    public class Texture
     {
         public int ID;
         public int unit;

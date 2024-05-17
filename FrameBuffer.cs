@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace EPQui
 {
-    internal class FrameBuffer
+    public class FrameBuffer
     {
         float[] rectangleVertices =
 {

@@ -7,7 +7,7 @@
         xmlns:UserC="clr-namespace:EPQui.UserCon"
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800"
+        Title="MainWindow" Height="800" Width="1200"
         >
     <Grid>
 
@@ -38,7 +38,10 @@
             </ScrollViewer>
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-            <glWpfControl:GLWpfControl Margin="10" Name="window" Grid.Column="1" MouseDown="window_MouseDown" MouseUp="window_MouseUp"/>
+
+            <UserC:VeiwPortDisplay Grid.Column="1" Grid.Row="0" x:Name="window"/>
+            
+
             <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
             <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
 
