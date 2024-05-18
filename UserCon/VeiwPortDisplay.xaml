@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:EPQui.UserCon" xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Border  Background="Gray" Padding="10">
         <glWpfControl:GLWpfControl Margin="10" Name="window"/>
-    </Grid>
+    </Border>
 </UserControl>

@@ -49,7 +49,7 @@ namespace EPQui
         {
             foreach (HierObj ob in Hobj)
             {
-                ob.UpdateClick(camera, Hobj.IndexOf(ob) + 1);
+                ob.UpdateClick(camera, Hobj.IndexOf(ob), Hobj.Count);
             }
         }
         public void AddMesh(HierObj hierObj)

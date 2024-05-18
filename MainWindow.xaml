@@ -34,6 +34,7 @@
 
             <ScrollViewer Grid.Column="0" Grid.Row="0" Background="LightCoral">
                 <StackPanel x:Name="theList">
+                    <Button Height="50" Click="Button_Click"/>
                 </StackPanel>
             </ScrollViewer>
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
@@ -44,11 +45,13 @@
 
             <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
             <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-
+<!--
             <ScrollViewer Grid.Column="2" Grid.Row="0" Background="CadetBlue">
                 <StackPanel >
+                    
                 </StackPanel>
             </ScrollViewer>
+-->
             <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
             <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
 

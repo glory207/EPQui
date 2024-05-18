@@ -69,11 +69,18 @@ namespace EPQui
 
 
         }
-       public override void UpdateClick(Camera camera,int value)
+       public override void UpdateClick(Camera camera,int value,int value2)
         {
+
+            objectModel = Matrix4.CreateRotationZ(objectRotation.Z);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
+            objectModel = objectModel * Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateTranslation(Position);
 
             clickProgram.Activate();
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
+            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
             mesh.DrawToClick(clickProgram, camera);
 

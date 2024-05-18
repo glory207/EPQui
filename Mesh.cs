@@ -367,7 +367,7 @@ namespace EPQui
             shader.Activate();
             VAO.Bind();
 
-            
+            GL.Uniform3(GL.GetUniformLocation(shader.ID, "camPos"), camera.Position);
             camera.Matrix(shader, "camMatrix");
             GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
         }

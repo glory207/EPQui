@@ -44,11 +44,14 @@ namespace EPQui
 
         }
 
-       public override void UpdateClick(Camera camera, int value)
+       public override void UpdateClick(Camera camera, int value, int value2)
         {
 
             clickProgram.Activate();
+            objectModel = Matrix4.CreateTranslation(Position);
+            objectModel = objectModel * Matrix4.CreateScale(objectScale);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
+            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(clickProgram.ID, "lightColor"), lightColor);
             GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camUp"), camera.OrientationU);
@@ -78,7 +81,7 @@ namespace EPQui
 
         public abstract void Update(Camera camera);
         public abstract void Update(List<LightContainer> lights,Camera camera);
-        public abstract void UpdateClick(Camera camera, int value);
+        public abstract void UpdateClick(Camera camera, int value, int value2);
         public abstract void destroy();
     } 
 }

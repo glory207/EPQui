@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EPQui
 {
@@ -31,9 +32,6 @@ namespace EPQui
         public int FBO;
         public int framebufferTexture;
         public int RBO;
-        public int PostFBO;
-        public int PostframebufferTexture;
-        public int PostRBO;
         public int width;
         public int height;
         public Color4 color = new Color4(0.1f, 0.2f, 0.3f, 4.0f);
@@ -49,62 +47,51 @@ namespace EPQui
         public void Bind()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            GL.Enable(EnableCap.DepthTest);
+        }
+        public void Clear()
+        {
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
             GL.ClearColor(color);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.DepthTest);
         }
         public void destroy()
         {
+           // GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.DeleteFramebuffer(FBO);
+            
         }
         public void update()
         {
         
-           GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO);
-           GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, PostFBO);
-           GL.BlitFramebuffer(0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
-        
-        
-        
-        
-           framebufferProgram.Activate();
-           rectVAO.Bind();
-           GL.Disable(EnableCap.DepthTest);
-           GL.BindTexture(TextureTarget.Texture2D, PostframebufferTexture);
-           GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), 1);
-           GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
-        
-           GL.DeleteFramebuffer(FBO);
-           GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-        
+           GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+
+        //   framebufferProgram.Activate();
+        //  rectVAO.Bind();
+        //  GL.Disable(EnableCap.DepthTest);
+        //  GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
+        //  GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
+        //   GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+
+            destroy();
+
+
 
         }
 
         public int update(int widthf, int heightf)
         {
 
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, PostFBO);
-            GL.BlitFramebuffer(0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
-
-
-
-
-            framebufferProgram.Activate();
-            rectVAO.Bind();
-            GL.Disable(EnableCap.DepthTest);
-            GL.BindTexture(TextureTarget.Texture2D, PostframebufferTexture);
-            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), 1);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
 
             byte[] pixel = new byte[4];
             GL.ReadPixels(widthf, heightf, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, pixel);
-           // Debug.WriteLine(pixel[0].ToString() +" "+ pixel[1].ToString() +" "+ pixel[2].ToString());
-
-            GL.DeleteFramebuffer(FBO);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
-            return pixel[0];
+            destroy();
+            Debug.WriteLine(((int)pixel[0]).ToString() + " " + pixel[1].ToString() + " " + pixel[2].ToString());
+           // Debug.WriteLine((widthf).ToString() + "X " + heightf.ToString() + "Y " + pixel[2].ToString());
+           // Debug.WriteLine((width).ToString() + "X " + height.ToString() + "Y ");
+            return (int)pixel[0];
         }
         public void updateScreenSize(int widthf, int heightf)
         {
@@ -130,6 +117,7 @@ namespace EPQui
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge); // Prevents edge bleeding
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge); // Prevents edge bleeding
+            GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, framebufferTexture, 0);
 
             // Create Render Buffer Object
@@ -137,29 +125,17 @@ namespace EPQui
             RBO = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBO);
             GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, samples, RenderbufferStorage.Depth24Stencil8, width, height);
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBO);
 
 
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 
 
-            // Create Frame Buffer Object
-
-            PostFBO = GL.GenFramebuffer();
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, PostFBO);
-
-            // Create Framebuffer Texture
-
-            PostframebufferTexture = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, PostframebufferTexture);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, PostframebufferTexture, 0);
-
-
-
+            if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
+            {
+                throw new Exception("Framebuffer is not complete!");
+            }
         }
     }
 }

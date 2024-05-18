@@ -52,7 +52,7 @@ namespace EPQui.UserCon
        public int hoverObj;
        public int selectedObjj = 0;
        
-       public delegate void SampleEventHandler(int obj);
+       public delegate void SampleEventHandler();
        public event SampleEventHandler SampleEvent;
         private void Window_Loaded1(object sender, RoutedEventArgs e)
         {
@@ -72,6 +72,7 @@ namespace EPQui.UserCon
 
             SCR_WIDTH = (int)window.ActualWidth;
             SCR_HEIGHT = (int)window.ActualHeight;
+            camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
         }
 
 
@@ -89,7 +90,7 @@ namespace EPQui.UserCon
             if (mouseA.Y >= 1.5f) mouseA.Y = 1.5f;
         }
 
-        private void Window_SizeChanged(object senderr, SizeChangedEventArgs e)
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SCR_WIDTH = (int)window.ActualWidth;
             SCR_HEIGHT = (int)window.ActualHeight;
@@ -98,12 +99,21 @@ namespace EPQui.UserCon
         }
         private void Window_Render(TimeSpan obj)
         {
+            
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
-            scene.Update(camera);
-            camera.update();
+
+            
+            camera.frameC.Clear();
             scene.UpdateClick(camera);
-            hoverObj = camera.updateClicks((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y) - 1;
+            hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+
+
+            camera.frame.Clear();
+            scene.Update(camera);
+            camera.update(camera.frame);
+
+
 
         }
 
@@ -117,16 +127,37 @@ namespace EPQui.UserCon
 
         private void window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            mouseR = false;
+            switch (e.ChangedButton)
+            {
+                case System.Windows.Input.MouseButton.Left:
+                    
+                    break;
+                case System.Windows.Input.MouseButton.Right:
+                    mouseR = false;
+                    break;
+
+            }
         }
 
         private void window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            mouseR = true;
-            if (hoverObj >= 0)
+            
+            switch (e.ChangedButton)
             {
-                SampleEvent.Invoke(hoverObj);
+                case System.Windows.Input.MouseButton.Left:
+                    if (hoverObj >= 0)
+                    {
+                        selectedObjj = hoverObj;
+                        SampleEvent.Invoke();
+                    }
+                    break;
+                case System.Windows.Input.MouseButton.Right:
+                    mouseR = true;
+                    break;
+
             }
+            
+
         }
 
         private void Grid_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)

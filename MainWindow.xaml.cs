@@ -29,18 +29,24 @@ namespace EPQui
     public partial class MainWindow
     {
         // GameWindow window;
-        // TransformEditor traE = new TransformEditor();
+         TransformEditor traE = new TransformEditor();
         public MainWindow()
         {
             InitializeComponent();
             scene = new Hierarchy();
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
+            traE.PropertyChanged += TraE_PropertyChanged;
+            theList.Children.Add(traE);
         }
 
-        private void Window_SampleEvent(int obj)
+        private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-
+            scene.Hobj[window.selectedObjj].Position = traE.BoundVector;
+        }
+        private void Window_SampleEvent()
+        {
+            traE.BoundVector = scene.Hobj[window.selectedObjj].Position;
         }
         Hierarchy scene;
         private void Window_Loaded2(object sender, RoutedEventArgs e)
@@ -58,6 +64,10 @@ namespace EPQui
             
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            scene.AddMesh(new LightContainer(window.camera.Position,new Vector4(1)));
+        }
     }
 
 

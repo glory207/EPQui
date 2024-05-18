@@ -11,8 +11,8 @@ namespace EPQui
 {
     public class Camera
     {
-       public FrameBuffer frameBuffer;
-       public FrameBuffer ClickBuffer;
+       public FrameBuffer frame;
+       public FrameBuffer frameC;
 
         public Vector3 Position;
         public Vector3 Orientation = new Vector3(1.0f, 0.0f, 0.0f);
@@ -27,9 +27,9 @@ namespace EPQui
         public float sensitivity = 100.0f;
         public Camera(int width, int height, Vector3 position)
         {
-            ClickBuffer = new FrameBuffer(width, height) { color = new Color4(0,0,0,255)};
-            
-            frameBuffer = new FrameBuffer(width, height);
+            frameC = new FrameBuffer(width, height) { color = new Color4(0,0,255,255)};
+
+            frame = new FrameBuffer(width, height);
             updateScreenSize(width, height);
             Position = position;
 
@@ -45,35 +45,29 @@ namespace EPQui
             projection = Matrix4.CreatePerspectiveFieldOfView((FOVdeg * MathF.PI/180f), (width / (float)height), nearPlane, farPlane);
             cameraMatrix = view *projection ;
             
-           // ClickBuffer.Bind();
-            frameBuffer.Bind();
         }
         public void Matrix(Shader shader, string uniform) {
             GL.UniformMatrix4(GL.GetUniformLocation(shader.ID, uniform),false, ref (cameraMatrix));
 
         }
-        // public void inputs(GLFWwindow* window);
         public void destroy() {
-            ClickBuffer.destroy();
-            frameBuffer.destroy();
+            frameC.destroy();
+            frameC.destroy();
         }
-       public void update()
+       public void update(FrameBuffer FrameBufferB)
         {
-
-            frameBuffer.update();
-            ClickBuffer.Bind();
+            FrameBufferB.update();
         }
-       public int updateClicks(int x, int y)
+       public int update(int x, int y, FrameBuffer FrameBufferB)
         {
-            
-           return ClickBuffer.update(x,y);
+            return FrameBufferB.update(x, y);
         }
         public void updateScreenSize(int widthf, int heightf) {
             this.width = widthf;
             this.height = heightf;
 
-            frameBuffer.updateScreenSize(widthf, heightf);
-            ClickBuffer.updateScreenSize(widthf, heightf);
+            frame.updateScreenSize(widthf, heightf);
+            frameC.updateScreenSize(widthf, heightf);
         }
 
     }
