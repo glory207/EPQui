@@ -42,10 +42,21 @@ namespace EPQui.UserCon
             InitializeComponent();
             slider1.BoundName = "X";
             slider2.BoundName = "Y";
-            slider3.BoundName = "Z";
+            slider3.BoundName = "Z"; 
             slider1.PropertyChangedUp += Slider1_PropertyChanged;
             slider2.PropertyChangedUp += Slider1_PropertyChanged;
             slider3.PropertyChangedUp += Slider1_PropertyChanged;
+            this.MouseMove += slider1.Slider_MouseMove;
+            this.MouseMove += slider2.Slider_MouseMove;
+            this.MouseMove += slider3.Slider_MouseMove;
+            SizeChanged += TransformEditor_SizeChanged;
+        }
+
+        private void TransformEditor_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            slider1.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f,0.1f);
+            slider2.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f,0.1f);
+            slider3.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f, 0.1f);
         }
 
         private void Slider1_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -88,7 +99,7 @@ namespace EPQui.UserCon
         {
             mini = !mini;
             if(mini) border.Height = 30;
-            else border.Height = 150;
+            else border.Height = 82;
 
         }
     }

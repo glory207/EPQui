@@ -8,10 +8,18 @@ using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
+
+   public enum LightType
+    {
+        point,
+        dir,
+        spot
+    }
+
     public class LightContainer : HierObj
     {
-
-        
+        public LightType Type = LightType.point;
+        public Matrix4 rotationMatrix = Matrix4.Identity;
         public LightContainer(Vector3 pos, Vector4 color) {
             Position = pos;
             lightColor = color;
@@ -35,11 +43,10 @@ namespace EPQui
            
             shaderProgram.Activate();
 
-            objectModel = Matrix4.CreateScale(objectScale);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateTranslation(Position);
+            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.Z);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.Y);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.X);
+            objectModel = rotationMatrix * Matrix4.CreateTranslation(Position);
             GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camUp"), camera.OrientationU);
@@ -53,11 +60,10 @@ namespace EPQui
 
             clickProgram.Activate();
 
-            objectModel = Matrix4.CreateScale(objectScale);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI/180f);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateTranslation(Position);
+            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.Z);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.Y);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.X);
+            objectModel =  rotationMatrix * Matrix4.CreateTranslation(Position);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);

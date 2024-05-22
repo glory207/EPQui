@@ -93,7 +93,8 @@ vec4 spotLight(vec3 lPos,vec3 lRot,vec4 lColor)
 	vec4 CombinedLight;
 	for(int i = 0 ; i < lightnum; i++)
 	{
-	CombinedLight += pointLight(lightPos[i],lightColor[i]);
+	//CombinedLight += spotLight(lightPos[i],lightRot[i],lightColor[i]);
+	CombinedLight += spotLight(lightPos[i],vec3(1,-1,0),lightColor[i]);
 	}
     FragColor = CombinedLight;
 

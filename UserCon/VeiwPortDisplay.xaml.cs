@@ -92,7 +92,7 @@ namespace EPQui.UserCon
             mouseD = (mouseP - new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y)) * new Vector2(-1, 1);
             mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
 
-
+            
 
             if (mouseR) mouseA += mouseD * mouseS;
             if (mouseA.Y <= -1.5f) mouseA.Y = -1.5f;
@@ -132,7 +132,7 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, space, mouseR;
+        bool up, down, left, right, shift, space, mouseR, mver;
 
         private void window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -186,6 +186,9 @@ namespace EPQui.UserCon
                 case Key.D:
                     right = false;
                     break;
+                case Key.M:
+                    mver = false;
+                    break;
                 case Key.Space:
                     space = false;
                     break;
@@ -210,6 +213,9 @@ namespace EPQui.UserCon
                     break;
                 case Key.D:
                     right = true;
+                    break;
+                case Key.M:
+                    mver = true;
                     break;
                 case Key.Space:
                     space = true;

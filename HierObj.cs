@@ -1,9 +1,12 @@
-﻿using OpenTK.Mathematics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Mathematics;
+using static System.Net.Mime.MediaTypeNames;
+using OpenTK.Graphics.OpenGL4;
+using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
@@ -23,5 +26,12 @@ namespace EPQui
         public abstract void Update(List<LightContainer> lights, Camera camera);
         public abstract void UpdateClick(Camera camera, int value, int value2);
         public abstract void destroy();
+    }
+    public class material
+    {
+        Texture[] textures = {
+                 new Texture("Res/planks.png", "diffuse", 0, PixelFormat.Rgba),
+                 new Texture("Res/planksSpec.png", "specular", 1, PixelFormat.Red)
+            };
     }
 }

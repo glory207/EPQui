@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Reflection.Metadata;
 using System.IO;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Diagnostics;
 
 namespace EPQui
 {
@@ -100,7 +101,7 @@ namespace EPQui
             if (success == 0)
             {
                 string infoLog = GL.GetShaderInfoLog(VertexShader);
-                Console.WriteLine(infoLog);
+                Debug.WriteLine(infoLog);
             }
 
             GL.CompileShader(FragmentShader);
@@ -109,7 +110,7 @@ namespace EPQui
             if (success == 0)
             {
                 string infoLog = GL.GetShaderInfoLog(FragmentShader);
-                Console.WriteLine(infoLog);
+                Debug.WriteLine(infoLog);
             }
 
             GL.CompileShader(GeometryShader);
@@ -118,7 +119,7 @@ namespace EPQui
             if (success == 0)
             {
                 string infoLog = GL.GetShaderInfoLog(GeometryShader);
-                Console.WriteLine(infoLog);
+                Debug.WriteLine(infoLog);
             }
 
 
@@ -135,7 +136,7 @@ namespace EPQui
             if (success == 0)
             {
                 string infoLog = GL.GetProgramInfoLog(ID);
-                Console.WriteLine(infoLog);
+                Debug.WriteLine(infoLog);
             }
 
 

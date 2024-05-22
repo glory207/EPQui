@@ -27,7 +27,6 @@ namespace EPQui.UserCon
         {
             DataContext = this;
             InitializeComponent();
-            this.MouseMove += Slider_MouseMove;
             this.MouseDown += ValueSlider_MouseDown;
             this.Focusable = true;
         }
@@ -39,7 +38,7 @@ namespace EPQui.UserCon
         }
 
         float delta,pos;
-        private void Slider_MouseMove(object sender, MouseEventArgs e)
+        public void Slider_MouseMove(object sender, MouseEventArgs e)
         {
             
             delta = pos - (float)Mouse.GetPosition(InputHitTest(new Point(0, 0))).X;
@@ -74,17 +73,10 @@ namespace EPQui.UserCon
         }
         private string boundname = "";
 
-        private void slider_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-           
-
-        }
         private void txtBlock_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
-                
-                // ((UIElement)sender).MoveFocus(new TraversalRequest(FocusNavigationDirection.Up));
                 this.Focus();
             }
         }

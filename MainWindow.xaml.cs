@@ -67,13 +67,7 @@ namespace EPQui
 
         private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (scene.Hobj[window.selectedObjj].GetType() == typeof(LightContainer))
-            {
-                scene.Hobj[window.selectedObjj].Position = traEP.BoundVector;
-                scene.Hobj[window.selectedObjj].lightColor.Xyz = traER.BoundVector;
-                scene.Hobj[window.selectedObjj].objectScale = traES.BoundVector;
-            }
-            else if (scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
+           
             {
                 scene.Hobj[window.selectedObjj].Position = traEP.BoundVector;
                 scene.Hobj[window.selectedObjj].objectRotation = traER.BoundVector;
@@ -85,17 +79,6 @@ namespace EPQui
             if (window.selectedObjj >= 0 && scene.Hobj.Count > 0)
             {
 
-                if (scene.Hobj[window.selectedObjj].GetType() == typeof(LightContainer))
-                {
-
-                    traEP.BoundVector = scene.Hobj[window.selectedObjj].Position;
-                    traER.BoundVector = scene.Hobj[window.selectedObjj].lightColor.Xyz;
-                    traES.BoundVector = scene.Hobj[window.selectedObjj].objectScale;
-                    traEP.BoundName = "Position";
-                    traER.BoundName = "lightColor";
-                    traES.BoundName = "objectScale";
-                }
-                else if (scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
                 {
 
 
@@ -152,6 +135,7 @@ namespace EPQui
         }
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
+
             scene.AddMesh(new MeshContainer(Vector3.Zero, (string)((FrameworkElement)sender).Tag));
 
         }

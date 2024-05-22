@@ -17,7 +17,7 @@ namespace EPQui
             objectScale = new Vector3(1.0f);
             objectRotation = new Vector3(0);
 
-            shaderProgram = new Shader();
+            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
             Texture[] textures = {
                  new Texture("Res/planks.png", "diffuse", 0, PixelFormat.Rgba),
@@ -43,9 +43,9 @@ namespace EPQui
 
 
             objectModel = Matrix4.CreateScale(objectScale);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
             objectModel = objectModel * Matrix4.CreateTranslation(Position);
 
             shaderProgram.Activate();
@@ -54,13 +54,17 @@ namespace EPQui
 	          GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "lightnum"), lights.Count);
 	          for (int i = 0; i < lights.Count; i++)
 	        {
-	        	string ii = "lightColor[" + i.ToString() + "]";
+	        	string ii = "lightType[" + i.ToString() + "]";
+	        	GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), (int)lights[i].Type);
+
+	            ii = "lightColor[" + i.ToString() + "]";
 	        	GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor);
 	        	ii = "lightPos[" + i.ToString() + "]";
 	        	GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].Position);
             
 	        	ii = "lightRot[" + i.ToString() + "]";
-	        	GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].objectRotation);
+                Matrix4 mt = lights[i].rotationMatrix.Inverted();
+                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
             
 	        }
             mesh.Draw(shaderProgram, camera);
@@ -74,9 +78,9 @@ namespace EPQui
 
 
             objectModel = Matrix4.CreateScale(objectScale);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
             objectModel = objectModel * Matrix4.CreateTranslation(Position);
 
             clickProgram.Activate();

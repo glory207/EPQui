@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Res\**" />
+    <EmbeddedResource Remove="Res\**" />
+    <None Remove="Res\**" />
+    <Page Remove="Res\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.8.2" />
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.3" />
     <PackageReference Include="StbImageSharp" Version="2.27.14" />
