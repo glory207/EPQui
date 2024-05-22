@@ -39,13 +39,13 @@ namespace EPQui
             clickProgram.Delete();
         }
         public override void Update(List<LightContainer> lights,Camera camera) {
-            
 
-             
-            objectModel =  Matrix4.CreateRotationZ(objectRotation.Z);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
-            objectModel = objectModel * Matrix4.CreateScale(objectScale);
+
+
+            objectModel = Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
             objectModel = objectModel * Matrix4.CreateTranslation(Position);
 
             shaderProgram.Activate();
@@ -72,10 +72,11 @@ namespace EPQui
        public override void UpdateClick(Camera camera,int value,int value2)
         {
 
-            objectModel = Matrix4.CreateRotationZ(objectRotation.Z);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
-            objectModel = objectModel * Matrix4.CreateScale(objectScale);
+
+            objectModel = Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
             objectModel = objectModel * Matrix4.CreateTranslation(Position);
 
             clickProgram.Activate();

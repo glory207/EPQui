@@ -19,6 +19,7 @@ using System.Windows.Input;
 using OpenTK.Windowing.Common.Input;
 using Quaternion = OpenTK.Mathematics.Quaternion;
 using EPQui.UserCon;
+using System.IO;
 
 namespace EPQui.UserCon
 {
@@ -42,7 +43,9 @@ namespace EPQui.UserCon
             scene = new Hierarchy();
             window.Loaded += Window_Loaded1; 
             window.Unloaded += Window_Unloaded;
+
             
+
         }
        public int SCR_WIDTH;
        public int SCR_HEIGHT;
@@ -63,6 +66,7 @@ namespace EPQui.UserCon
             window.KeyUp += Grid_KeyUp;
             window.MouseDown += window_MouseDown;
             window.MouseUp += window_MouseUp;
+            window.MouseLeave += Window_MouseLeave;
             GL.DepthFunc(DepthFunction.Less);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Multisample);
@@ -73,8 +77,13 @@ namespace EPQui.UserCon
             SCR_WIDTH = (int)window.ActualWidth;
             SCR_HEIGHT = (int)window.ActualHeight;
             camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
+            this.Focusable = true;
         }
 
+        private void Window_MouseLeave(object sender, MouseEventArgs e)
+        {
+            mouseR = false;
+        }
 
         Vector2 mouseA, mouseP, mouseS = new Vector2(0.005f);
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -141,6 +150,7 @@ namespace EPQui.UserCon
 
         private void window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            this.Focus();
             
             switch (e.ChangedButton)
             {
@@ -214,7 +224,7 @@ namespace EPQui.UserCon
         void update()
         {
 
-            // if (mouseR)
+             if (this.IsFocused)
             {
                 if (up) { 
                     

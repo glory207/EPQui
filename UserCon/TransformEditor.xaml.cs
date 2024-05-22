@@ -23,6 +23,19 @@ namespace EPQui.UserCon
     /// </summary>
     public partial class TransformEditor : UserControl, INotifyPropertyChanged
     {
+        bool mini;
+        private string DisplayName = "Na";
+
+
+        public string BoundName
+        {
+            get { return DisplayName; }
+            set
+            {
+                DisplayName = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BoundName"));
+            }
+        }
         public TransformEditor()
         {
             DataContext = this;
@@ -71,7 +84,13 @@ namespace EPQui.UserCon
             }
         }
 
-        
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            mini = !mini;
+            if(mini) border.Height = 30;
+            else border.Height = 150;
+
+        }
     }
     
 }

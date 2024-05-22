@@ -17,7 +17,7 @@ namespace EPQui
         {
             ID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count * sizeof(float) * 6, vertices.ToArray(), BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count * sizeof(float) * 5, vertices.ToArray(), BufferUsageHint.StreamDraw);
           
         }
         public VBO(List<float> vertices)

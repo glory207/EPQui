@@ -34,8 +34,12 @@ namespace EPQui
         public override void Update(Camera camera) {
            
             shaderProgram.Activate();
-            objectModel = Matrix4.CreateTranslation(Position);
-            objectModel = objectModel * Matrix4.CreateScale(objectScale);
+
+            objectModel = Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateTranslation(Position);
             GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camUp"), camera.OrientationU);
@@ -48,8 +52,12 @@ namespace EPQui
         {
 
             clickProgram.Activate();
-            objectModel = Matrix4.CreateTranslation(Position);
-            objectModel = objectModel * Matrix4.CreateScale(objectScale);
+
+            objectModel = Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z * MathF.PI/180f);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X * MathF.PI / 180f);
+            objectModel = objectModel * Matrix4.CreateTranslation(Position);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
@@ -68,20 +76,4 @@ namespace EPQui
         }
     }
 
-    public abstract class HierObj
-    {
-        public Vector3 Position;
-        public Vector3 objectScale;
-        public Vector3 objectRotation;
-        public Vector4 lightColor;
-        public Matrix4 objectModel;
-        public Mesh mesh;
-        public Shader shaderProgram;
-        public Shader clickProgram;
-
-        public abstract void Update(Camera camera);
-        public abstract void Update(List<LightContainer> lights,Camera camera);
-        public abstract void UpdateClick(Camera camera, int value, int value2);
-        public abstract void destroy();
-    } 
 }

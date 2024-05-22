@@ -88,7 +88,7 @@ namespace EPQui
             byte[] pixel = new byte[4];
             GL.ReadPixels(widthf, heightf, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, pixel);
             destroy();
-            Debug.WriteLine(((int)pixel[0]).ToString() + " " + pixel[1].ToString() + " " + pixel[2].ToString());
+           // Debug.WriteLine(((int)pixel[0]).ToString() + " " + pixel[1].ToString() + " " + pixel[2].ToString());
            // Debug.WriteLine((widthf).ToString() + "X " + heightf.ToString() + "Y " + pixel[2].ToString());
            // Debug.WriteLine((width).ToString() + "X " + height.ToString() + "Y ");
             return (int)pixel[0];
