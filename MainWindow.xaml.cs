@@ -30,24 +30,12 @@ namespace EPQui
     /// </summary>
     public partial class MainWindow
     {
-        // GameWindow window;
-         TransformEditor traEP = new TransformEditor();
-         TransformEditor traER = new TransformEditor();
-         TransformEditor traES = new TransformEditor();
-
         public MainWindow()
         {
             InitializeComponent();
             scene = new Hierarchy();
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
-            traEP.PropertyChanged += TraE_PropertyChanged;
-            traER.PropertyChanged += TraE_PropertyChanged;
-            traES.PropertyChanged += TraE_PropertyChanged;
-            theList.Children.Add(traEP);
-            theList.Children.Add(traER);
-            theList.Children.Add(traES);
-
             String[] meshDir = Directory.GetFiles("Res/meshes/","*.obj");
             ObjectSelector buttonL = new ObjectSelector();
             buttonL.textBlk.Text = "light";
@@ -65,29 +53,22 @@ namespace EPQui
             }
         }
 
-        private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-           
-            {
-                scene.Hobj[window.selectedObjj].Position = traEP.BoundVector;
-                scene.Hobj[window.selectedObjj].objectRotation = traER.BoundVector;
-                scene.Hobj[window.selectedObjj].objectScale = traES.BoundVector;
-            }
-        }
+       
         private void Window_SampleEvent()
         {
+            theList2.Children.Clear();
             if (window.selectedObjj >= 0 && scene.Hobj.Count > 0)
             {
 
+                TransformEditor traE = new TransformEditor();
+                theList2.Children.Add(traE);
+                traE.set(scene.Hobj[window.selectedObjj]);
+                if(scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
                 {
 
-
-                    traEP.BoundVector = scene.Hobj[window.selectedObjj].Position;
-                    traER.BoundVector = scene.Hobj[window.selectedObjj].objectRotation;
-                    traES.BoundVector = scene.Hobj[window.selectedObjj].objectScale;
-                    traEP.BoundName = "Position";
-                    traER.BoundName = "objectRotation";
-                    traES.BoundName = "objectScale";
+                    MaterialEditor matE = new MaterialEditor();
+                    theList2.Children.Add(matE);
+                    matE.set(((MeshContainer)scene.Hobj[window.selectedObjj]).mate);
                 }
             }
         }

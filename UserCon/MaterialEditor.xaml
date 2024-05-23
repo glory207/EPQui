@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="EPQui.UserCon.TransformEditor"
+﻿<UserControl x:Class="EPQui.UserCon.MaterialEditor"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EPQui.UserCon"
              mc:Ignorable="d" 
-             d:DesignHeight="300.425" d:DesignWidth="348.722"
+             d:DesignHeight="241.111" d:DesignWidth="348.722"
              FontSize="18">
     <Grid Background="DarkGray" Height="300">
         <Grid.RowDefinitions>
@@ -13,12 +13,14 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Background="Gray" Name="title" MouseDown="title_MouseDown" Margin="5 5 0 0" HorizontalAlignment="Left" Padding="10" CornerRadius="5">
-            <TextBlock Text="Transform" VerticalAlignment="Center"/>
+            <TextBlock Text="Material" VerticalAlignment="Center"/>
         </Border>
         <StackPanel Margin="5 10 5 0" Grid.Row="1">
-            <local:Vec3Editor x:Name="traEP"/>
-            <local:Vec3Editor x:Name="traER"/>
-            <local:Vec3Editor x:Name="traES"/>
+            <local:Vec2Editor x:Name="traOff"/>
+            <local:Vec2Editor x:Name="traSca"/>
+            <Button Click="Button_Click">
+                Texture
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

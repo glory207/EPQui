@@ -31,7 +31,13 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-
+            
+            <ScrollViewer Grid.Column="2" Grid.Row="0" Background="LightCoral">
+                <StackPanel x:Name="theList2">
+                   
+                </StackPanel>
+            </ScrollViewer>
+            
             <ScrollViewer Grid.Column="0" Grid.Row="0" Background="LightCoral">
                 <StackPanel x:Name="theList">
                     <Button Click="deleteObj" Height="50" >

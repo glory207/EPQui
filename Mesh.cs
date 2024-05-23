@@ -30,14 +30,12 @@ namespace EPQui
         public string name = "empty";
         public List<Vertex> vertices = new List<Vertex>();
         public List<uint> indices = new List<uint>();
-        public List<Texture> textures = new List<Texture>();
         VAO VAO = new VAO();
 
-        public Mesh(List<Vertex> vertices, List<uint> indices, List<Texture> textures, string name) {
+        public Mesh(List<Vertex> vertices, List<uint> indices, string name) {
             this.name = name;
             this.vertices = vertices;
             this.indices = indices;
-            this.textures = textures;
 
             VAO.Bind();
             VBO VBO = new VBO(vertices);
@@ -50,8 +48,7 @@ namespace EPQui
             EBO.Unind();
 
         }
-        public Mesh(string path, List<Texture> textures) {
-            this.textures = textures;
+        public Mesh(string path) {
             string line = "#";
             StreamReader str = new StreamReader(path);
             int num = 0;
@@ -334,33 +331,12 @@ namespace EPQui
              
             shader.Activate();
             VAO.Bind();
-            uint numDiffuse = 0;
-            uint numSpecular = 0;
          
          
-            for (int i = 0; i < textures.Count(); i++)
-            {
-                string num = "";
-                string type = textures[i].type;
-                if (type == "diffuse")
-                {
-                    num = (numDiffuse++).ToString();
-                }
-                else if (type == "specular")
-                {
-                    num = (numSpecular++).ToString();
-                }
-                textures[i].texUnit(shader, (type + num).ToString(),(uint) i);
-                textures[i].Bind();
-            }
             GL.Uniform3(GL.GetUniformLocation(shader.ID, "camPos"), camera.Position);
             camera.Matrix(shader, "camMatrix");
             GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
-            for (int i = 0; i < textures.Count(); i++)
-            {
-         
-                textures[i].Unbind();
-            }
+            
         }
         public void DrawToClick(Shader shader, Camera camera) {
             

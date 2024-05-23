@@ -29,9 +29,10 @@ namespace EPQui
     }
     public class material
     {
-        Texture[] textures = {
-                 new Texture("Res/planks.png", "diffuse", 0, PixelFormat.Rgba),
-                 new Texture("Res/planksSpec.png", "specular", 1, PixelFormat.Red)
+       public List<Texture> textures = new List<Texture>() {
+                 new Texture("Res/Stone.jpg", "diffuse", 0, PixelFormat.Rgba)
             };
+        public Vector2 texOff = new Vector2(0);
+        public Vector2 texScale = new Vector2(1);
     }
 }

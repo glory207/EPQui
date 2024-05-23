@@ -12,6 +12,7 @@ namespace EPQui
 {
     internal class MeshContainer: HierObj
     {
+        public material mate;
        public MeshContainer(Vector3 pos,string path) {
             Position = pos;
             objectScale = new Vector3(1.0f);
@@ -19,13 +20,9 @@ namespace EPQui
 
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            Texture[] textures = {
-                 new Texture("Res/planks.png", "diffuse", 0, PixelFormat.Rgba),
-                 new Texture("Res/planksSpec.png", "specular", 1, PixelFormat.Red)
-            };
-            List<Texture> tex = textures.ToList();
 
-            mesh = new Mesh(path, tex);
+            mate = new material();
+            mesh = new Mesh(path);
         }
        public MeshContainer() {
             Position = new Vector3(0);
@@ -33,6 +30,8 @@ namespace EPQui
             objectScale = new Vector3(1);
             shaderProgram = new Shader();
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+
+            mate = new material();
         } 
        public override void destroy() {
             shaderProgram.Delete();
@@ -67,10 +66,36 @@ namespace EPQui
                 GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
             
 	        }
+
+
+           uint numDiffuse = 0;
+           uint numSpecular = 0;
+           for (int i = 0; i < mate.textures.Count(); i++)
+           {
+               string num = "";
+               string type = mate.textures[i].type;
+               if (type == "diffuse")
+               {
+                   num = (numDiffuse++).ToString();
+               }
+               else if (type == "specular")
+               {
+                   num = (numSpecular++).ToString();
+               }
+               mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
+               mate.textures[i].Bind();
+           }
+          //  mate.textures.texUnit(shaderProgram, (mate.textures.type).ToString(), (uint)1);
+            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
+            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
             mesh.Draw(shaderProgram, camera);
+             for (int i = 0; i < mate.textures.Count(); i++)
+             {
+            
+                 mate.textures[i].Unbind();
+             }
 
-
-
+          //  mate.textures.Unbind();
 
         }
        public override void UpdateClick(Camera camera,int value,int value2)
