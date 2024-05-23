@@ -33,10 +33,12 @@ namespace EPQui
         public MainWindow()
         {
             InitializeComponent();
+
+
             scene = new Hierarchy();
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
-            String[] meshDir = Directory.GetFiles("Res/meshes/","*.obj");
+            string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
             ObjectSelector buttonL = new ObjectSelector();
             buttonL.textBlk.Text = "light";
             buttonL.MouseDown += Button_Click3;
@@ -46,14 +48,13 @@ namespace EPQui
             {
                 ObjectSelector button = new ObjectSelector();
                 button.Tag = str;
-                button.textBlk.Text = str.Substring(11, str.Substring(11).Length-4);
+                button.textBlk.Text = str.Substring(11, str.Substring(11).Length - 4);
                 button.MouseDown += Button_Click2;
 
                 wrpPan.Children.Add(button);
             }
         }
 
-       
         private void Window_SampleEvent()
         {
             theList2.Children.Clear();
@@ -63,7 +64,7 @@ namespace EPQui
                 TransformEditor traE = new TransformEditor();
                 theList2.Children.Add(traE);
                 traE.set(scene.Hobj[window.selectedObjj]);
-                if(scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
+                if (scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
                 {
 
                     MaterialEditor matE = new MaterialEditor();
@@ -83,8 +84,8 @@ namespace EPQui
                  new LightContainer(new Vector3(1.0f, 2.8f, 0.8f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f)),
                  new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f)),
              };
-            
-            
+
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -109,7 +110,7 @@ namespace EPQui
                 button.Height = 50;
                 button.Width = 50;
                 button.Click += Button_Click2;
-                
+
                 wrpPan.Children.Add(button);
             }
 
@@ -122,7 +123,7 @@ namespace EPQui
         }
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
-            scene.AddMesh(new LightContainer(window.camera.Position,new Vector4(1,1,1,1)));
+            scene.AddMesh(new LightContainer(window.camera.Position, new Vector4(1, 1, 1, 1)));
 
         }
         private void deleteObj(object sender, RoutedEventArgs e)
