@@ -71,6 +71,12 @@ namespace EPQui
                     theList2.Children.Add(matE);
                     matE.set(((MeshContainer)scene.Hobj[window.selectedObjj]).mate);
                 }
+                else if (scene.Hobj[window.selectedObjj].GetType() == typeof(LightContainer))
+                {
+                    LightEditor ligE = new LightEditor();
+                    theList2.Children.Add(ligE);
+                    ligE.set(((LightContainer)scene.Hobj[window.selectedObjj]));
+                }
             }
         }
         Hierarchy scene;
@@ -80,9 +86,8 @@ namespace EPQui
 
             scene.Hobj = new List<HierObj>()
              {
-                 new LightContainer(new Vector3(-1.0f, 2.8f, 0.8f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)),
-                 new LightContainer(new Vector3(1.0f, 2.8f, 0.8f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f)),
-                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(0.0f, 0.0f, 1.0f, 1.0f)),
+                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)){Type = LightType.dir},
+                 new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj"){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
              };
 
 

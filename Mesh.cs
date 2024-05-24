@@ -347,6 +347,11 @@ namespace EPQui
             camera.Matrix(shader, "camMatrix");
             GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
         }
+        public void DrawToShadow() {
+            
+            VAO.Bind();
+            GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
+        }
 
 
 

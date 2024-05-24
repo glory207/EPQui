@@ -116,13 +116,11 @@ namespace EPQui.UserCon
             camera.frameC.Clear();
             scene.UpdateClick(camera);
             hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
-
-
+          
+          
             camera.frame.Clear();
             scene.Update(camera);
             camera.update(camera.frame);
-
-
 
         }
 

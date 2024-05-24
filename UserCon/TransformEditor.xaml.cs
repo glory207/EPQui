@@ -47,7 +47,7 @@ namespace EPQui.UserCon
         {
             mini = !mini;
             if (mini) this.Height = 50;
-            else this.Height = 300;
+            else this.Height = double.NaN;
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

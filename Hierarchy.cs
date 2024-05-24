@@ -30,13 +30,13 @@ namespace EPQui
                 if (ob.GetType() == typeof(LightContainer))
                 {
                     ob.Update(camera);
-                    lights.Add((LightContainer)ob);
+                    lights.Add(((LightContainer)ob));
                 }
             }
 
             foreach (HierObj ob in Hobj)
             {
-                if (ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
+                if(ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
             }
             gridshaderProgram.Activate();
             Matrix4 mat = Matrix4.Identity;
@@ -44,6 +44,7 @@ namespace EPQui
             GL.Uniform4(GL.GetUniformLocation(gridshaderProgram.ID, "lightColor"), 1, 1, 1, 1);
             GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
             gridMesh.Draw(gridshaderProgram, camera);
+
         }
         public void UpdateClick(Camera camera)
         {

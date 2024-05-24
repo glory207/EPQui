@@ -57,9 +57,13 @@ namespace EPQui
 	        	GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), (int)lights[i].Type);
 
 	            ii = "lightColor[" + i.ToString() + "]";
-	        	GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor);
+	        	GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor.Normalized());
+	            ii = "lightIntensity[" + i.ToString() + "]";
+	        	GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].intencity);
 	        	ii = "lightPos[" + i.ToString() + "]";
 	        	GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].Position);
+	        	ii = "lightAng[" + i.ToString() + "]";
+	        	GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].angle);
             
 	        	ii = "lightRot[" + i.ToString() + "]";
                 Matrix4 mt = lights[i].rotationMatrix.Inverted();
@@ -85,7 +89,7 @@ namespace EPQui
                mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
                mate.textures[i].Bind();
            }
-          //  mate.textures.texUnit(shaderProgram, (mate.textures.type).ToString(), (uint)1);
+
             GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
             GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
             mesh.Draw(shaderProgram, camera);
@@ -94,8 +98,6 @@ namespace EPQui
             
                  mate.textures[i].Unbind();
              }
-
-          //  mate.textures.Unbind();
 
         }
        public override void UpdateClick(Camera camera,int value,int value2)
@@ -113,6 +115,20 @@ namespace EPQui
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
             mesh.DrawToClick(clickProgram, camera);
+
+        }
+       public void UpdateShadow(Shader shadowMapProgram)
+        {
+
+
+            objectModel = Matrix4.CreateScale(objectScale);
+            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.Z);
+            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.Y);
+            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.X);
+            objectModel = objectModel * Matrix4.CreateTranslation(Position);
+
+            GL.UniformMatrix4(GL.GetUniformLocation(shadowMapProgram.ID, "model"), false, ref objectModel);
+            mesh.DrawToShadow();
 
         }
 

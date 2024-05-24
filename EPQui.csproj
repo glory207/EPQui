@@ -24,6 +24,9 @@
     <Compile Update="UserCon\MaterialEditor.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserCon\FloatEditor.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserCon\Vec2Editor.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -31,6 +34,10 @@
 
   <ItemGroup>
     <Page Update="UserCon\MaterialEditor.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserCon\FloatEditor.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
