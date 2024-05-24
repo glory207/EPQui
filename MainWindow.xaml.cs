@@ -60,7 +60,7 @@ namespace EPQui
             theList2.Children.Clear();
             if (window.selectedObjj >= 0 && scene.Hobj.Count > 0)
             {
-
+                
                 TransformEditor traE = new TransformEditor();
                 theList2.Children.Add(traE);
                 traE.set(scene.Hobj[window.selectedObjj]);
