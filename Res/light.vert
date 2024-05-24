@@ -8,10 +8,13 @@ uniform mat4 camMatrix;
 out DATA
 {
     mat4 projection;
+	mat4 model;
 } data_out;
 
 void main()
 {
-	gl_Position = model * vec4(aPos,1.0f);
+	gl_Position = vec4(aPos,1.0f);
    data_out.projection = camMatrix;
+   data_out.model = model;
+
 }

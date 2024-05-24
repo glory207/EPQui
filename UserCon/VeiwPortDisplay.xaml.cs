@@ -39,7 +39,7 @@ namespace EPQui.UserCon
             };
             window.Start(settings);
 
-            camera = new Camera(SCR_WIDTH, SCR_HEIGHT, new Vector3(0.0f, 0.0f, 0.0f));
+            camera = new Camera(SCR_WIDTH, SCR_HEIGHT, new Vector3(4.0f, 3.0f, 0.0f));
             scene = new Hierarchy();
             window.Loaded += Window_Loaded1; 
             window.Unloaded += Window_Unloaded;

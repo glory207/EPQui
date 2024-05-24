@@ -1,0 +1,14 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl old_wooden_table
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.588235 0.588235 0.588235
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Bump -bm 0.040000 C:\\Users\\gloto\\Downloads\\612s9murnnuo-old_wooden_table\\old_wooden_table\\old_table_bump.png
+map_Kd C:\\Users\\gloto\\Downloads\\612s9murnnuo-old_wooden_table\\old_wooden_table\\old_table_diffuse.png

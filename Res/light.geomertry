@@ -6,28 +6,62 @@ layout (triangle_strip, max_vertices = 150) out;
 out vec4 color;
 uniform vec3 camUp;
 uniform vec3 camRight;
-
+uniform vec4 lightColor;
 in DATA
 {
     mat4 projection;
+mat4 model;
+
 } data_in[];
 
 
 void main()
 {
-   float size = 0.5f;
+   float size = 0.1f;
 
 	int cir = 10;
 	float cire = cir;
+	color = lightColor;
 	for(int i = 0 ; i < cir ; i++)
 	{
-		gl_Position = data_in[0].projection * (gl_in[0].gl_Position);
+		gl_Position = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position);
 		EmitVertex();
-		gl_Position = data_in[0].projection * (gl_in[0].gl_Position + vec4(sin(radians(((i+1)/cire)*360.0)) * camRight + cos(radians(((i+1)/cire)*360.0)) * camUp,0)*size);
-		EmitVertex();
-		gl_Position = data_in[0].projection * (gl_in[0].gl_Position + vec4(sin(radians((i/cire)*360.0)) * camRight + cos(radians((i/cire)*360.0)) * camUp,0)*size);
+		gl_Position = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(sin(radians(((i+1)/cire)*360.0)) * camRight + cos(radians(((i+1)/cire)*360.0)) * camUp,0)*size);
+		EmitVertex(); 
+		gl_Position = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(sin(radians((i/cire)*360.0)) * camRight + cos(radians((i/cire)*360.0)) * camUp,0)*size);
 		EmitVertex();
 		EndPrimitive();
 	}
+	color = vec4(0.1,0.1,0.1,1);
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(-size,-size,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(size,-size,0,0));
+		EmitVertex();
+		EndPrimitive();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,-size,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,size,0));
+		EmitVertex();
+		EndPrimitive();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(size,-size,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(-size,-size,0,0));
+		EmitVertex();
+		EndPrimitive();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,size,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		EmitVertex();
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,-size,0));
+		EmitVertex();
+		EndPrimitive();
+
+
 	
 }

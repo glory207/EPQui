@@ -86,7 +86,7 @@ namespace EPQui
 
             scene.Hobj = new List<HierObj>()
              {
-                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)){Type = LightType.dir},
+                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)){Type = LightType.spot},
                  new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj"){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
              };
 
