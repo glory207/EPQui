@@ -42,7 +42,8 @@ namespace EPQui.UserCon
             InitializeComponent();
             slider1.BoundName = " ";
             slider1.PropertyChangedUp += Slider1_PropertyChanged;
-            
+
+            this.MouseMove += slider1.Slider_MouseMove;
             this.MouseMove += Slider_MouseMove;
             SizeChanged += TransformEditor_SizeChanged;
         }

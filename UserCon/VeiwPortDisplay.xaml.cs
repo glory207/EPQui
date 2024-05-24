@@ -112,16 +112,31 @@ namespace EPQui.UserCon
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
 
-            
-            camera.frameC.Clear();
-            scene.UpdateClick(camera);
-            hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
-          
-          
-            camera.frame.Clear();
-            scene.Update(camera);
-            camera.update(camera.frame);
+            if(!mver)
+            {
 
+                camera.frameC.Clear();
+                scene.UpdateClick(camera);
+                hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+
+
+                camera.frame.Clear();
+                scene.Update(camera);
+                camera.update(camera.frame);
+
+            }
+            else
+            {
+
+                camera.frame.Clear();
+                scene.Update(camera);
+                camera.update(camera.frame);
+
+                camera.frameC.Clear();
+                scene.UpdateClick(camera);
+                hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+
+            }
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -220,6 +235,12 @@ namespace EPQui.UserCon
                     break;
                 case Key.LeftShift:
                     shift = true;
+                    break;
+                case Key.E:
+                  mver = true;
+                    break;
+                case Key.Q:
+                  mver = false;
                     break;
             }
         }

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
+using System.Windows;
 
 namespace EPQui
 {
@@ -67,12 +68,12 @@ namespace EPQui
         
            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
 
-        //   framebufferProgram.Activate();
-        //  rectVAO.Bind();
-        //  GL.Disable(EnableCap.DepthTest);
-        //  GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
-        //  GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
-        //   GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+           framebufferProgram.Activate();
+          rectVAO.Bind();
+          GL.Disable(EnableCap.DepthTest);
+          GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
+          GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
+           GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
             destroy();
 
@@ -134,6 +135,8 @@ namespace EPQui
 
             if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
             {
+                
+                MessageBox.Show("Framebuffer is not complete!");
                 throw new Exception("Framebuffer is not complete!");
             }
         }

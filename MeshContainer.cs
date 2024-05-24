@@ -28,7 +28,7 @@ namespace EPQui
             Position = new Vector3(0);
             objectRotation = new Vector3(0);
             objectScale = new Vector3(1);
-            shaderProgram = new Shader();
+            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
 
             mate = new material();
