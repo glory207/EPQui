@@ -23,7 +23,9 @@ namespace EPQui
         public Matrix4 rotationMatrix = Matrix4.Identity;
         public Vector2 angle = new Vector2(0.9f, 0.1f);
         public float intencity = 1f;
-        public LightContainer(Vector3 pos, Vector4 color) {
+        public LightContainer(Vector3 pos, Vector4 color, HierObj parent)
+        {
+            this.parent = parent; 
             Position = pos;
             lightColor = color;
             objectScale = new Vector3(1);
@@ -33,7 +35,7 @@ namespace EPQui
 
 
         }
-        public override void Update(Camera camera) {
+        public override void Update(List<LightContainer> lights, Camera camera) {
 
             
 
@@ -72,10 +74,6 @@ namespace EPQui
             shaderProgram.Delete();
         }
 
-        public override void Update(List<LightContainer> lights, Camera camera)
-        {
-           
-        }
     }
 
 }

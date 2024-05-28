@@ -13,7 +13,8 @@ namespace EPQui
     internal class MeshContainer: HierObj
     {
         public material mate;
-       public MeshContainer(Vector3 pos,string path) {
+       public MeshContainer(Vector3 pos,string path,HierObj parent) {
+            this.parent = parent;
             Position = pos;
             objectScale = new Vector3(1.0f);
             objectRotation = new Vector3(0);
@@ -24,15 +25,6 @@ namespace EPQui
             mate = new material();
             mesh = new Mesh(path);
         }
-       public MeshContainer() {
-            Position = new Vector3(0);
-            objectRotation = new Vector3(0);
-            objectScale = new Vector3(1);
-            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
-            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-
-            mate = new material();
-        } 
        public override void destroy() {
             shaderProgram.Delete();
             clickProgram.Delete();
@@ -132,9 +124,5 @@ namespace EPQui
 
         }
 
-        public override void Update(Camera camera)
-        {
-            
-        }
     }
 }

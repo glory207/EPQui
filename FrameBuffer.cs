@@ -36,10 +36,14 @@ namespace EPQui
         public int width;
         public int height;
         public Color4 color = new Color4(0.1f, 0.2f, 0.3f, 4.0f);
-
-        public FrameBuffer(int widthf, int heightf)
+        PixelInternalFormat pixelInternalFormat;
+        PixelFormat pixelFormat;
+        PixelType pixelType;
+        public FrameBuffer(int widthf, int heightf, PixelInternalFormat pixelInternalFormat, PixelFormat pixelFormat, PixelType pixelType)
         {
-
+            this.pixelInternalFormat = pixelInternalFormat;
+            this.pixelFormat = pixelFormat;
+            this.pixelType = pixelType;
             framebufferProgram = new Shader("Res/framebuffer.vert", "Res/framebuffer.frag");
             framebufferProgram.Activate();
             GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), 1);
@@ -87,12 +91,10 @@ namespace EPQui
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
 
             byte[] pixel = new byte[4];
-            GL.ReadPixels(widthf, heightf, 1, 1, PixelFormat.Rgba, PixelType.UnsignedByte, pixel);
+            GL.ReadPixels(widthf, heightf, 1, 1, pixelFormat, pixelType, pixel);
             destroy();
-           // Debug.WriteLine(((int)pixel[0]).ToString() + " " + pixel[1].ToString() + " " + pixel[2].ToString());
-           // Debug.WriteLine((widthf).ToString() + "X " + heightf.ToString() + "Y " + pixel[2].ToString());
-           // Debug.WriteLine((width).ToString() + "X " + height.ToString() + "Y ");
-            return (int)pixel[0];
+            Debug.WriteLine((int)pixel[1]);
+            return (int)pixel[1];
         }
         public void updateScreenSize(int widthf, int heightf)
         {
@@ -113,7 +115,7 @@ namespace EPQui
 
             framebufferTexture = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2DMultisample, framebufferTexture);
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, PixelInternalFormat.Rgba, width, height, true);
+            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, pixelInternalFormat, width, height, true);
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge); // Prevents edge bleeding

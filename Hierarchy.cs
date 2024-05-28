@@ -8,9 +8,8 @@ using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
-   public class Hierarchy
+   public class Hierarchy: HierObj
     {
-        public List<HierObj> Hobj = new List<HierObj>();
 
         public Mesh gridMesh;
         Shader gridshaderProgram;
@@ -22,19 +21,18 @@ namespace EPQui
             gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
 
         }
-        public void Update(Camera camera)
+        public override void Update(List<LightContainer> lights, Camera camera)
         {
-            List<LightContainer> lights = new List<LightContainer>();
-            foreach (HierObj ob in Hobj)
+            foreach (HierObj ob in children)
             {
                 if (ob.GetType() == typeof(LightContainer))
                 {
-                    ob.Update(camera);
+                    ob.Update(lights, camera);
                     lights.Add(((LightContainer)ob));
                 }
             }
 
-            foreach (HierObj ob in Hobj)
+            foreach (HierObj ob in children)
             {
                 if(ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
             }
@@ -46,29 +44,21 @@ namespace EPQui
             gridMesh.Draw(gridshaderProgram, camera);
 
         }
-        public void UpdateClick(Camera camera)
+        public override void UpdateClick(Camera camera, int value, int value2)
         {
-            foreach (HierObj ob in Hobj)
+            foreach (HierObj ob in children)
             {
-                ob.UpdateClick(camera, Hobj.IndexOf(ob), Hobj.Count);
+                ob.UpdateClick(camera, children.IndexOf(ob), children.Count);
             }
         }
-        public void AddMesh(HierObj hierObj)
+        public override void destroy()
         {
-            Hobj.Add(hierObj);
-        }
-        public void DeleteObj(int pos)
-        {
-            Hobj[pos].destroy();
-            Hobj.RemoveAt(pos);
-        }
-        public void destroy()
-        {
-            foreach (HierObj ob in Hobj)
+            foreach (HierObj ob in children)
             {
                 ob.destroy();
             }
             gridshaderProgram.Delete();
         }
+
     }
 }

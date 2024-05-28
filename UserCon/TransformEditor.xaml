@@ -16,6 +16,9 @@
             <TextBlock Text="Transform" VerticalAlignment="Center"/>
         </Border>
         <StackPanel Margin="5 10 5 0" Grid.Row="1">
+            <Button Click="Button_Click">
+                delete
+            </Button>
             <local:Vec3Editor x:Name="traEP"/>
             <local:Vec3Editor x:Name="traER"/>
             <local:Vec3Editor x:Name="traES"/>

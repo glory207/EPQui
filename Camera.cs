@@ -27,9 +27,9 @@ namespace EPQui
         public float sensitivity = 100.0f;
         public Camera(int width, int height, Vector3 position)
         {
-            frameC = new FrameBuffer(width, height) { color = new Color4(0,0,255,255)};
+            frameC = new FrameBuffer(width, height,PixelInternalFormat.Rgb,PixelFormat.Rgb,PixelType.UnsignedByte) { color = new Color4(0,0,255,255)};
 
-            frame = new FrameBuffer(width, height);
+            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte);
             updateScreenSize(width, height);
             Position = position;
 

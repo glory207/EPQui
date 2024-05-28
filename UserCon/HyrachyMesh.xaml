@@ -5,10 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EPQui.UserCon"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Height="20">
-        <TextBlock FontSize="15" Text="{Binding BoundText,UpdateSourceTrigger=PropertyChanged}">
-
-        </TextBlock>
-    </Grid>
+             d:DesignHeight="43" d:DesignWidth="115.25">
+    <Border Background="Gray" CornerRadius="5">
+        <TreeViewItem Name="tree" Background="Transparent" BorderBrush="Transparent">
+        </TreeViewItem>
+    </Border>
 </UserControl>

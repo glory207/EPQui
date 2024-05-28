@@ -39,10 +39,11 @@
             </ScrollViewer>
 
             <ScrollViewer Grid.Column="0" Grid.Row="0" Background="LightCoral">
-                <StackPanel x:Name="theList">
-                    <Button Click="deleteObj" Height="50" >
-                        delete
-                    </Button>
+                <StackPanel>
+                    
+                    <TreeView x:Name="theList">
+                        
+                    </TreeView>
                 </StackPanel>
             </ScrollViewer>
             <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>

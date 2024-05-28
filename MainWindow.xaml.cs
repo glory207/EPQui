@@ -53,29 +53,30 @@ namespace EPQui
 
                 wrpPan.Children.Add(button);
             }
+            
         }
 
         private void Window_SampleEvent()
         {
             theList2.Children.Clear();
-            if (window.selectedObjj >= 0 && scene.Hobj.Count > 0)
+            if (window.selectedObjj >= 0 && scene.children.Count > 0)
             {
                 
                 TransformEditor traE = new TransformEditor();
                 theList2.Children.Add(traE);
-                traE.set(scene.Hobj[window.selectedObjj]);
-                if (scene.Hobj[window.selectedObjj].GetType() == typeof(MeshContainer))
+                traE.set(scene.children[window.selectedObjj]);
+                if (scene.children[window.selectedObjj].GetType() == typeof(MeshContainer))
                 {
 
                     MaterialEditor matE = new MaterialEditor();
                     theList2.Children.Add(matE);
-                    matE.set(((MeshContainer)scene.Hobj[window.selectedObjj]).mate);
+                    matE.set(((MeshContainer)scene.children[window.selectedObjj]).mate);
                 }
-                else if (scene.Hobj[window.selectedObjj].GetType() == typeof(LightContainer))
+                else if (scene.children[window.selectedObjj].GetType() == typeof(LightContainer))
                 {
                     LightEditor ligE = new LightEditor();
                     theList2.Children.Add(ligE);
-                    ligE.set(((LightContainer)scene.Hobj[window.selectedObjj]));
+                    ligE.set(((LightContainer)scene.children[window.selectedObjj]));
                 }
             }
         }
@@ -84,13 +85,13 @@ namespace EPQui
         {
             ((VeiwPortDisplay)sender).scene = scene;
 
-            scene.Hobj = new List<HierObj>()
+            scene.children = new List<HierObj>()
              {
-                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)){Type = LightType.spot},
-                 new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj"){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
+                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),scene){Type = LightType.spot},
+                 new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj",scene){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
              };
 
-
+           
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -123,19 +124,15 @@ namespace EPQui
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
 
-            scene.AddMesh(new MeshContainer(Vector3.Zero, (string)((FrameworkElement)sender).Tag));
+            scene.children.Add(new MeshContainer(Vector3.Zero, (string)((FrameworkElement)sender).Tag, scene));
 
         }
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
-            scene.AddMesh(new LightContainer(window.camera.Position, new Vector4(1, 1, 1, 1)));
+            scene.children.Add(new LightContainer(window.camera.Position, new Vector4(1, 1, 1, 1), scene));
 
         }
-        private void deleteObj(object sender, RoutedEventArgs e)
-        {
-            scene.DeleteObj(window.selectedObjj);
-            window.selectedObjj = -1;
-        }
+        
     }
 
 

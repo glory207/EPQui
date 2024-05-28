@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +59,13 @@ namespace EPQui.UserCon
                 target.objectRotation = traER.BoundVector;
                 target.objectScale = traES.BoundVector;
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+         target.destroy();
+         Debug.WriteLine (target.parent.children.Remove(target).ToString());
+            
         }
     }
 }

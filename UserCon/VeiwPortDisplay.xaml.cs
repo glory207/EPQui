@@ -20,6 +20,7 @@ using OpenTK.Windowing.Common.Input;
 using Quaternion = OpenTK.Mathematics.Quaternion;
 using EPQui.UserCon;
 using System.IO;
+using System.Collections.Generic;
 
 namespace EPQui.UserCon
 {
@@ -111,17 +112,17 @@ namespace EPQui.UserCon
             
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
-
-            if(!mver)
+            List<LightContainer> lights = new List<LightContainer>();
+            if (!mver)
             {
 
                 camera.frameC.Clear();
-                scene.UpdateClick(camera);
+                scene.UpdateClick(camera,0,0);
                 hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
 
 
                 camera.frame.Clear();
-                scene.Update(camera);
+                scene.Update(lights, camera);
                 camera.update(camera.frame);
 
             }
@@ -129,11 +130,11 @@ namespace EPQui.UserCon
             {
 
                 camera.frame.Clear();
-                scene.Update(camera);
+                scene.Update(lights, camera);
                 camera.update(camera.frame);
 
                 camera.frameC.Clear();
-                scene.UpdateClick(camera);
+                scene.UpdateClick(camera,0,0);
                 hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
 
             }

@@ -19,25 +19,12 @@ namespace EPQui.UserCon
     /// <summary>
     /// Interaction logic for HyrachyMesh.xaml
     /// </summary>
-    public partial class HyrachyMesh : UserControl, INotifyPropertyChanged
+    public partial class HyrachyMesh : UserControl
     {
         public HyrachyMesh()
         {
             DataContext = this;
             InitializeComponent();
-        }
-        private string boundText;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string BoundText
-        {
-            get { return boundText; }
-            set 
-            { 
-                boundText = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BoundText"));
-            }
         }
 
     }
