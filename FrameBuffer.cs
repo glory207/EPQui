@@ -85,7 +85,7 @@ namespace EPQui
 
         }
 
-        public int update(int widthf, int heightf)
+        public byte[] update(int widthf, int heightf)
         {
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
@@ -93,8 +93,9 @@ namespace EPQui
             byte[] pixel = new byte[4];
             GL.ReadPixels(widthf, heightf, 1, 1, pixelFormat, pixelType, pixel);
             destroy();
-            Debug.WriteLine((int)pixel[1]);
-            return (int)pixel[1];
+            if (pixel[1] == 0) Debug.WriteLine(pixel[0]);
+            else Debug.WriteLine(pixel[1]);
+            return pixel;
         }
         public void updateScreenSize(int widthf, int heightf)
         {

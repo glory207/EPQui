@@ -48,12 +48,15 @@ namespace EPQui.UserCon
             
 
         }
-       public int SCR_WIDTH;
+
+        public Gyzmo gyzmo;
+        public int SCR_WIDTH;
        public int SCR_HEIGHT;
        public Hierarchy scene;
        public Camera camera;
        public float speed = 0.05f;
        public int hoverObj;
+       public int editObj;
        public int selectedObjj = 0;
        
        public delegate void SampleEventHandler();
@@ -79,6 +82,9 @@ namespace EPQui.UserCon
             SCR_HEIGHT = (int)window.ActualHeight;
             camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
             this.Focusable = true;
+
+            gyzmo = new Gyzmo();
+
         }
 
         private void Window_MouseLeave(object sender, MouseEventArgs e)
@@ -109,35 +115,34 @@ namespace EPQui.UserCon
         }
         private void Window_Render(TimeSpan obj)
         {
-            
+
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
             List<LightContainer> lights = new List<LightContainer>();
-            if (!mver)
-            {
-
-                camera.frameC.Clear();
-                scene.UpdateClick(camera,0,0);
-                hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
 
 
-                camera.frame.Clear();
-                scene.Update(lights, camera);
-                camera.update(camera.frame);
+            camera.frameC.Clear();
+            scene.UpdateClick(camera, 0, 0);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
 
-            }
-            else
-            {
+            GL.Disable(EnableCap.CullFace);
+            gyzmo.UpdateClick(camera, scene.children[selectedObjj].objectModel);
+            GL.Enable(EnableCap.CullFace);
+            byte[] col = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+            hoverObj = col[0];
+            editObj= col[1];
 
                 camera.frame.Clear();
-                scene.Update(lights, camera);
-                camera.update(camera.frame);
+            scene.Update(lights, camera);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
 
-                camera.frameC.Clear();
-                scene.UpdateClick(camera,0,0);
-                hoverObj = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+            GL.Disable(EnableCap.CullFace);
+            gyzmo.Update(camera, scene.children[selectedObjj].objectModel);
+            GL.Enable(EnableCap.CullFace);
+            camera.update(camera.frame);
 
-            }
+
+
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -169,10 +174,14 @@ namespace EPQui.UserCon
             switch (e.ChangedButton)
             {
                 case System.Windows.Input.MouseButton.Left:
-                    if (hoverObj >= 0)
+                    if (editObj == 0)
                     {
                         selectedObjj = hoverObj;
                         SampleEvent.Invoke();
+                    }
+                    else
+                    {
+
                     }
                     break;
                 case System.Windows.Input.MouseButton.Right:

@@ -39,9 +39,9 @@ namespace EPQui
             gridshaderProgram.Activate();
             Matrix4 mat = Matrix4.Identity;
             GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
-            GL.Uniform4(GL.GetUniformLocation(gridshaderProgram.ID, "lightColor"), 1, 1, 1, 1);
             GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
             gridMesh.Draw(gridshaderProgram, camera);
+
 
         }
         public override void UpdateClick(Camera camera, int value, int value2)

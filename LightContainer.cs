@@ -29,8 +29,8 @@ namespace EPQui
             Position = pos;
             lightColor = color;
             objectScale = new Vector3(1);
-            shaderProgram = new Shader("Res/light.vert", "Res/light.frag", "Res/light.geomertry");
-            clickProgram = new Shader("Res/light.vert", "Res/Clicks.frag", "Res/light.geomertry");
+            shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
+            clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
 
 

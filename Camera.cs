@@ -58,7 +58,7 @@ namespace EPQui
         {
             FrameBufferB.update();
         }
-       public int update(int x, int y, FrameBuffer FrameBufferB)
+       public byte[] update(int x, int y, FrameBuffer FrameBufferB)
         {
             return FrameBufferB.update(x, y);
         }
