@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
+using OpenTK.Mathematics;
 
 namespace EPQui.UserCon
 {
@@ -40,7 +41,7 @@ namespace EPQui.UserCon
         {
             target = tr;
             traEP.BoundVector = target.Position;
-            traER.BoundVector = target.objectRotation;
+            traER.BoundVector = target.objectRotation.ToEulerAngles();
             traES.BoundVector = target.objectScale;
         }
         bool mini;
@@ -51,12 +52,14 @@ namespace EPQui.UserCon
             else this.Height = double.NaN;
         }
         public event PropertyChangedEventHandler? PropertyChanged;
+        public delegate void deletedEventHandler();
+        public event deletedEventHandler? deleted;
         private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
 
             {
                 target.Position = traEP.BoundVector;
-                target.objectRotation = traER.BoundVector;
+                target.objectRotation = Quaternion.FromEulerAngles(traER.BoundVector);
                 target.objectScale = traES.BoundVector;
             }
         }
@@ -65,7 +68,7 @@ namespace EPQui.UserCon
         {
          target.destroy();
          Debug.WriteLine (target.parent.children.Remove(target).ToString());
-            
+         deleted.Invoke();
         }
     }
 }

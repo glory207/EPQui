@@ -38,6 +38,7 @@ namespace EPQui
             scene = new Hierarchy();
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
+            
             string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
             ObjectSelector buttonL = new ObjectSelector();
             buttonL.textBlk.Text = "light";
@@ -55,31 +56,41 @@ namespace EPQui
             }
             
         }
-
+        TransformEditor traE;
+        MaterialEditor matE;
+        LightEditor ligE;
         private void Window_SampleEvent()
         {
             theList2.Children.Clear();
             if (window.selectedObjj >= 0 && scene.children.Count > 0)
             {
                 
-                TransformEditor traE = new TransformEditor();
+                traE = new TransformEditor();
+                traE.deleted += TraE_deleted;
                 theList2.Children.Add(traE);
                 traE.set(scene.children[window.selectedObjj]);
                 if (scene.children[window.selectedObjj].GetType() == typeof(MeshContainer))
                 {
 
-                    MaterialEditor matE = new MaterialEditor();
+                    matE = new MaterialEditor();
                     theList2.Children.Add(matE);
                     matE.set(((MeshContainer)scene.children[window.selectedObjj]).mate);
                 }
                 else if (scene.children[window.selectedObjj].GetType() == typeof(LightContainer))
                 {
-                    LightEditor ligE = new LightEditor();
+                    ligE = new LightEditor();
                     theList2.Children.Add(ligE);
                     ligE.set(((LightContainer)scene.children[window.selectedObjj]));
                 }
             }
         }
+
+        private void TraE_deleted()
+        {
+            theList2.Children.Clear();
+            window.selectedObjj = -1;
+        }
+
         Hierarchy scene;
         private void Window_Loaded2(object sender, RoutedEventArgs e)
         {
@@ -87,7 +98,7 @@ namespace EPQui
 
             scene.children = new List<HierObj>()
              {
-                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),scene){Type = LightType.spot},
+                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),scene){Type = LightType.point},
                  new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj",scene){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
              };
 

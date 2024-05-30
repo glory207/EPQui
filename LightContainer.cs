@@ -19,7 +19,7 @@ namespace EPQui
 
     public class LightContainer : HierObj
     {
-        public LightType Type = LightType.spot;
+        public LightType Type = LightType.point;
         public Matrix4 rotationMatrix = Matrix4.Identity;
         public Vector2 angle = new Vector2(0.9f, 0.1f);
         public float intencity = 1f;
@@ -41,10 +41,10 @@ namespace EPQui
 
             shaderProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.Z);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.Y);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.X);
-            objectModel = rotationMatrix * Matrix4.CreateTranslation(Position);
+            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
+            objectModel = rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camUp"), camera.OrientationU);
@@ -58,10 +58,10 @@ namespace EPQui
 
             clickProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.Z);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.Y);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.X);
-            objectModel =  rotationMatrix * Matrix4.CreateTranslation(Position);
+            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
+            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
+            objectModel =  rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);

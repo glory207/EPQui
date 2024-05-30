@@ -35,9 +35,9 @@ namespace EPQui
 
             
         }
+        public Matrix4 view;
+        public Matrix4 projection;
         public void updateMatrix(float FOVdeg, float nearPlane, float farPlane, int wi, int he) {
-            Matrix4 view = new Matrix4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-            Matrix4 projection = new Matrix4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
             this.width = wi;
             this.height = he;
             // update view matrix

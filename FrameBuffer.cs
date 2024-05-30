@@ -93,8 +93,6 @@ namespace EPQui
             byte[] pixel = new byte[4];
             GL.ReadPixels(widthf, heightf, 1, 1, pixelFormat, pixelType, pixel);
             destroy();
-            if (pixel[1] == 0) Debug.WriteLine(pixel[0]);
-            else Debug.WriteLine(pixel[1]);
             return pixel;
         }
         public void updateScreenSize(int widthf, int heightf)

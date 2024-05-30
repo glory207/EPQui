@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using static System.Net.Mime.MediaTypeNames;
 using OpenTK.Graphics.OpenGL4;
-using System.Windows.Media.Media3D;
 
 namespace EPQui
 {
 
     public abstract class HierObj
     {
+        public Vector3 PositionAdded;
         public Vector3 Position;
         public Vector3 objectScale;
-        public Vector3 objectRotation;
+        public Vector3 objectScaleAdded;
+        public Quaternion objectRotation;
         public Vector4 lightColor;
         public Matrix4 objectModel;
         public Mesh mesh;

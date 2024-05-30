@@ -56,6 +56,7 @@ namespace EPQui.UserCon
        public Camera camera;
        public float speed = 0.05f;
        public int hoverObj;
+       public int editObjHover;
        public int editObj;
        public int selectedObjj = 0;
        
@@ -92,10 +93,10 @@ namespace EPQui.UserCon
             mouseR = false;
         }
 
-        Vector2 mouseA, mouseP, mouseS = new Vector2(0.005f);
+        Vector2 mouseD, mouseA, mouseP, mouseS = new Vector2(0.005f);
+        Vector3 mouseW;
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            Vector2 mouseD;
             mouseD = (mouseP - new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y)) * new Vector2(-1, 1);
             mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
 
@@ -104,6 +105,7 @@ namespace EPQui.UserCon
             if (mouseR) mouseA += mouseD * mouseS;
             if (mouseA.Y <= -1.5f) mouseA.Y = -1.5f;
             if (mouseA.Y >= 1.5f) mouseA.Y = 1.5f;
+
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -120,28 +122,32 @@ namespace EPQui.UserCon
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
             List<LightContainer> lights = new List<LightContainer>();
 
-
+            
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
 
-            GL.Disable(EnableCap.CullFace);
-            gyzmo.UpdateClick(camera, scene.children[selectedObjj].objectModel);
-            GL.Enable(EnableCap.CullFace);
+            if (selectedObjj >= 0)
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
+                GL.Disable(EnableCap.CullFace);
+                gyzmo.UpdateClick(camera, scene.children[selectedObjj].objectModel);
+                GL.Enable(EnableCap.CullFace);
+            }
             byte[] col = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
             hoverObj = col[0];
-            editObj= col[1];
-
-                camera.frame.Clear();
+            editObjHover = col[1];
+            camera.frame.Clear();
             scene.Update(lights, camera);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
+            if (selectedObjj >= 0)
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
 
-            GL.Disable(EnableCap.CullFace);
-            gyzmo.Update(camera, scene.children[selectedObjj].objectModel);
-            GL.Enable(EnableCap.CullFace);
+                GL.Disable(EnableCap.CullFace);
+                gyzmo.Update(camera, scene.children[selectedObjj].objectModel);
+                GL.Enable(EnableCap.CullFace);
+
+            }
             camera.update(camera.frame);
-
-
 
         }
 
@@ -151,14 +157,20 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, space, mouseR, mver;
+        bool up, down, left, right, shift, space, mouseR,mouseL;
 
         private void window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             switch (e.ChangedButton)
             {
                 case System.Windows.Input.MouseButton.Left:
-                    
+                    mouseL = false;
+                    scene.children[selectedObjj].Position += scene.children[selectedObjj].PositionAdded;
+                    scene.children[selectedObjj].PositionAdded = Vector3.Zero;
+                    scene.children[selectedObjj].objectScale += scene.children[selectedObjj].objectScaleAdded;
+                    scene.children[selectedObjj].objectScaleAdded = Vector3.Zero;
+                    editObj = 0;
+                    SampleEvent.Invoke();
                     break;
                 case System.Windows.Input.MouseButton.Right:
                     mouseR = false;
@@ -174,13 +186,56 @@ namespace EPQui.UserCon
             switch (e.ChangedButton)
             {
                 case System.Windows.Input.MouseButton.Left:
-                    if (editObj == 0)
+                    mouseL = true;
+                    if (editObjHover == 0)
                     {
                         selectedObjj = hoverObj;
                         SampleEvent.Invoke();
                     }
                     else
                     {
+                        editObj = editObjHover;
+                        Matrix4 ProjectionInv = camera.projection.Inverted();
+
+                        float mouse_x = (float)mouseP.X;
+                        float mouse_y = (float)mouseP.Y;
+
+                        float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                        float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+
+                        Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                        Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+
+
+                        Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+
+                        Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+
+
+                        float ray_x = MathF.Abs(Vector3.Dot(point_world, Vector3.UnitX) / point_world.Length);
+                        float ray_y = MathF.Abs(Vector3.Dot(point_world, Vector3.UnitY) / point_world.Length);
+                        float ray_z = MathF.Abs(Vector3.Dot(point_world, Vector3.UnitZ) / point_world.Length);
+                        Debug.WriteLine(ray_x.ToString() + " " + ray_y.ToString() + " " + ray_z.ToString());
+                        float t = 0;
+                        if (editObj == 1 || editObj == 4)
+                        {
+                            if (ray_y > ray_x) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                            else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                            mouseW = new Vector3(0, 0, ((camera.Position + t * point_world)).Z);
+                        }
+                        else if (editObj == 2 || editObj == 5)
+                        {
+                            if (ray_y > ray_z) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                            else t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                            mouseW = new Vector3(((camera.Position + t * point_world)).X, 0, 0);
+                        }
+                        else if (editObj == 3 || editObj == 6)
+                        {
+                            if (ray_z > ray_x) t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                            else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                            mouseW = new Vector3(0, ((camera.Position + t * point_world)).Y, 0);
+                        }
+
 
                     }
                     break;
@@ -209,9 +264,6 @@ namespace EPQui.UserCon
                 case Key.D:
                     right = false;
                     break;
-                case Key.M:
-                    mver = false;
-                    break;
                 case Key.Space:
                     space = false;
                     break;
@@ -237,34 +289,22 @@ namespace EPQui.UserCon
                 case Key.D:
                     right = true;
                     break;
-                case Key.M:
-                    mver = true;
-                    break;
                 case Key.Space:
                     space = true;
                     break;
                 case Key.LeftShift:
                     shift = true;
                     break;
-                case Key.E:
-                  mver = true;
-                    break;
-                case Key.Q:
-                  mver = false;
-                    break;
             }
         }
 
-
+        Vector3 ogPos;
         void update()
         {
 
              if (this.IsFocused)
             {
-                if (up) { 
-                    
-                    camera.Position += camera.Orientation * speed;
-                }
+                if (up)camera.Position += camera.Orientation * speed;
                 if (down) camera.Position += -camera.Orientation * speed;
                 if (left) camera.Position += -camera.OrientationR * speed;
                 if (right) camera.Position += camera.OrientationR * speed;
@@ -278,6 +318,72 @@ namespace EPQui.UserCon
                 camera.Orientation = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.Orientation;
                 camera.OrientationU = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.OrientationU;
                 camera.OrientationR = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.OrientationR;
+
+
+                if (mouseL && editObj != 0)
+                {
+                    Matrix4 ProjectionInv = camera.projection.Inverted();
+
+                    float mouse_x = (float)mouseP.X;
+                    float mouse_y = (float)mouseP.Y;
+
+                    float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                    float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+
+                    Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                    Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+
+
+                    Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+
+                    Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+
+
+                    float ray_x = MathF.Abs(Vector3.Dot(camera.Orientation, Vector3.UnitX) / camera.Orientation.Length);
+                    float ray_y = MathF.Abs(Vector3.Dot(camera.Orientation, Vector3.UnitY) / camera.Orientation.Length);
+                    float ray_z = MathF.Abs(Vector3.Dot(camera.Orientation, Vector3.UnitZ) / camera.Orientation.Length);
+                    Debug.WriteLine(ray_x.ToString() + " " + ray_y.ToString() + " " + ray_z.ToString());
+                    float t = 0;
+                    if (editObj == 1)
+                    {
+                        if (ray_y > ray_x) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                        else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                        scene.children[selectedObjj].PositionAdded = new Vector3(0, 0, ((camera.Position + t * point_world) - mouseW).Z);
+                    }
+                    else if (editObj == 2)
+                    {
+                        if (ray_y > ray_z) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                        else t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                        scene.children[selectedObjj].PositionAdded = new Vector3(((camera.Position + t * point_world) - mouseW).X, 0, 0);
+                    }
+                    else if (editObj == 3)
+                    {
+                        if (ray_z > ray_x) t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                        else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                        scene.children[selectedObjj].PositionAdded = new Vector3(0, ((camera.Position + t * point_world) - mouseW).Y, 0);
+                    }
+                    else if (editObj == 4)
+                    {
+                        if (ray_y > ray_x) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                        else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                        scene.children[selectedObjj].objectScaleAdded = new Vector3(0, 0, ((camera.Position + t * point_world) - mouseW).Z);
+                    }
+                    else if (editObj == 5)
+                    {
+                        if (ray_y > ray_z) t = (scene.children[selectedObjj].Position.Y - camera.Position.Y) / point_world.Y;
+                        else t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                        scene.children[selectedObjj].objectScaleAdded = new Vector3(((camera.Position + t * point_world) - mouseW).X, 0, 0);
+                    }
+                    else if (editObj == 6)
+                    {
+                        if (ray_z > ray_x) t = (scene.children[selectedObjj].Position.Z - camera.Position.Z) / point_world.Z;
+                        else t = (scene.children[selectedObjj].Position.X - camera.Position.X) / point_world.X;
+                        scene.children[selectedObjj].objectScaleAdded = new Vector3(0, ((camera.Position + t * point_world) - mouseW).Y, 0);
+                    }
+
+
+
+                }
             }
         }
     }
