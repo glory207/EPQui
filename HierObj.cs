@@ -17,8 +17,10 @@ namespace EPQui
         public Vector3 objectScale;
         public Vector3 objectScaleAdded;
         public Quaternion objectRotation;
+        public Quaternion objectRotationAdded;
         public Vector4 lightColor;
         public Matrix4 objectModel;
+        public Matrix4 rotationMatrix = Matrix4.Identity;
         public Mesh mesh;
         public Shader shaderProgram;
         public Shader clickProgram;

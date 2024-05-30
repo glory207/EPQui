@@ -38,7 +38,7 @@ namespace EPQui
             scene = new Hierarchy();
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
-            
+
             string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
             ObjectSelector buttonL = new ObjectSelector();
             buttonL.textBlk.Text = "light";
@@ -135,7 +135,7 @@ namespace EPQui
         private void Button_Click2(object sender, RoutedEventArgs e)
         {
 
-            scene.children.Add(new MeshContainer(Vector3.Zero, (string)((FrameworkElement)sender).Tag, scene));
+            scene.children.Add(new MeshContainer(window.camera.Position, (string)((FrameworkElement)sender).Tag, scene));
 
         }
         private void Button_Click3(object sender, RoutedEventArgs e)

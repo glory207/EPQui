@@ -17,6 +17,7 @@ namespace EPQui
             Position = pos;
             objectScale = new Vector3(1.0f);
             objectRotation = Quaternion.Identity;
+            objectRotationAdded = Quaternion.Identity;
 
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
@@ -33,10 +34,8 @@ namespace EPQui
 
 
             objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
-            objectModel = objectModel * Matrix4.CreateTranslation(Position + PositionAdded);
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
 
             shaderProgram.Activate();
               
@@ -96,11 +95,9 @@ namespace EPQui
 
 
             objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
-            objectModel = objectModel * Matrix4.CreateTranslation(Position + PositionAdded);
 
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             clickProgram.Activate();
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
@@ -113,11 +110,8 @@ namespace EPQui
 
 
             objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-            objectModel = objectModel * Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
-            objectModel = objectModel * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
-            objectModel = objectModel * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
-            objectModel = objectModel * Matrix4.CreateTranslation(Position + PositionAdded );
-
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.UniformMatrix4(GL.GetUniformLocation(shadowMapProgram.ID, "model"), false, ref objectModel);
             mesh.DrawToShadow();
 

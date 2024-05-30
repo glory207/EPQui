@@ -4,7 +4,6 @@ using System.Linq;
 using OpenTK.Mathematics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using System.Reflection;
 
 namespace EPQui
@@ -20,7 +19,6 @@ namespace EPQui
     public class LightContainer : HierObj
     {
         public LightType Type = LightType.point;
-        public Matrix4 rotationMatrix = Matrix4.Identity;
         public Vector2 angle = new Vector2(0.9f, 0.1f);
         public float intencity = 1f;
         public LightContainer(Vector3 pos, Vector4 color, HierObj parent)
@@ -29,6 +27,9 @@ namespace EPQui
             Position = pos;
             lightColor = color;
             objectScale = new Vector3(1);
+
+            objectRotation = Quaternion.Identity;
+            objectRotationAdded = Quaternion.Identity;
             shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
             clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
@@ -41,9 +42,7 @@ namespace EPQui
 
             shaderProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
             objectModel = rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
@@ -58,9 +57,7 @@ namespace EPQui
 
             clickProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateRotationZ(objectRotation.ToEulerAngles().Z);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationY(objectRotation.ToEulerAngles().Y);
-            rotationMatrix = rotationMatrix * Matrix4.CreateRotationX(objectRotation.ToEulerAngles().X);
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
             objectModel =  rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
