@@ -280,6 +280,9 @@ namespace EPQui.UserCon
                 case Key.D3:
                     gyzmo.type = GyzmoType.scale;
                     break;
+                case Key.Y:
+                    scene.save();
+                    break;
             }
         }
 

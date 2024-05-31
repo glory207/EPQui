@@ -8,7 +8,7 @@
              xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DesignHeight="62.738" d:DesignWidth="175.125" >
     <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="25"/>
+            <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -18,7 +18,7 @@
         <Border  x:Name="slider" Grid.ColumnSpan="2" Margin="0 0 0 1.5" CornerRadius="5 2 0 0" Background="DarkGray" Grid.Row="0" Grid.Column="0">
             
         </Border>
-        <Border  HorizontalAlignment="Stretch" Margin="0 0 3 0" CornerRadius="0 0 2 2" Background="Gray" Grid.Row="1" Grid.Column="0">
+        <Border x:Name="tle" Padding="4 0" HorizontalAlignment="Stretch" Margin="0 0 3 0" CornerRadius="0 0 2 2" Background="Gray" Grid.Row="1" Grid.Column="0">
             <TextBlock Text="{Binding BoundName}" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Border>
         <Border Grid.ColumnSpan="2" CornerRadius="0 0 5 2" Background="Gray" Grid.Row="1" Grid.Column="1">

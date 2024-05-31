@@ -32,31 +32,31 @@ void main()
 		EmitVertex();
 		EndPrimitive();
 	}
-	color = vec4(0.1,0.1,0.1,1);
+
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(-size,-size,0,0));
 		EmitVertex();
-		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*5,0,0));
 		EmitVertex();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(size,-size,0,0));
 		EmitVertex();
 		EndPrimitive();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,-size,0));
 		EmitVertex();
-		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*5,0,0));
 		EmitVertex();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,size,0));
 		EmitVertex();
 		EndPrimitive();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(size,-size,0,0));
 		EmitVertex();
-		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*5,0,0));
 		EmitVertex();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(-size,-size,0,0));
 		EmitVertex();
 		EndPrimitive();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,size,0));
 		EmitVertex();
-		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*2,0,0));
+		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size*5,0,0));
 		EmitVertex();
 		gl_Position = data_in[0].projection * data_in[0].model * (gl_in[0].gl_Position + vec4(0,-size,-size,0));
 		EmitVertex();

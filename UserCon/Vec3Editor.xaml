@@ -7,6 +7,8 @@
              mc:Ignorable="d" 
              FontSize="15" d:DesignHeight="84.159" d:DesignWidth="182.992"  >
     <Border Background="LightGray" CornerRadius="5" Padding="2 3 5 5"   Name="border" Margin =" 0 1" MouseUp="Border_MouseUp">
+        
+        
         <Grid Background="Transparent">
 
             <Grid.RowDefinitions>
@@ -16,7 +18,7 @@
             <Grid HorizontalAlignment="Stretch" MouseDown="RowDefinition_MouseDown">
 
                 <Border HorizontalAlignment="Stretch" CornerRadius="2" Background="LightGray" MouseDown="RowDefinition_MouseDown" >
-
+                   
                 </Border>
                 <Border HorizontalAlignment="Left" CornerRadius="2" Background="Gray" MouseDown="Border_MouseDown" >
                     <TextBlock Padding="5" Text="{ Binding BoundName }" VerticalAlignment="Center" HorizontalAlignment="Left" />

@@ -16,16 +16,14 @@ namespace EPQui
         spot
     }
 
-    public class LightContainer : HierObj
+    public class LightContainer : HierObj, ICloneable
     {
         public LightType Type = LightType.point;
         public Vector2 angle = new Vector2(0.9f, 0.1f);
         public float intencity = 1f;
-        public LightContainer(Vector3 pos, Vector4 color, HierObj parent)
+        public LightContainer(HierObj parent)
         {
-            this.parent = parent; 
-            Position = pos;
-            lightColor = color;
+            this.parent = parent;
             objectScale = new Vector3(1);
 
             objectRotation = Quaternion.Identity;
@@ -33,7 +31,7 @@ namespace EPQui
             shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
             clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
-
+            name = "light";
 
         }
         public override void Update(List<LightContainer> lights, Camera camera) {
@@ -70,7 +68,28 @@ namespace EPQui
         public override void destroy() {
             shaderProgram.Delete();
         }
+        public LightContainer() { }
+        public object Clone()
+        {
+            return new LightContainer()
+            {
+                parent = parent,
+                Position = Position,
+                objectScale = objectScale,
+                objectRotation = objectRotation,
+                objectRotationAdded = Quaternion.Identity,
+                shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry"),
+                clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry"),
+                mesh = new Mesh(),
+                name = "light",
+                lightColor = lightColor,
+                Type = Type,
+                angle = angle,
+                intencity = intencity
+            };
 
+
+        }
     }
 
 }

@@ -19,6 +19,9 @@
             <Button Click="Button_Click">
                 delete
             </Button>
+            <Button Click="Button_Click_1">
+                duplicate
+            </Button>
             <local:Vec3Editor x:Name="traEP"/>
             <local:Vec3Editor x:Name="traER"/>
             <local:Vec3Editor x:Name="traES"/>

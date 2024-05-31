@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -25,7 +26,18 @@ namespace EPQui.UserCon
     {
         bool mini;
         private string DisplayName = "Na";
-
+        public float speed;
+        public float Speed
+        {
+            get { return speed; }
+            set
+            {
+                speed = value;
+                slider1.speed = speed;
+                slider2.speed = speed;
+                slider3.speed = speed;
+            }
+        }
 
         public string BoundName
         {
@@ -50,14 +62,26 @@ namespace EPQui.UserCon
             this.MouseMove += slider2.Slider_MouseMove;
             this.MouseMove += slider3.Slider_MouseMove;
             this.MouseMove += Slider_MouseMove;
+            this.LostFocus += Vec3Editor_LostFocus;
+            this.MouseLeave += Vec3Editor_LostFocus;
+
             SizeChanged += TransformEditor_SizeChanged;
+            Speed = 0.01f;
+        }
+
+        private void Vec3Editor_LostFocus(object sender, RoutedEventArgs e)
+        {
+            clicked = false;
+            slider1.clicked = false;
+            slider2.clicked = false;
+            slider3.clicked = false;
         }
 
         private void TransformEditor_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            slider1.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f,0.1f);
-            slider2.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f,0.1f);
-            slider3.txtBlock.Width = Math.Max((ActualWidth - 90) / 3f, 0.1f);
+            slider1.txtBlock.Width = Math.Max((ActualWidth  / 3f) - slider1.tle.ActualWidth,0.1f);
+            slider2.txtBlock.Width = Math.Max((ActualWidth  / 3f) - slider1.tle.ActualWidth,0.1f);
+            slider3.txtBlock.Width = Math.Max((ActualWidth  / 3f) - slider1.tle.ActualWidth, 0.1f);
         }
 
         private void Slider1_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -131,7 +155,7 @@ namespace EPQui.UserCon
             if (clicked)
             {
                 up = true;
-                BoundVector -= delta * 0.05f * Vector3.One;
+                BoundVector -= delta * Speed * Vector3.One;
             }
         }
 

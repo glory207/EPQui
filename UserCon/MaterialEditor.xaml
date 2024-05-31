@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EPQui.UserCon"
              mc:Ignorable="d" 
-             d:DesignHeight="241.111" d:DesignWidth="348.722"
+             d:DesignHeight="409.111" d:DesignWidth="348.722"
              FontSize="18">
     <Grid Background="DarkGray" Height="auto">
         <Grid.RowDefinitions>
@@ -18,6 +18,8 @@
         <StackPanel Margin="5 10 5 0" Grid.Row="1">
             <local:Vec2Editor x:Name="traOff"/>
             <local:Vec2Editor x:Name="traSca"/>
+            <local:FloatEditor x:Name="traDif"/>
+            <local:FloatEditor x:Name="traSpec"/>
             <Button Click="Button_Click">
                 Texture
             </Button>

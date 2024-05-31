@@ -1,10 +1,18 @@
 #version 330 core
 
-out int FragColor; 
+out vec4 FragColor; 
 uniform int objectId;  
-uniform int objectLength; 
+
+uniform int objectLength;
 
 void main()
 {
-    	FragColor = objectId;
+
+    	float color2 = (float(objectId) / float(objectLength) );
+
+
+	float color = (float(objectId) / 255.0);
+
+    	FragColor = vec4(color,0,0,1);
+
 }

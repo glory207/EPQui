@@ -32,6 +32,7 @@ namespace EPQui.UserCon
             InitializeComponent();
             traEP.BoundName = "Position";
             traER.BoundName = "objectRotation";
+            traER.Speed = 0.01f;
             traES.BoundName = "objectScale";
             traEP.PropertyChanged += TraE_PropertyChanged;
             traER.PropertyChanged += TraE_PropertyChanged;
@@ -54,6 +55,7 @@ namespace EPQui.UserCon
         public event PropertyChangedEventHandler? PropertyChanged;
         public delegate void deletedEventHandler();
         public event deletedEventHandler? deleted;
+        public event deletedEventHandler? duped;
         private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
 
@@ -67,8 +69,12 @@ namespace EPQui.UserCon
         private void Button_Click(object sender, RoutedEventArgs e)
         {
          target.destroy();
-         Debug.WriteLine (target.parent.children.Remove(target).ToString());
          deleted.Invoke();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            duped.Invoke();
         }
     }
 }

@@ -24,7 +24,7 @@
 	float dist = length(lightVec);
 	float a = 3.0;
 	float b = 0.7;
-	float inten = lightI *100f / (a * dist * dist + b * dist + 1.0f);
+	float inten = lightI *100.0f / (a * dist * dist + b * dist + 1.0f);
 
 	float ambient = 0.07f;
 

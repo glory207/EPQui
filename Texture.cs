@@ -16,8 +16,10 @@ namespace EPQui
         public int unit;
         public string type;
         ImageResult image;
+        public string path;
         public Texture(string path, string texType, int slot,PixelFormat pixelFormat)
         {
+            this.path = path;
             type = texType;
 
             using (Stream stream = File.OpenRead(path))

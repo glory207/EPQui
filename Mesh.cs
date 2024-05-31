@@ -28,6 +28,7 @@ namespace EPQui
 
 
         public string name = "empty";
+        public string path = "empty";
         public List<Vertex> vertices = new List<Vertex>();
         public List<uint> indices = new List<uint>();
         VAO VAO = new VAO();
@@ -49,6 +50,7 @@ namespace EPQui
 
         }
         public Mesh(string path) {
+            this.path = path;
             string line = "#";
             StreamReader str = new StreamReader(path);
             int num = 0;
@@ -57,7 +59,7 @@ namespace EPQui
             List<Vertex> vertex = new List<Vertex>();
             List<uint> indices = new List<uint>();
             Vector3 offset = new Vector3(0);
-
+            name = path.Substring(11, path.Substring(11).Length - 4);
             while (!str.EndOfStream)
             {
                 line = str.ReadLine();
@@ -65,7 +67,7 @@ namespace EPQui
                 {
 
 
-                    name = line.Substring(2);
+                   // name = line.Substring(2);
 
 
                     num++;
@@ -352,8 +354,6 @@ namespace EPQui
             VAO.Bind();
             GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
         }
-
-
 
     }
 }

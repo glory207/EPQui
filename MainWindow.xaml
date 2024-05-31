@@ -7,9 +7,10 @@
         xmlns:UserC="clr-namespace:EPQui.UserCon"
         xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200"
+        Title="MainWindow" Height="720" Width="1256" 
+        Background="Gray"
         >
-    <Grid>
+    <Grid >
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -32,33 +33,33 @@
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Grid.Column="2" Grid.Row="0" Background="LightCoral">
+            <ScrollViewer Grid.Column="2" Grid.Row="0" Background="SlateGray">
                 <StackPanel x:Name="theList2">
 
                 </StackPanel>
             </ScrollViewer>
 
-            <ScrollViewer Grid.Column="0" Grid.Row="0" Background="LightCoral">
-                <StackPanel>
-                    
-                    <TreeView x:Name="theList">
-                        
+            <ScrollViewer Grid.Column="0" Grid.Row="0" Background="SlateGray">
+                <StackPanel x:Name="theList">
+
+                    <TreeView >
+
                     </TreeView>
                 </StackPanel>
             </ScrollViewer>
-            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
+            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
 
             <UserC:VeiwPortDisplay Grid.Column="1" Grid.Row="0" x:Name="window"/>
 
 
-            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="Red"/>
-            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="Red"/>
+            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
+            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
+            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
+            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
 
         </Grid>
-        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="1" Background="Red"/>
+        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="1" Background="White"/>
 
         <ScrollViewer Grid.Column="1" Grid.Row="2" Background="Gray">
             <WrapPanel Name="wrpPan">
@@ -68,7 +69,7 @@
                 </Button>
             </WrapPanel>
         </ScrollViewer>
-        <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Background="Red"/>
+        <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Background="White"/>
 
     </Grid>
 </Window>

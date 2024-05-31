@@ -28,10 +28,15 @@ namespace EPQui.UserCon
             InitializeComponent();
             traS.BoundName = "Color";
             traS.PropertyChanged += TraE_PropertyChanged;
-            traI.BoundName = "intencity";
+            traS.slider1.BoundName = "R";
+            traS.slider2.BoundName = "G";
+            traS.slider3.BoundName = "B";
+            traI.BoundName = "intensity";
             traI.PropertyChanged += TraE_PropertyChanged;
-            traA.BoundName = "angle";
+            traA.BoundName = "cone";
             traA.PropertyChanged += TraE_PropertyChanged;
+            traA.slider1.BoundName = "ang";
+            traA.slider2.BoundName = "sft";
             combo.SelectionChanged += Combo_SelectionChanged;
         }
 

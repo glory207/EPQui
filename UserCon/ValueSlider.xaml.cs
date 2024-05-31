@@ -23,6 +23,7 @@ namespace EPQui.UserCon
     /// </summary>
     public partial class ValueSlider : UserControl, INotifyPropertyChanged
     {
+        public float speed = 0;
         public ValueSlider()
         {
             DataContext = this;
@@ -43,7 +44,7 @@ namespace EPQui.UserCon
             
             delta = pos - (float)Mouse.GetPosition(InputHitTest(new Point(0, 0))).X;
             pos = (float)Mouse.GetPosition(InputHitTest(new Point(0, 0))).X;
-            if (clicked&&e.LeftButton == MouseButtonState.Pressed) BoundVal -= delta * 0.05f;
+            if (clicked&&e.LeftButton == MouseButtonState.Pressed) BoundVal -= delta * speed;
             else clicked = false;
         }
 

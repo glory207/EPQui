@@ -21,6 +21,8 @@ using EPQui.UserCon;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
 using System.IO;
+using System.Windows.Media;
+using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace EPQui
 {
@@ -33,29 +35,61 @@ namespace EPQui
         public MainWindow()
         {
             InitializeComponent();
+            
 
-
-            scene = new Hierarchy();
+            scene = new Hierarchy("Res/scenes/scene11.txt");
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
 
             string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
-            ObjectSelector buttonL = new ObjectSelector();
-            buttonL.textBlk.Text = "light";
-            buttonL.MouseDown += Button_Click3;
+            Button buttonL = new Button();
+            buttonL.Padding = new Thickness(20, 20, 20, 20);
+            buttonL.Content = "light";
+            buttonL.Click += Button_Click3;
 
             wrpPan.Children.Add(buttonL);
             foreach (string str in meshDir)
             {
-                ObjectSelector button = new ObjectSelector();
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
                 button.Tag = str;
-                button.textBlk.Text = str.Substring(11, str.Substring(11).Length - 4);
-                button.MouseDown += Button_Click2;
+                button.Content = str.Substring(11, str.Substring(11).Length - 4);
+                button.Click += Button_Click2;
+
+                wrpPan.Children.Add(button);
+            }
+            meshDir = Directory.GetFiles("Res/textures/", "*.png");
+            foreach (string str in meshDir)
+            {
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
+                button.Background = new SolidColorBrush( Color.FromRgb(112,130,250));
+                button.Tag = str;
+                button.Content = str.Substring(13, str.Substring(13).Length - 4);
+                button.Click += Button_Click1; 
+
+                wrpPan.Children.Add(button);
+            }
+            meshDir = Directory.GetFiles("Res/textures/", "*.jpg");
+            foreach (string str in meshDir)
+            {
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
+                button.Background = new SolidColorBrush( Color.FromRgb(112,130,250));
+                button.Tag = str;
+                button.Content = str.Substring(13, str.Substring(13).Length - 4);
+                button.Click += Button_Click1; 
 
                 wrpPan.Children.Add(button);
             }
             
         }
+
+        private void Button_Click1(object sender, RoutedEventArgs e)
+        {
+           if(scene.children[window.selectedObjj].GetType() == typeof(MeshContainer)) ((MeshContainer)scene.children[window.selectedObjj]).mate.textures[0] = new Texture((string)((Button)sender).Tag, "diffuse", 0, PixelFormat.Rgba);
+        }
+
         TransformEditor traE;
         MaterialEditor matE;
         LightEditor ligE;
@@ -67,6 +101,7 @@ namespace EPQui
                 
                 traE = new TransformEditor();
                 traE.deleted += TraE_deleted;
+                traE.duped += TraE_duped;
                 theList2.Children.Add(traE);
                 traE.set(scene.children[window.selectedObjj]);
                 if (scene.children[window.selectedObjj].GetType() == typeof(MeshContainer))
@@ -85,10 +120,28 @@ namespace EPQui
             }
         }
 
+        private void TraE_duped()
+        {
+            if (scene.children[window.selectedObjj].GetType() == typeof(MeshContainer))
+            {
+                var ms = (MeshContainer)((MeshContainer)scene.children[window.selectedObjj]).Clone();
+                scene.children.Add(ms);
+            }
+            else if (scene.children[window.selectedObjj].GetType() == typeof(LightContainer))
+            {
+                var ms = (LightContainer)((LightContainer)scene.children[window.selectedObjj]).Clone();
+                scene.children.Add(ms);
+            }
+            setHir();
+
+        }
+
         private void TraE_deleted()
         {
             theList2.Children.Clear();
+            scene.children.Remove(scene.children[window.selectedObjj]);
             window.selectedObjj = -1;
+            setHir();
         }
 
         Hierarchy scene;
@@ -96,13 +149,30 @@ namespace EPQui
         {
             ((VeiwPortDisplay)sender).scene = scene;
 
-            scene.children = new List<HierObj>()
-             {
-                 new LightContainer(new Vector3(0.0f, 2.8f, 0.8f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),scene){Type = LightType.point},
-                 new MeshContainer(new Vector3(0.0f, 0.0f, 0.0f), "Res/meshes/cube.obj",scene){objectScale = new Vector3(50,0.05f,50), mate = new material(){texScale = new Vector2(50)}},
-             };
+            setHir();
 
-           
+        }
+        void setHir()
+        {
+            theList.Children.Clear();
+            for(int i = 0; i < scene.children.Count; i++)
+            {
+                TextBlock bt = new TextBlock();
+                bt.Background = new SolidColorBrush(Color.FromRgb(200,200,200));
+                bt.Padding = new Thickness(5,5,5,5);
+                bt.Margin = new Thickness(5,0,1,5);
+                bt.Width = float.NaN;
+                bt.Text = scene.children[i].name;
+                bt.Tag = i;
+                bt.MouseDown += Bt_MouseDown;
+                theList.Children.Add(bt);
+            }
+        }
+
+        private void Bt_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            window.selectedObjj =(int) ((TextBlock)sender).Tag;
+            Window_SampleEvent();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -136,12 +206,12 @@ namespace EPQui
         {
 
             scene.children.Add(new MeshContainer(window.camera.Position, (string)((FrameworkElement)sender).Tag, scene));
-
+            setHir();
         }
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
-            scene.children.Add(new LightContainer(window.camera.Position, new Vector4(1, 1, 1, 1), scene));
-
+            scene.children.Add(new LightContainer( scene) { Position = window.camera.Position , lightColor = new Vector4(1, 1, 1, 1) });
+            setHir();
         }
         
     }

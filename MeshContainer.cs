@@ -6,14 +6,18 @@ using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using static System.Net.Mime.MediaTypeNames;
 using OpenTK.Graphics.OpenGL4;
+using System.IO;
+using System.Net;
+using System.Windows.Shapes;
 
 namespace EPQui
 {
-    internal class MeshContainer: HierObj
+    internal class MeshContainer: HierObj,ICloneable
     {
         public material mate;
-       public MeshContainer(Vector3 pos,string path,HierObj parent) {
-            this.parent = parent;
+
+        public MeshContainer(Vector3 pos,string path,HierObj parentt) {
+            parent = parentt;
             Position = pos;
             objectScale = new Vector3(1.0f);
             objectRotation = Quaternion.Identity;
@@ -24,8 +28,37 @@ namespace EPQui
 
             mate = new material();
             mesh = new Mesh(path);
+            name = mesh.name;
         }
-       public override void destroy() {
+        public MeshContainer()
+        {
+            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
+            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            objectRotationAdded = Quaternion.Identity;
+
+        }
+        public object Clone()
+        {
+            return new MeshContainer()
+            {
+                parent = this.parent,
+                Position = Position,
+            objectScale = objectScale,
+            objectRotation = objectRotation,
+            objectRotationAdded = objectRotationAdded,
+
+            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry"),
+            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry"),
+
+            mate = (material)mate.Clone(),
+            mesh = mesh,
+            name = name + " awdawdad"
+            };
+            
+            
+        }
+
+        public override void destroy() {
             shaderProgram.Delete();
             clickProgram.Delete();
         }
@@ -79,6 +112,9 @@ namespace EPQui
                mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
                mate.textures[i].Bind();
            }
+
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
 
             GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
             GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);

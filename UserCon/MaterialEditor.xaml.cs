@@ -33,14 +33,21 @@ namespace EPQui.UserCon
             InitializeComponent();
             traOff.BoundName = "Texture Offset";
             traSca.BoundName = "Texture Scale";
+            traSpec.BoundName = "Specular value";
+            traDif.BoundName = "Diffuce value";
             traOff.PropertyChanged += TraE_PropertyChanged;
             traSca.PropertyChanged += TraE_PropertyChanged;
+            traDif.PropertyChanged += TraE_PropertyChanged;
+            traSpec.PropertyChanged += TraE_PropertyChanged;
+
         }
         public void set(material tr)
         {
             target = tr;
             traOff.BoundVector = target.texOff;
             traSca.BoundVector = target.texScale;
+            traDif.BoundVector = target.diffuce;
+            traSpec.BoundVector = target.specular;
         }
         bool mini;
         private void title_MouseDown(object sender, MouseButtonEventArgs e)
@@ -55,6 +62,8 @@ namespace EPQui.UserCon
 
             target.texOff = traOff.BoundVector;
             target.texScale = traSca.BoundVector; 
+            target.specular = traSpec.BoundVector;
+            target.diffuce = traDif.BoundVector;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

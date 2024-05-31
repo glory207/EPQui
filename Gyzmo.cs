@@ -164,7 +164,9 @@ namespace EPQui
             }
             else if (editObj == 7)
             {
-                //slected.objectScaleAdded = new Vector3( Vector2.Distance( mouseW.Xy , mouseP));
+                nrm = camera.Orientation;
+                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
+                slected.objectScaleAdded = new Vector3(Vector3.Distance(slected.Position, (camera.Position + t * point_world)) - Vector3.Distance(slected.Position, mouseW));
             }
             else if (editObj == 8)
             {
@@ -280,7 +282,9 @@ namespace EPQui
             }
             else if (editObj == 7)
             {
-                // mouseW = new Vector3(mouseP);
+                t = Vector3.Dot(camera.Orientation, slected.Position - camera.Position) / Vector3.Dot(camera.Orientation, point_world);
+                mouseW = (camera.Position + t * point_world);
+
             }
             else if (editObj == 8 || editObj == 12)
             {

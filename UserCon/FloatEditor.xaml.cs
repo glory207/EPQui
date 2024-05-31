@@ -25,7 +25,14 @@ namespace EPQui.UserCon
     {
         bool mini;
         private string DisplayName = "Na";
-
+        public float speed;
+        public float Speed
+        {
+            get { return speed; }
+            set {
+                speed = value;
+                slider1.speed = speed; }
+        }
 
         public string BoundName
         {
@@ -46,6 +53,7 @@ namespace EPQui.UserCon
             this.MouseMove += slider1.Slider_MouseMove;
             this.MouseMove += Slider_MouseMove;
             SizeChanged += TransformEditor_SizeChanged;
+            Speed = 0.01f;
         }
 
         private void TransformEditor_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -116,7 +124,7 @@ namespace EPQui.UserCon
             if (clicked)
             {
                 up = true;
-                BoundVector -= delta * 0.05f;
+                BoundVector -= delta * Speed;
             }
         }
 
