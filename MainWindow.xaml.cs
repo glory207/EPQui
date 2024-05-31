@@ -34,10 +34,24 @@ namespace EPQui
     {
         public MainWindow()
         {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.FileName = "Scene"; // Default file name
+            dialog.DefaultExt = ".sce"; // Default file extension
+            dialog.Filter = "Text documents (.sce)|*.sce"; // Filter files by extension
+           
+            bool? result = dialog.ShowDialog();
+           
             InitializeComponent();
+            if (result == true)
+            {
+                string filename = dialog.FileName;
+                scene = new Hierarchy(filename);
+            }
+            else
+            {
+                scene = new Hierarchy();
+            }
             
-
-            scene = new Hierarchy("Res/scenes/scene11.txt");
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
 
@@ -63,10 +77,10 @@ namespace EPQui
             {
                 Button button = new Button();
                 button.Padding = new Thickness(20, 20, 20, 20);
-                button.Background = new SolidColorBrush( Color.FromRgb(112,130,250));
+                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
                 button.Tag = str;
                 button.Content = str.Substring(13, str.Substring(13).Length - 4);
-                button.Click += Button_Click1; 
+                button.Click += Button_Click1;
 
                 wrpPan.Children.Add(button);
             }
@@ -75,14 +89,13 @@ namespace EPQui
             {
                 Button button = new Button();
                 button.Padding = new Thickness(20, 20, 20, 20);
-                button.Background = new SolidColorBrush( Color.FromRgb(112,130,250));
+                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
                 button.Tag = str;
                 button.Content = str.Substring(13, str.Substring(13).Length - 4);
-                button.Click += Button_Click1; 
+                button.Click += Button_Click1;
 
                 wrpPan.Children.Add(button);
             }
-            
         }
 
         private void Button_Click1(object sender, RoutedEventArgs e)

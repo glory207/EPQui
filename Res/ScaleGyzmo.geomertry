@@ -72,6 +72,29 @@ void draw()
 		EndPrimitive();
 	}
 }
+
+
+
+void drawC(int sc)
+{
+
+	float dis = 0.5f;
+   float size = dis + 0.1 * sc;
+   float size2 = dis + 0.1 * (sc+1);
+	int cir = 6;
+	float cire = cir;
+
+	for(int i = 0 ; i <= cir ; i++)
+	{
+		gl_Position = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(sin(radians((i/cire)*360.0)) * ri + cos(radians((i/cire)*360.0)) * up,0) *size);
+		EmitVertex(); 
+		gl_Position = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(sin(radians((i/cire)*360.0)) * ri + cos(radians((i/cire)*360.0)) * up,0) *size2);
+		EmitVertex();
+	}
+	
+		EndPrimitive();
+}
+
 void main()
 {
 
@@ -109,64 +132,12 @@ part = 6;
    up = vec3(1,0,0);
 	draw();
 	}
-//	dis = 0.1f;
-//	part = 7;
-//	color = vec4(0.5f,0.5f,0.5f,1);
-//   ri = vec3(0,0,1);
-//   fr = vec3(1,0,0);
-//   up = vec3(0,1,0);
-//
-//vec4 Crn[8];
-//
-//Crn[0] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * -ri + dis * up + fr * dis,0));
-//Crn[1] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * -ri + dis * -up + fr * dis,0));
-//Crn[2] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * ri + dis * -up + fr * dis,0));
-//Crn[3] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * ri + dis * up + fr * dis,0));
-//Crn[4] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * -ri + dis * up + fr * -dis,0));
-//Crn[5] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * -ri + dis * -up + fr * -dis,0));
-//Crn[6] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * ri + dis * -up + fr * -dis,0));
-//Crn[7] = data_in[0].projection * ( data_in[0].model * gl_in[0].gl_Position + vec4(dis * ri + dis * up + fr * -dis,0));
-//	
-//	gl_Position = Crn[1];
-//	EmitVertex();
-//	gl_Position = Crn[0];
-//	EmitVertex();
-//	gl_Position = Crn[2];
-//	EmitVertex();
-//	gl_Position = Crn[3];
-//	EmitVertex();
-//	gl_Position = Crn[6];
-//	EmitVertex();
-//	gl_Position = Crn[7];
-//	EmitVertex();
-//	gl_Position = Crn[5];
-//	EmitVertex();
-//	gl_Position = Crn[4];
-//	EmitVertex();
-//	gl_Position = Crn[1];
-//	EmitVertex();
-//	gl_Position = Crn[0];
-//	EmitVertex();
-//	EndPrimitive();
-//
-//	
-//	gl_Position = Crn[0];
-//	EmitVertex();
-//	gl_Position = Crn[4];
-//	EmitVertex();
-//	gl_Position = Crn[3];
-//	EmitVertex();
-//	gl_Position = Crn[7];
-//	EmitVertex();
-//	EndPrimitive();
-//
-//	gl_Position = Crn[1];
-//	EmitVertex();
-//	gl_Position = Crn[5];
-//	EmitVertex();
-//	gl_Position = Crn[2];
-//	EmitVertex();
-//	gl_Position = Crn[6];
-//	EmitVertex();
-//	EndPrimitive();
+
+	
+part = 7;
+	color = vec4(1,1,1,1);
+   ri = camRight;
+  fr = camFr;
+   up = camUp;
+	drawC(1);
 }

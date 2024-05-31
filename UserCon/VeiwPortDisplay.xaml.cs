@@ -126,27 +126,28 @@ namespace EPQui.UserCon
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
 
-            if (selectedObjj >= 0)
-            {
-                GL.Clear(ClearBufferMask.DepthBufferBit);
-                GL.Disable(EnableCap.CullFace);
-                gyzmo.UpdateClick(camera, scene.children[selectedObjj]);
-                GL.Enable(EnableCap.CullFace);
-            }
-            byte[] col = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
-            hoverObj = col[0];
-            editObjHover = col[1];
-            camera.frame.Clear();
-            scene.Update(lights, camera);
-            if (selectedObjj >= 0)
-            {
-                GL.Clear(ClearBufferMask.DepthBufferBit);
+                if (selectedObjj >= 0 && scene.children.Count > 0)
+                {
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
+                    GL.Disable(EnableCap.CullFace);
+                    gyzmo.UpdateClick(camera, scene.children[selectedObjj]);
+                    GL.Enable(EnableCap.CullFace);
+                }
+                byte[] col = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
+                hoverObj = col[0];
+                editObjHover = col[1];
+                camera.frame.Clear();
+                scene.Update(lights, camera);
+                if (selectedObjj >= 0 && scene.children.Count > 0)
+                {
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
 
-                GL.Disable(EnableCap.CullFace);
-                gyzmo.Update(camera, scene.children[selectedObjj]);
-                GL.Enable(EnableCap.CullFace);
+                    GL.Disable(EnableCap.CullFace);
+                    gyzmo.Update(camera, scene.children[selectedObjj]);
+                    GL.Enable(EnableCap.CullFace);
 
-            }
+                }
+            
             camera.update(camera.frame);
 
         }
@@ -158,6 +159,61 @@ namespace EPQui.UserCon
         }
 
         bool up, down, left, right, shift, space, mouseR, mouseL;
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            switch (int.Parse(((Button)sender).Tag.ToString()))
+            {
+
+                case 1:
+                    gyzmo.type = GyzmoType.translation;
+                    break;
+                case 2:
+                    gyzmo.type = GyzmoType.rotation;
+                    break;
+                case 3:
+                    gyzmo.type = GyzmoType.scale;
+                    break;
+                case 4:
+                    ((Button)sender).Content = "Perspective";
+                    ((Button)sender).Tag = 5;
+                    camera.perspective = false;
+                    break;
+                case 5:
+                    ((Button)sender).Content = "Orthographic";
+                    ((Button)sender).Tag = 4;
+                    camera.perspective = true;
+
+                    break;
+                case 6:
+                    scene.save();
+                    break;
+                case 7:
+                    var dialog = new Microsoft.Win32.OpenFileDialog();
+                    dialog.FileName = "Scene"; // Default file name
+                    dialog.DefaultExt = ".sce"; // Default file extension
+                    dialog.Filter = "Text documents (.sce)|*.sce"; // Filter files by extension
+                    dialog.CheckFileExists = false;
+                    
+                    bool? result = dialog.ShowDialog();
+
+                    InitializeComponent();
+                    if (result == true)
+                    {
+                        string filename = dialog.FileName;
+                        bool valid = false;
+                        do
+                        {
+                            if (File.Exists(filename)) filename = filename.Substring(0, filename.Length - 4) + "(dupe).sce";
+                            else valid = true;
+                        } while (valid == false);
+                        
+                        scene.path = filename;
+                        scene.save();
+                    }
+                    break;
+            }
+        }
 
         private void window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

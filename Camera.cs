@@ -37,12 +37,14 @@ namespace EPQui
         }
         public Matrix4 view;
         public Matrix4 projection;
+        public bool perspective = true;
         public void updateMatrix(float FOVdeg, float nearPlane, float farPlane, int wi, int he) {
-            this.width = wi;
-            this.height = he;
+            this.width = wi/100;
+            this.height = he/100;
             // update view matrix
             view = Matrix4.LookAt(Position, Position + Orientation, Up);
-            projection = Matrix4.CreatePerspectiveFieldOfView((FOVdeg * MathF.PI/180f), (width / (float)height), nearPlane, farPlane);
+            if (perspective) projection = Matrix4.CreatePerspectiveFieldOfView((FOVdeg * MathF.PI / 180f), (width / (float)height), nearPlane, farPlane);
+            else projection = Matrix4.CreateOrthographic(width, height, -farPlane, farPlane );
             cameraMatrix = view *projection ;
             
         }

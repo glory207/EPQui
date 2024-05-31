@@ -17,7 +17,7 @@ namespace EPQui
 
         public Mesh gridMesh;
         Shader gridshaderProgram;
-        string path;
+       public string path;
         public void save()
         {
             StreamWriter str = new StreamWriter(path);
@@ -74,6 +74,7 @@ namespace EPQui
         {
             this.path = path;
             StreamReader str = new StreamReader(path);
+            
             string line;
             while (!str.EndOfStream)
             {
@@ -332,10 +333,17 @@ namespace EPQui
         }
         public Hierarchy()
         {
-            path = "Res/scenes/scene11.txt";
+            path = "Res/scenes/scene.sce";
+            bool valid = false;
+            do
+            {
+                if (File.Exists(path)) path = path.Substring(0, path.Length - 4) + "(dupe).sce";
+                else valid = true;
+            } while (valid == false);
+
             gridMesh = new Mesh();
             gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
-
+            children.Add(new LightContainer(this));
         }
         public override void Update(List<LightContainer> lights, Camera camera)
         {

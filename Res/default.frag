@@ -5,8 +5,10 @@
      uniform vec2 lightAng[50];
      uniform int lightType[50];
      uniform float lightIntensity[50];
+     uniform float specularLight;
+     uniform float diffuseLight;
 
-     uniform mat4 lightRot[50];
+     uniform mat4 lightRot[5];
      uniform int lightnum;
      uniform vec3 camPos;
 
@@ -30,9 +32,8 @@
 
 	vec3 norm = normalize(norm);
 	vec3 lightDirection = normalize(lightVec);
-	float diffuse = max(dot(norm, lightDirection), 0.0f);
+	float diffuse = max(dot(norm, lightDirection), 0.0f) * diffuseLight;
 
-	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, norm);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
@@ -52,10 +53,9 @@ vec4 direcLight(vec3 lPos,vec3 rot,vec4 lColor, float lightI)
 	// diffuse lighting
 	vec3 norm = normalize(norm);
 	vec3 lightDirection = normalize(rot);
-	float diffuse = max(dot(norm, lightDirection), 0.0f);
+	float diffuse = max(dot(norm, lightDirection), 0.0f) * diffuseLight;
 
 	// specular lighting
-	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, norm);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
@@ -73,10 +73,9 @@ vec4 spotLight(vec3 lPos,vec3 rot,vec4 lColor, float lightI, float outerCone, fl
 	// diffuse lighting
 	vec3 norm = normalize(norm);
 	vec3 lightDirection = normalize(lPos - crntPos);
-	float diffuse = max(dot(norm, lightDirection), 0.0f);
+	float diffuse = max(dot(norm, lightDirection), 0.0f) * diffuseLight;
 
 	// specular lighting
-	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, norm);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);

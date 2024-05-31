@@ -25,7 +25,7 @@ namespace EPQui
         {
             this.parent = parent;
             objectScale = new Vector3(1);
-
+            lightColor = Vector4.One;
             objectRotation = Quaternion.Identity;
             objectRotationAdded = Quaternion.Identity;
             shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
@@ -68,7 +68,10 @@ namespace EPQui
         public override void destroy() {
             shaderProgram.Delete();
         }
-        public LightContainer() { }
+        public LightContainer()
+        {
+           
+        }
         public object Clone()
         {
             return new LightContainer()
