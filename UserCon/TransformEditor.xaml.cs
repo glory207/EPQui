@@ -44,6 +44,7 @@ namespace EPQui.UserCon
             traEP.BoundVector = target.Position;
             traER.BoundVector = target.objectRotation.ToEulerAngles();
             traES.BoundVector = target.objectScale;
+            Danm.BoundVal = target.name;
         }
         bool mini;
         private void title_MouseDown(object sender, MouseButtonEventArgs e)
@@ -56,6 +57,8 @@ namespace EPQui.UserCon
         public delegate void deletedEventHandler();
         public event deletedEventHandler? deleted;
         public event deletedEventHandler? duped;
+
+
         private void TraE_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
 
@@ -63,6 +66,7 @@ namespace EPQui.UserCon
                 target.Position = traEP.BoundVector;
                 target.objectRotation = Quaternion.FromEulerAngles(traER.BoundVector);
                 target.objectScale = traES.BoundVector;
+                target.name = Danm.BoundVal;
             }
         }
 

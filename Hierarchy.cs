@@ -83,35 +83,35 @@ namespace EPQui
                 {
                     
                     LightContainer tempL = new LightContainer(this);
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.angle = parse2(line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.intencity = float.Parse(line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.lightColor = parse4(line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.name = (line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.objectRotation = Quaternion.FromEulerAngles(parse3(line)); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.objectScale = parse3(line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.Position = parse3(line); 
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.Type =(LightType) int.Parse(line); 
                     children.Add(tempL);
@@ -119,45 +119,45 @@ namespace EPQui
                 else if(line == "<MeshContainer>")
                 {
                     MeshContainer tempL = new MeshContainer() { parent = this};
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.name = (line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.objectRotation = Quaternion.FromEulerAngles(parse3(line));
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.objectScale = parse3(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.Position = parse3(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mesh = new Mesh(line);
 
                     tempL.mate = new material();
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mate.texOff = parse2(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mate.texScale = parse2(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mate.specular = float.Parse(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mate.diffuce = float.Parse(line);
 
-                    Debug.WriteLine(str.ReadLine());
+                    str.ReadLine();
                     line = str.ReadLine();
                     tempL.mate.textures[0] = new Texture(line, "diffuse", 0, PixelFormat.Rgba);
 

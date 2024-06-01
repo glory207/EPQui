@@ -12,9 +12,17 @@
             <RowDefinition Height="40"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Background="Gray" Name="title" MouseDown="title_MouseDown" Margin="5 5 0 0" HorizontalAlignment="Left" Padding="10" CornerRadius="5">
-            <TextBlock Text="Transform" VerticalAlignment="Center"/>
-        </Border>
+        
+        
+        <StackPanel Orientation="Horizontal">
+            <Border Background="Gray" Name="title" MouseDown="title_MouseDown" Margin="5 5 0 0" HorizontalAlignment="Left" Padding="10" CornerRadius="5">
+                <TextBlock Text="Transform" VerticalAlignment="Center" />
+            </Border>
+
+            <local:name_Editor x:Name="Danm" Margin="5 5 0 0" HorizontalAlignment="Left" />
+        </StackPanel>
+       
+
         <StackPanel Margin="5 10 5 0" Grid.Row="1">
             <Button Click="Button_Click">
                 delete

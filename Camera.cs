@@ -15,8 +15,8 @@ namespace EPQui
        public FrameBuffer frameC;
 
         public Vector3 Position;
-        public Vector3 Orientation = new Vector3(1.0f, 0.0f, 0.0f);
-        public Vector3 OrientationR = new Vector3(0.0f, 0.0f, 1.0f);
+        public Vector3 Orientation = new Vector3(-1.0f, 0.0f, 0.0f);
+        public Vector3 OrientationR = new Vector3(0.0f, 0.0f, -1.0f);
         public Vector3 OrientationU = new Vector3(0.0f, 1.0f, 0.0f);
         public Vector3 Up = new Vector3(0.0f, 1.0f, 0.0f);
         public Matrix4 cameraMatrix = new Matrix4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
@@ -25,11 +25,13 @@ namespace EPQui
         public bool firstClick = true;
         public float speed = 0.1f;
         public float sensitivity = 100.0f;
-        public Camera(int width, int height, Vector3 position)
+        int DeFrame;
+        public Camera(int width, int height, Vector3 position,int dframe)
         {
-            frameC = new FrameBuffer(width, height,PixelInternalFormat.Rgb,PixelFormat.Rgb,PixelType.UnsignedByte) { color = new Color4(0,0,255,255)};
+            DeFrame = dframe;
 
-            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte);
+            frameC = new FrameBuffer(width, height, PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte, DeFrame) { color = new Color4(0, 0, 255, 255) };
+            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte, DeFrame);
             updateScreenSize(width, height);
             Position = position;
 
@@ -55,14 +57,6 @@ namespace EPQui
         public void destroy() {
             frameC.destroy();
             frameC.destroy();
-        }
-       public void update(FrameBuffer FrameBufferB)
-        {
-            FrameBufferB.update();
-        }
-       public byte[] update(int x, int y, FrameBuffer FrameBufferB)
-        {
-            return FrameBufferB.update(x, y);
         }
         public void updateScreenSize(int widthf, int heightf) {
             this.width = widthf;

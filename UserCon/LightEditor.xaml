@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EPQui.UserCon"
              mc:Ignorable="d" 
-             FontSize="18" d:DesignWidth="387.793" d:DesignHeight="233.333">
+             FontSize="18" d:DesignWidth="387.793" d:DesignHeight="375.233">
     <Grid Background="DarkGray" Height="auto">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>

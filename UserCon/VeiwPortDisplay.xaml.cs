@@ -21,6 +21,8 @@ using Quaternion = OpenTK.Mathematics.Quaternion;
 using EPQui.UserCon;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Linq;
 
 namespace EPQui.UserCon
 {
@@ -40,8 +42,7 @@ namespace EPQui.UserCon
             };
             window.Start(settings);
 
-            camera = new Camera(SCR_WIDTH, SCR_HEIGHT, new Vector3(4.0f, 3.0f, 0.0f));
-            scene = new Hierarchy();
+            
             window.Loaded += Window_Loaded1;
             window.Unloaded += Window_Unloaded;
 
@@ -54,7 +55,7 @@ namespace EPQui.UserCon
         public int SCR_HEIGHT;
         public Hierarchy scene;
         public Camera camera;
-        public float speed = 0.05f;
+        public float speed;
         public int hoverObj;
         public int editObjHover;
         public int editObj;
@@ -64,6 +65,7 @@ namespace EPQui.UserCon
         public event SampleEventHandler SampleEvent;
         private void Window_Loaded1(object sender, RoutedEventArgs e)
         {
+            
             window.Render += Window_Render;
             window.SizeChanged += Window_SizeChanged;
             window.MouseMove += Window_MouseMove;
@@ -81,7 +83,8 @@ namespace EPQui.UserCon
 
             SCR_WIDTH = (int)window.ActualWidth;
             SCR_HEIGHT = (int)window.ActualHeight;
-            camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
+            camera = new Camera(SCR_WIDTH, SCR_HEIGHT, new Vector3(4.0f, 3.0f, 0.0f), window.Framebuffer);
+           // scene = new Hierarchy();
             this.Focusable = true;
 
             gyzmo = new Gyzmo();
@@ -115,8 +118,16 @@ namespace EPQui.UserCon
             camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
 
         }
+        double _timeElapsed;
+        int _frameCount;
+        private float _fps;
+        private float delta;
         private void Window_Render(TimeSpan obj)
         {
+
+            delta = (float)obj.TotalSeconds;
+            _fps = 1 / delta;
+            Debug.WriteLine(_fps.ToString());
 
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
@@ -126,29 +137,33 @@ namespace EPQui.UserCon
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
 
-                if (selectedObjj >= 0 && scene.children.Count > 0)
-                {
-                    GL.Clear(ClearBufferMask.DepthBufferBit);
-                    GL.Disable(EnableCap.CullFace);
-                    gyzmo.UpdateClick(camera, scene.children[selectedObjj]);
-                    GL.Enable(EnableCap.CullFace);
-                }
-                byte[] col = camera.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y, camera.frameC);
-                hoverObj = col[0];
-                editObjHover = col[1];
-                camera.frame.Clear();
-                scene.Update(lights, camera);
-                if (selectedObjj >= 0 && scene.children.Count > 0)
-                {
-                    GL.Clear(ClearBufferMask.DepthBufferBit);
+            if (selectedObjj >= 0 && scene.children.Count > 0)
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
+                GL.Disable(EnableCap.CullFace);
+                gyzmo.UpdateClick(camera, scene.children[selectedObjj]);
+                GL.Enable(EnableCap.CullFace);
+            }
+            byte[] col = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
+            hoverObj = col[0];
+            editObjHover = col[1];
+            camera.frame.Clear();
+            scene.Update(lights, camera);
+            if (selectedObjj >= 0 && scene.children.Count > 0)
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
 
-                    GL.Disable(EnableCap.CullFace);
-                    gyzmo.Update(camera, scene.children[selectedObjj]);
-                    GL.Enable(EnableCap.CullFace);
+                GL.Disable(EnableCap.CullFace);
+                gyzmo.Update(camera, scene.children[selectedObjj]);
+                GL.Enable(EnableCap.CullFace);
 
-                }
-            
-            camera.update(camera.frame);
+            }
+
+
+            camera.frame.update();
+
+
+
 
         }
 
@@ -158,7 +173,7 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, space, mouseR, mouseL;
+        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -239,44 +254,44 @@ namespace EPQui.UserCon
         private void window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             this.Focus();
-
+        
             switch (e.ChangedButton)
-            {
-                case System.Windows.Input.MouseButton.Left:
-                    mouseL = true;
-                    if (editObjHover == 0)
-                    {
-                        selectedObjj = hoverObj;
-                        SampleEvent.Invoke();
-                    }
-                    else
-                    {
-                        editObj = editObjHover;
-                        Matrix4 ProjectionInv = camera.projection.Inverted();
-
-                        float mouse_x = (float)mouseP.X;
-                        float mouse_y = (float)mouseP.Y;
-
-                        float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
-                        float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
-
-                        Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
-                        Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
-
-
-                        Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
-
-                        Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                        gyzmo.set(editObj, camera, scene.children[selectedObjj], point_world);
-
-                    }
-                    break;
-                case System.Windows.Input.MouseButton.Right:
-                    mouseR = true;
-                    break;
-
-            }
-
+          {
+              case System.Windows.Input.MouseButton.Left:
+                  mouseL = true;
+                  if (editObjHover == 0)
+                  {
+                      selectedObjj = hoverObj;
+                      SampleEvent.Invoke();
+                  }
+                 else
+                 {
+                     editObj = editObjHover;
+                     Matrix4 ProjectionInv = camera.projection.Inverted();
+              
+                     float mouse_x = (float)mouseP.X;
+                     float mouse_y = (float)mouseP.Y;
+              
+                     float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                     float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+              
+                     Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                     Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+              
+              
+                     Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+              
+                     Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+                     gyzmo.set(editObj, camera, scene.children[selectedObjj], point_world);
+              
+                 }
+                  break;
+              case System.Windows.Input.MouseButton.Right:
+                  mouseR = true;
+                  break;
+        
+          }
+        
 
         }
 
@@ -301,6 +316,9 @@ namespace EPQui.UserCon
                     break;
                 case Key.LeftShift:
                     shift = false;
+                    break;
+                case Key.LeftCtrl:
+                    Ctrl = false;
                     break;
             }
         }
@@ -327,6 +345,9 @@ namespace EPQui.UserCon
                 case Key.LeftShift:
                     shift = true;
                     break;
+                case Key.LeftCtrl:
+                    Ctrl = true;
+                    break;
                 case Key.D1:
                     gyzmo.type = GyzmoType.translation;
                     break;
@@ -337,7 +358,7 @@ namespace EPQui.UserCon
                     gyzmo.type = GyzmoType.scale;
                     break;
                 case Key.Y:
-                    scene.save();
+                    Texture tex = new Texture("Res/textures/planks.png", "diffuse", 0, PixelFormat.Rgba);
                     break;
             }
         }
@@ -347,11 +368,12 @@ namespace EPQui.UserCon
 
             if (this.IsFocused)
             {
+                if (shift) speed = 10 * delta; else speed = 5 * delta;
                 if (up) camera.Position += camera.Orientation * speed;
                 if (down) camera.Position += -camera.Orientation * speed;
                 if (left) camera.Position += -camera.OrientationR * speed;
                 if (right) camera.Position += camera.OrientationR * speed;
-                if (shift) camera.Position += -camera.OrientationU * speed;
+                if (Ctrl) camera.Position += -camera.OrientationU * speed;
                 if (space) camera.Position += camera.OrientationU * speed;
 
 
@@ -363,25 +385,25 @@ namespace EPQui.UserCon
                 camera.OrientationR = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.OrientationR;
 
 
-                if (mouseL && editObj != 0)
-                {
-                    Matrix4 ProjectionInv = camera.projection.Inverted();
-
-                    float mouse_x = (float)mouseP.X;
-                    float mouse_y = (float)mouseP.Y;
-
-                    float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
-                    float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
-
-                    Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
-                    Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
-
-
-                    Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
-
-                    Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                    gyzmo.edit(editObj, camera, scene.children[selectedObjj], point_world);
-                }
+               if (mouseL && editObj != 0)
+               {
+                   Matrix4 ProjectionInv = camera.projection.Inverted();
+              
+                   float mouse_x = (float)mouseP.X;
+                   float mouse_y = (float)mouseP.Y;
+              
+                   float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                   float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+              
+                   Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                   Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+              
+              
+                   Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+              
+                   Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+                   gyzmo.edit(editObj, camera, scene.children[selectedObjj], point_world);
+               }
             }
         }
     }

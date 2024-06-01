@@ -10,66 +10,9 @@
         Title="MainWindow" Height="720" Width="1256" 
         Background="Gray"
         >
-    <Grid >
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="150"/>
-            <RowDefinition Height="10"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Column="1" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="200"/>
-            </Grid.ColumnDefinitions>
-
-            <ScrollViewer Grid.Column="2" Grid.Row="0" Background="SlateGray">
-                <StackPanel x:Name="theList2">
-
-                </StackPanel>
-            </ScrollViewer>
-
-            <ScrollViewer Grid.Column="0" Grid.Row="0" Background="SlateGray">
-                <StackPanel x:Name="theList">
-
-                    <TreeView >
-
-                    </TreeView>
-                </StackPanel>
-            </ScrollViewer>
-            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
-            <GridSplitter Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
-
-            <UserC:VeiwPortDisplay Grid.Column="1" Grid.Row="0" x:Name="window"/>
-
-
-            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
-            <GridSplitter Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
-            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="1" Background="White"/>
-            <GridSplitter Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="White"/>
-
-        </Grid>
-        <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="1" Background="White"/>
-
-        <ScrollViewer Grid.Column="1" Grid.Row="2" Background="Gray">
-            <WrapPanel Name="wrpPan">
-
-                <Button Height="100"  Width="100" Click="Button_Click" >
-                    add new obj
-                </Button>
-            </WrapPanel>
-        </ScrollViewer>
-        <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Background="White"/>
-
+    <Grid  x:Name="grid">
+        <WrapPanel Name="wrpPan">
+            
+        </WrapPanel>
     </Grid>
 </Window>

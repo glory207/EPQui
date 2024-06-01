@@ -28,118 +28,151 @@ namespace EPQui
 };
 
         public Shader framebufferProgram;
-        public VAO rectVAO;
-        public VBO rectVBO;
+        public int rectVAO;
+        public int rectVBO;
+        int DeFrame;
         public int FBO;
         public int framebufferTexture;
         public int RBO;
+        public int FBOP;
+        public int framebufferTextureP;
+        public int RBOP;
         public int width;
         public int height;
         public Color4 color = new Color4(0.1f, 0.2f, 0.3f, 4.0f);
         PixelInternalFormat pixelInternalFormat;
         PixelFormat pixelFormat;
         PixelType pixelType;
-        public FrameBuffer(int widthf, int heightf, PixelInternalFormat pixelInternalFormat, PixelFormat pixelFormat, PixelType pixelType)
+        bool multisample;
+        public FrameBuffer(int widthf, int heightf, PixelInternalFormat pixelInternalFormat, PixelFormat pixelFormat, PixelType pixelType, int dfr)
         {
+            DeFrame = dfr;
             this.pixelInternalFormat = pixelInternalFormat;
             this.pixelFormat = pixelFormat;
             this.pixelType = pixelType;
+
+
+            rectVAO = GL.GenVertexArray();
+            rectVBO = GL.GenBuffer();
+            GL.BindVertexArray(rectVAO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, rectVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, (rectangleVertices.Length) * sizeof(float), rectangleVertices, BufferUsageHint.StaticDraw);
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (2 * sizeof(float)));
+
+
             framebufferProgram = new Shader("Res/framebuffer.vert", "Res/framebuffer.frag");
             framebufferProgram.Activate();
-            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), 1);
-            updateScreenSize( widthf, heightf);
-        }
-        public void Bind()
-        {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-            GL.Enable(EnableCap.DepthTest);
+            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
+
+            updateScreenSize(widthf, heightf);
         }
         public void Clear()
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            if (multisample) GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            else GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBOP);
             GL.ClearColor(color);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.DepthTest);
         }
         public void destroy()
         {
-           // GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GL.DeleteFramebuffer(FBO);
-            
+            if (multisample) GL.DeleteFramebuffer(FBO);
+            GL.DeleteFramebuffer(FBOP);
+
         }
         public void update()
         {
-        
-           GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            if (multisample)
+            {
+                GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, FBOP);
+                GL.BlitFramebuffer(0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            }
 
-           framebufferProgram.Activate();
-          rectVAO.Bind();
-          GL.Disable(EnableCap.DepthTest);
-          GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
-          GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
-           GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, DeFrame);
 
-            destroy();
+            framebufferProgram.Activate();
+            GL.BindVertexArray(rectVAO);
+            GL.Disable(EnableCap.DepthTest);
 
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, framebufferTextureP);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
 
         }
 
         public byte[] update(int widthf, int heightf)
         {
-
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-
+            if (multisample) GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            else GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBOP);
             byte[] pixel = new byte[4];
             GL.ReadPixels(widthf, heightf, 1, 1, pixelFormat, pixelType, pixel);
-            destroy();
+          //  Debug.WriteLine(((int)pixel[0]).ToString());
             return pixel;
         }
         public void updateScreenSize(int widthf, int heightf)
         {
             this.width = widthf;
             this.height = heightf;
-            int samples = 4;
-
-            rectVAO = new VAO();
-            rectVBO = new VBO(rectangleVertices.ToList());
-            rectVAO.LinkAttrib(rectVBO, 0, 2, 4 * sizeof(float), 0);
-            rectVAO.LinkAttrib(rectVBO, 1, 2, 4 * sizeof(float), 2 * sizeof(float));
-            // Create Frame Buffer Object
-
-            FBO = GL.GenFramebuffer();
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-
-            // Create Framebuffer Texture
-
-            framebufferTexture = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2DMultisample, framebufferTexture);
-            GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, pixelInternalFormat, width, height, true);
-            GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge); // Prevents edge bleeding
-            GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge); // Prevents edge bleeding
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, framebufferTexture, 0);
-
-            // Create Render Buffer Object
-
-            RBO = GL.GenRenderbuffer();
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBO);
-            GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, samples, RenderbufferStorage.Depth24Stencil8, width, height);
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
-            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBO);
-
-
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
-
-            if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
+            if (multisample)
             {
-                
-                MessageBox.Show("Framebuffer is not complete!");
-                throw new Exception("Framebuffer is not complete!");
+
+                framebufferProgram.Activate();
+                GL.Uniform2(GL.GetUniformLocation(framebufferProgram.ID, "ScreenSize"), new Vector2(height, width));
+
+                int samples = 4;
+
+                FBO = GL.GenFramebuffer();
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+
+                framebufferTexture = GL.GenTexture();
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.BindTexture(TextureTarget.Texture2DMultisample, framebufferTexture);
+                GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, PixelInternalFormat.Rgb, width, height, true);
+
+                GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
+                GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
+                GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
+                GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2DMultisample, framebufferTexture, 0);
+                RBO = GL.GenRenderbuffer();
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBO);
+                GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, samples, RenderbufferStorage.Depth24Stencil8, width, height);
+                GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBO);
+
+
+
+                if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
+                {
+
+                    MessageBox.Show("Framebuffer is not complete!" + height.ToString());
+                    throw new Exception("Framebuffer is not complete!");
+                }
             }
+
+            FBOP = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBOP);
+
+            framebufferTextureP = GL.GenTexture();
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, framebufferTextureP);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, framebufferTextureP, 0);
+            RBOP = GL.GenRenderbuffer();
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBOP);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, width, height);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBOP);
         }
     }
 }

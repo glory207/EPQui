@@ -52,7 +52,7 @@ namespace EPQui
 
             mate = (material)mate.Clone(),
             mesh = mesh,
-            name = name + " awdawdad"
+            name = name + " copy"
             };
             
             
@@ -97,33 +97,33 @@ namespace EPQui
 
            uint numDiffuse = 0;
            uint numSpecular = 0;
-           for (int i = 0; i < mate.textures.Count(); i++)
-           {
-               string num = "";
-               string type = mate.textures[i].type;
-               if (type == "diffuse")
-               {
-                   num = (numDiffuse++).ToString();
-               }
-               else if (type == "specular")
-               {
-                   num = (numSpecular++).ToString();
-               }
-               mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
-               mate.textures[i].Bind();
-           }
-
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
-
-            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
-            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
-            mesh.Draw(shaderProgram, camera);
-             for (int i = 0; i < mate.textures.Count(); i++)
+         for (int i = 0; i < mate.textures.Count(); i++)
+         {
+             string num = "";
+             string type = mate.textures[i].type;
+             if (type == "diffuse")
              {
-            
-                 mate.textures[i].Unbind();
+                 num = (numDiffuse++).ToString();
              }
+             else if (type == "specular")
+             {
+                 num = (numSpecular++).ToString();
+             }
+             mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
+             mate.textures[i].Bind();
+         }
+
+         GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
+         GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
+
+         GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
+         GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
+         mesh.Draw(shaderProgram, camera);
+            for (int i = 0; i < mate.textures.Count(); i++)
+            {
+           
+                mate.textures[i].Unbind();
+            }
 
         }
        public override void UpdateClick(Camera camera,int value,int value2)
