@@ -118,17 +118,22 @@ namespace EPQui.UserCon
             camera.updateScreenSize(SCR_WIDTH, SCR_HEIGHT);
 
         }
-        double _timeElapsed;
-        int _frameCount;
-        private float _fps;
+        int frameCount;
+        float elapsTime;
+        private float fps;
         private float delta;
         private void Window_Render(TimeSpan obj)
         {
-
+            frameCount++;
             delta = (float)obj.TotalSeconds;
-            _fps = 1 / delta;
-            Debug.WriteLine(_fps.ToString());
-
+            elapsTime += delta;
+            if (elapsTime > 0.2f)
+            {
+            fps = frameCount / elapsTime;
+            frameCount = 0;
+            elapsTime = 0;
+            FPStxt.Text ="FPS: " + ((int)fps).ToString();
+            }
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
             List<LightContainer> lights = new List<LightContainer>();
@@ -136,7 +141,9 @@ namespace EPQui.UserCon
 
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
+            hoverObj = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
 
+            camera.frameE.Clear();
             if (selectedObjj >= 0 && scene.children.Count > 0)
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -144,9 +151,7 @@ namespace EPQui.UserCon
                 gyzmo.UpdateClick(camera, scene.children[selectedObjj]);
                 GL.Enable(EnableCap.CullFace);
             }
-            byte[] col = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
-            hoverObj = col[0];
-            editObjHover = col[1];
+            editObjHover = camera.frameE.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
             camera.frame.Clear();
             scene.Update(lights, camera);
             if (selectedObjj >= 0 && scene.children.Count > 0)
@@ -232,65 +237,65 @@ namespace EPQui.UserCon
 
         private void window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            switch (e.ChangedButton)
-            {
-                case System.Windows.Input.MouseButton.Left:
-                    mouseL = false;
-                    scene.children[selectedObjj].Position += scene.children[selectedObjj].PositionAdded;
-                    scene.children[selectedObjj].PositionAdded = Vector3.Zero;
-                    scene.children[selectedObjj].objectScale += scene.children[selectedObjj].objectScaleAdded;
-                    scene.children[selectedObjj].objectScaleAdded = Vector3.Zero;
-                    scene.children[selectedObjj].objectRotation = scene.children[selectedObjj].objectRotationAdded * scene.children[selectedObjj].objectRotation;
-                    scene.children[selectedObjj].objectRotationAdded = Quaternion.Identity;
-                    editObj = 0;
-                    SampleEvent.Invoke();
-                    break;
-                case System.Windows.Input.MouseButton.Right:
-                    mouseR = false;
-                    break;
-
-            }
+           switch (e.ChangedButton)
+           {
+               case System.Windows.Input.MouseButton.Left:
+                   mouseL = false;
+                   scene.children[selectedObjj].Position += scene.children[selectedObjj].PositionAdded;
+                   scene.children[selectedObjj].PositionAdded = Vector3.Zero;
+                   scene.children[selectedObjj].objectScale += scene.children[selectedObjj].objectScaleAdded;
+                   scene.children[selectedObjj].objectScaleAdded = Vector3.Zero;
+                   scene.children[selectedObjj].objectRotation = scene.children[selectedObjj].objectRotationAdded * scene.children[selectedObjj].objectRotation;
+                   scene.children[selectedObjj].objectRotationAdded = Quaternion.Identity;
+                   editObj = 0;
+                   SampleEvent.Invoke();
+                   break;
+               case System.Windows.Input.MouseButton.Right:
+                   mouseR = false;
+                   break;
+          
+           }
         }
         private void window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             this.Focus();
         
-            switch (e.ChangedButton)
-          {
-              case System.Windows.Input.MouseButton.Left:
-                  mouseL = true;
-                  if (editObjHover == 0)
-                  {
-                      selectedObjj = hoverObj;
-                      SampleEvent.Invoke();
-                  }
-                 else
-                 {
-                     editObj = editObjHover;
-                     Matrix4 ProjectionInv = camera.projection.Inverted();
-              
-                     float mouse_x = (float)mouseP.X;
-                     float mouse_y = (float)mouseP.Y;
-              
-                     float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
-                     float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
-              
-                     Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
-                     Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
-              
-              
-                     Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
-              
-                     Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                     gyzmo.set(editObj, camera, scene.children[selectedObjj], point_world);
-              
-                 }
-                  break;
-              case System.Windows.Input.MouseButton.Right:
-                  mouseR = true;
-                  break;
+           switch (e.ChangedButton)
+        {
+            case System.Windows.Input.MouseButton.Left:
+                mouseL = true;
+                if (editObjHover == 0)
+                {
+                    selectedObjj = hoverObj;
+                    SampleEvent.Invoke();
+                }
+               else
+               {
+                   editObj = editObjHover;
+                   Matrix4 ProjectionInv = camera.projection.Inverted();
+            
+                   float mouse_x = (float)mouseP.X;
+                   float mouse_y = (float)mouseP.Y;
+            
+                   float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                   float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+            
+                   Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                   Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+            
+            
+                   Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+            
+                   Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+                   gyzmo.set(editObj, camera, scene.children[selectedObjj], point_world);
+            
+               }
+                break;
+            case System.Windows.Input.MouseButton.Right:
+                mouseR = true;
+                break;
         
-          }
+        }
         
 
         }

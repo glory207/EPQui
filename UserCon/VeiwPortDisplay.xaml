@@ -15,6 +15,7 @@
         <Button Tag ="4" Click="Button_Click"  Width="80" Content="Orthographic" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top"/>
         <Button Tag ="6" Click="Button_Click"  Width="80" Content="Save" HorizontalAlignment="Left" Margin="10,115,0,0" VerticalAlignment="Top"/>
         <Button Tag ="7" Click="Button_Click"  Width="80" Content="Save As" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="FPStxt" HorizontalAlignment="Right" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Background="AliceBlue" Opacity="0.8"/>
 
     </Grid>
 </UserControl>

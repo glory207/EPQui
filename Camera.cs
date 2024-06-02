@@ -13,6 +13,7 @@ namespace EPQui
     {
        public FrameBuffer frame;
        public FrameBuffer frameC;
+       public FrameBuffer frameE;
 
         public Vector3 Position;
         public Vector3 Orientation = new Vector3(-1.0f, 0.0f, 0.0f);
@@ -30,8 +31,9 @@ namespace EPQui
         {
             DeFrame = dframe;
 
-            frameC = new FrameBuffer(width, height, PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte, DeFrame) { color = new Color4(0, 0, 255, 255) };
-            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte, DeFrame);
+            frameC = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
+            frameE = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
+            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte, DeFrame,true);
             updateScreenSize(width, height);
             Position = position;
 
@@ -56,7 +58,8 @@ namespace EPQui
         }
         public void destroy() {
             frameC.destroy();
-            frameC.destroy();
+            frame.destroy();
+            frameE.destroy();
         }
         public void updateScreenSize(int widthf, int heightf) {
             this.width = widthf;
@@ -64,6 +67,7 @@ namespace EPQui
 
             frame.updateScreenSize(widthf, heightf);
             frameC.updateScreenSize(widthf, heightf);
+            frameE.updateScreenSize(widthf, heightf);
         }
 
     }

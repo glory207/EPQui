@@ -44,8 +44,9 @@ namespace EPQui
         PixelFormat pixelFormat;
         PixelType pixelType;
         bool multisample;
-        public FrameBuffer(int widthf, int heightf, PixelInternalFormat pixelInternalFormat, PixelFormat pixelFormat, PixelType pixelType, int dfr)
+        public FrameBuffer(int widthf, int heightf, PixelInternalFormat pixelInternalFormat, PixelFormat pixelFormat, PixelType pixelType, int dfr, bool multi)
         {
+            multisample = multi;
             DeFrame = dfr;
             this.pixelInternalFormat = pixelInternalFormat;
             this.pixelFormat = pixelFormat;
@@ -107,14 +108,13 @@ namespace EPQui
 
         }
 
-        public byte[] update(int widthf, int heightf)
+        public int update(int widthf, int heightf)
         {
             if (multisample) GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
             else GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBOP);
-            byte[] pixel = new byte[4];
+            int[] pixel = new int[1];
             GL.ReadPixels(widthf, heightf, 1, 1, pixelFormat, pixelType, pixel);
-          //  Debug.WriteLine(((int)pixel[0]).ToString());
-            return pixel;
+            return pixel[0];
         }
         public void updateScreenSize(int widthf, int heightf)
         {
@@ -126,7 +126,7 @@ namespace EPQui
                 framebufferProgram.Activate();
                 GL.Uniform2(GL.GetUniformLocation(framebufferProgram.ID, "ScreenSize"), new Vector2(height, width));
 
-                int samples = 4;
+                int samples = 8;
 
                 FBO = GL.GenFramebuffer();
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
@@ -134,7 +134,7 @@ namespace EPQui
                 framebufferTexture = GL.GenTexture();
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2DMultisample, framebufferTexture);
-                GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, PixelInternalFormat.Rgb, width, height, true);
+                GL.TexImage2DMultisample(TextureTargetMultisample.Texture2DMultisample, samples, pixelInternalFormat, width, height, true);
 
                 GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2DMultisample, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
@@ -162,7 +162,7 @@ namespace EPQui
             framebufferTextureP = GL.GenTexture();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, framebufferTextureP);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, width, height, 0, PixelFormat.Rgb, PixelType.UnsignedByte, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
