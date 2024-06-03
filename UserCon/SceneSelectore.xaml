@@ -5,8 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EPQui.UserCon"
         mc:Ignorable="d"
-        Title="SceneSelectore" Height="450" Width="800">
+        Title="SceneSelectore" Height="154" Width="346"
+        FontSize="30"
+        >
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="49*"/>
+            <RowDefinition Height="89*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+            Name
+        </TextBlock>
+        <TextBox x:Name="txt" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+
+        </TextBox>
+        <Button Click="Button_Click" Grid.Column="1" Content="X" Background="Red"/>
+        <Button Click="Button_Click_1" Grid.Column="2" Content="OK" Background="Green"/>
     </Grid>
 </Window>

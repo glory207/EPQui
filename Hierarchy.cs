@@ -364,7 +364,10 @@ namespace EPQui
             Matrix4 mat = Matrix4.Identity;
             GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
             GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
-            gridMesh.Draw(gridshaderProgram, camera);
+            gridshaderProgram.Activate();
+            GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(gridshaderProgram, "camMatrix");
+            gridMesh.Draw();
 
 
         }
@@ -373,6 +376,14 @@ namespace EPQui
             foreach (HierObj ob in children)
             {
                 ob.UpdateClick(camera, children.IndexOf(ob), children.Count);
+            }
+        }
+        public void UpdateShadow(Matrix4 lit)
+        {
+
+            foreach (HierObj ob in children)
+            {
+                if (ob.GetType() == typeof(MeshContainer)) ((MeshContainer)ob).UpdateShadow(lit);
             }
         }
         public override void destroy()

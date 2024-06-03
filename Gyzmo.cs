@@ -30,16 +30,16 @@ namespace EPQui
         public Gyzmo()
         {
             mesh = new Mesh();
-            shaderProgram = new Shader[] {
-                new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/TransGyzmo.geomertry"),
-                new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/RotationGyzmo .geomertry"),
-                new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/ScaleGyzmo.geomertry")
-            };
-            clickProgram = new Shader[] { 
-                new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/TransGyzmo.geomertry"),
-                new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/RotationGyzmo .geomertry"),
-                new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/ScaleGyzmo.geomertry")
-            };
+           shaderProgram = new Shader[] {
+               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/TransGyzmo.geomertry"),
+               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/RotationGyzmo .geomertry"),
+               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/ScaleGyzmo.geomertry")
+         };
+         clickProgram = new Shader[] { 
+               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/TransGyzmo.geomertry"),
+               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/RotationGyzmo .geomertry"),
+               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/ScaleGyzmo.geomertry")
+           };
         }
         public void UpdateClick(Camera camera, HierObj slected)
         {
@@ -53,8 +53,8 @@ namespace EPQui
                     GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camUp"), camera.OrientationU);
                     GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camRight"), camera.OrientationR);
                     GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camFr"), camera.Orientation);
-                    GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camP"), camera.Position);
-                    mesh.DrawToClick(clickProgram[i], camera);
+                    camera.Matrix(clickProgram[i], "camMatrix");
+                    mesh.Draw();
                 }
             }
         }
@@ -70,8 +70,8 @@ namespace EPQui
                     GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camUp"), camera.OrientationU);
                     GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camRight"), camera.OrientationR);
                     GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camFr"), camera.Orientation);
-                    GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camP"), camera.Position);
-                    mesh.DrawToClick(shaderProgram[i], camera);
+                    camera.Matrix(shaderProgram[i], "camMatrix");
+                    mesh.Draw();
                 }
             }
 

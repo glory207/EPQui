@@ -49,10 +49,10 @@ namespace EPQui
 
                 wrpPan.Children.Add(button);
             }
-            string strr = "non";
+            string strr = "new scene";
             Button buttonn = new Button();
             buttonn.Padding = new Thickness(20, 20, 20, 20);
-            buttonn.Tag = strr;
+            buttonn.Tag = "non";
             buttonn.Content = strr;
             buttonn.Click += Button_Click;
 

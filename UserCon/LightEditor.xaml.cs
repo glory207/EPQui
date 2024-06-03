@@ -53,7 +53,7 @@ namespace EPQui.UserCon
             traA.BoundVector = clamp(target.angle, 0,3.1f);
             combo.SelectedIndex = (int)target.Type;
         }
-        bool mini;
+        bool mini = true;
         private void title_MouseDown(object sender, MouseButtonEventArgs e)
         {
             mini = !mini;

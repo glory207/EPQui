@@ -49,7 +49,7 @@ namespace EPQui.UserCon
             traDif.BoundVector = target.diffuce;
             traSpec.BoundVector = target.specular;
         }
-        bool mini;
+        bool mini = true;
         private void title_MouseDown(object sender, MouseButtonEventArgs e)
         {
             mini = !mini;

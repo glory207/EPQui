@@ -129,10 +129,10 @@ namespace EPQui.UserCon
             elapsTime += delta;
             if (elapsTime > 0.2f)
             {
-            fps = frameCount / elapsTime;
-            frameCount = 0;
-            elapsTime = 0;
-            FPStxt.Text ="FPS: " + ((int)fps).ToString();
+                fps = frameCount / elapsTime;
+                frameCount = 0;
+                elapsTime = 0;
+                FPStxt.Text = "FPS: " + ((int)fps).ToString();
             }
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
@@ -142,7 +142,8 @@ namespace EPQui.UserCon
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
             hoverObj = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
-
+            Debug.WriteLine(hoverObj.ToString());
+            camera.frameC.update();
             camera.frameE.Clear();
             if (selectedObjj >= 0 && scene.children.Count > 0)
             {
@@ -163,12 +164,15 @@ namespace EPQui.UserCon
                 GL.Enable(EnableCap.CullFace);
 
             }
-
-
             camera.frame.update();
 
-
-
+            foreach (LightContainer light in lights)
+            {
+                light.setShadowModel(camera);
+                scene.UpdateShadow(light.shadowModel);
+                // scene.UpdateShadow(camera.cameraMatrix);
+                //   if (scene.children[selectedObjj] == light)   light.ShadowModel(window.Framebuffer);
+            }
 
         }
 
@@ -209,29 +213,29 @@ namespace EPQui.UserCon
                     scene.save();
                     break;
                 case 7:
-                    var dialog = new Microsoft.Win32.OpenFileDialog();
-                    dialog.FileName = "Scene"; // Default file name
-                    dialog.DefaultExt = ".sce"; // Default file extension
-                    dialog.Filter = "Text documents (.sce)|*.sce"; // Filter files by extension
-                    dialog.CheckFileExists = false;
-                    
-                    bool? result = dialog.ShowDialog();
 
-                    InitializeComponent();
-                    if (result == true)
-                    {
-                        string filename = dialog.FileName;
-                        bool valid = false;
-                        do
-                        {
-                            if (File.Exists(filename)) filename = filename.Substring(0, filename.Length - 4) + "(dupe).sce";
-                            else valid = true;
-                        } while (valid == false);
-                        
-                        scene.path = filename;
-                        scene.save();
-                    }
+                    SceneSelectore sceneSelectore = new SceneSelectore();
+                    sceneSelectore.SceneSelected += save;
+                    sceneSelectore.Show();
                     break;
+            }
+        }
+
+        void save(string filename)
+        {
+
+          //  if (result == true)
+            {
+               // string filename = dialog.FileName;
+                bool valid = false;
+                do
+                {
+                    if (File.Exists(filename)) filename = filename.Substring(0, filename.Length - 4) + "(dupe).sce";
+                    else valid = true;
+                } while (valid == false);
+
+                scene.path = filename;
+                scene.save();
             }
         }
 

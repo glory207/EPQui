@@ -329,28 +329,7 @@ namespace EPQui
             VBO.Unind();
             EBO.Unind();
         }
-        public void Draw(Shader shader, Camera camera) {
-             
-            shader.Activate();
-            VAO.Bind();
-         
-         
-            GL.Uniform3(GL.GetUniformLocation(shader.ID, "camPos"), camera.Position);
-            camera.Matrix(shader, "camMatrix");
-            GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
-            
-        }
-        public void DrawToClick(Shader shader, Camera camera) {
-            
-            shader.Activate();
-            VAO.Bind();
-
-            GL.Uniform3(GL.GetUniformLocation(shader.ID, "camPos"), camera.Position);
-            camera.Matrix(shader, "camMatrix");
-            GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
-        }
-        public void DrawToShadow() {
-            
+        public void Draw() {
             VAO.Bind();
             GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
         }

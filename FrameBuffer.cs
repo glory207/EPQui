@@ -30,7 +30,7 @@ namespace EPQui
         public Shader framebufferProgram;
         public int rectVAO;
         public int rectVBO;
-        int DeFrame;
+     public   int DeFrame;
         public int FBO;
         public int framebufferTexture;
         public int RBO;
@@ -168,6 +168,7 @@ namespace EPQui
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
+
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, framebufferTextureP, 0);
             RBOP = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBOP);

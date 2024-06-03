@@ -23,7 +23,7 @@ namespace EPQui.UserCon
     /// </summary>
     public partial class FloatEditor : UserControl, INotifyPropertyChanged
     {
-        bool mini;
+        bool mini = true;
         private string DisplayName = "Na";
         public float speed;
         public float Speed

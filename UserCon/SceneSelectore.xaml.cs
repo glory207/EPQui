@@ -22,12 +22,19 @@ namespace EPQui.UserCon
         public SceneSelectore()
         {
             InitializeComponent();
-            Closed += SceneSelectore_Closed;
+        }
+        public delegate void deletedEventHandler(string st);
+        public event deletedEventHandler SceneSelected;
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            SceneSelected.Invoke("Res/scenes/"+ txt.Text +".sce");
+            Close();
         }
 
-        private void SceneSelectore_Closed(object? sender, EventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+            Close();
         }
     }
 }

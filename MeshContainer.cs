@@ -9,13 +9,15 @@ using OpenTK.Graphics.OpenGL4;
 using System.IO;
 using System.Net;
 using System.Windows.Shapes;
+using System.Windows.Controls;
+using System.Windows.Automation.Text;
 
 namespace EPQui
 {
     internal class MeshContainer: HierObj,ICloneable
     {
         public material mate;
-
+        Shader shadowABC;
         public MeshContainer(Vector3 pos,string path,HierObj parentt) {
             parent = parentt;
             Position = pos;
@@ -25,6 +27,8 @@ namespace EPQui
 
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+             shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+           // shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
 
             mate = new material();
             mesh = new Mesh(path);
@@ -34,6 +38,9 @@ namespace EPQui
         {
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            //shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+
             objectRotationAdded = Quaternion.Identity;
 
         }
@@ -91,11 +98,22 @@ namespace EPQui
 	        	ii = "lightRot[" + i.ToString() + "]";
                 Matrix4 mt = lights[i].rotationMatrix.Inverted();
                 GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
+                
+	        	ii = "lightProjection[" + i.ToString() + "]";
+                mt = lights[i].shadowModel.Inverted();
+                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
+
+             //   ii = "ShadowMap[" + i.ToString() + "]";
+             //   GL.BindTexture(TextureTarget.Texture2D, lights[i].FBO.framebufferTextureP);
+             //   GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].FBO.framebufferTextureP);
+                
             
-	        }
+        }
+           string rii = "ShadowMapo";
+            GL.BindTexture(TextureTarget.Texture2D, lights[0].FBO.framebufferTextureP);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, rii), lights[0].FBO.framebufferTextureP);
 
-
-           uint numDiffuse = 0;
+            uint numDiffuse = 0;
            uint numSpecular = 0;
          for (int i = 0; i < mate.textures.Count(); i++)
          {
@@ -109,8 +127,8 @@ namespace EPQui
              {
                  num = (numSpecular++).ToString();
              }
-             mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
              mate.textures[i].Bind();
+             mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
          }
 
          GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
@@ -118,7 +136,10 @@ namespace EPQui
 
          GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
          GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
-         mesh.Draw(shaderProgram, camera);
+            shaderProgram.Activate();
+            GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(shaderProgram, "camMatrix");
+            mesh.Draw();
             for (int i = 0; i < mate.textures.Count(); i++)
             {
            
@@ -136,20 +157,24 @@ namespace EPQui
             objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             clickProgram.Activate();
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
-            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
-            mesh.DrawToClick(clickProgram, camera);
+            GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(clickProgram, "camMatrix");
+            mesh.Draw();
 
         }
-       public void UpdateShadow(Shader shadowMapProgram)
+       public void UpdateShadow(Matrix4 cam)
         {
 
 
-            objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
-            GL.UniformMatrix4(GL.GetUniformLocation(shadowMapProgram.ID, "model"), false, ref objectModel);
-            mesh.DrawToShadow();
+          objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
+         
+          rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+          objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
+            shadowABC.Activate();
+          GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref objectModel);
+          GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref cam);
+          mesh.Draw();
 
         }
 

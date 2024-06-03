@@ -46,7 +46,7 @@ namespace EPQui.UserCon
             traES.BoundVector = target.objectScale;
             Danm.BoundVal = target.name;
         }
-        bool mini;
+        bool mini = false;
         private void title_MouseDown(object sender, MouseButtonEventArgs e)
         {
             mini = !mini;
