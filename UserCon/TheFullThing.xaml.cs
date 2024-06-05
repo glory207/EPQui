@@ -85,7 +85,7 @@ namespace EPQui.UserCon
         }
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
-            Texture tex = new Texture((string)((Button)sender).Tag, "diffuse", 0, PixelFormat.Rgba);
+            Texture tex = new Texture((string)((Button)sender).Tag, "diffuse", PixelFormat.Rgba);
             if (scene.children[window.selectedObjj].GetType() == typeof(MeshContainer)) ((MeshContainer)scene.children[window.selectedObjj]).mate.textures[0] = tex;
         }
 

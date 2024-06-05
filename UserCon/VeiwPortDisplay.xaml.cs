@@ -60,7 +60,7 @@ namespace EPQui.UserCon
         public int editObjHover;
         public int editObj;
         public int selectedObjj = 0;
-
+        List<LightContainer> lights;
         public delegate void SampleEventHandler();
         public event SampleEventHandler SampleEvent;
         private void Window_Loaded1(object sender, RoutedEventArgs e)
@@ -119,12 +119,14 @@ namespace EPQui.UserCon
 
         }
         int frameCount;
+        int frameCountU;
         float elapsTime;
         private float fps;
         private float delta;
         private void Window_Render(TimeSpan obj)
         {
             frameCount++;
+            frameCountU++;
             delta = (float)obj.TotalSeconds;
             elapsTime += delta;
             if (elapsTime > 0.2f)
@@ -136,9 +138,11 @@ namespace EPQui.UserCon
             }
             update();
             camera.updateMatrix(45.0f, 0.1f, 100.0f, SCR_WIDTH, SCR_HEIGHT);
-            List<LightContainer> lights = new List<LightContainer>();
+           
 
-
+            scene.PreUpdate();
+         if(shade)  scene.UpdateShadow(camera);
+            
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
             hoverObj = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
@@ -153,7 +157,11 @@ namespace EPQui.UserCon
                 GL.Enable(EnableCap.CullFace);
             }
             editObjHover = camera.frameE.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
+           
+
+
             camera.frame.Clear();
+            lights = new List<LightContainer>();
             scene.Update(lights, camera);
             if (selectedObjj >= 0 && scene.children.Count > 0)
             {
@@ -166,14 +174,13 @@ namespace EPQui.UserCon
             }
             camera.frame.update();
 
-            foreach (LightContainer light in lights)
+            if (shift)
             {
-                light.setShadowModel(camera);
-                scene.UpdateShadow(light.shadowModel);
-                // scene.UpdateShadow(camera.cameraMatrix);
-                //   if (scene.children[selectedObjj] == light)   light.ShadowModel(window.Framebuffer);
-            }
 
+               
+                lights[0].FBO.DeFrame = window.Framebuffer;
+                lights[0].FBO.update();
+            }
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -182,7 +189,7 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL;
+        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -217,6 +224,12 @@ namespace EPQui.UserCon
                     SceneSelectore sceneSelectore = new SceneSelectore();
                     sceneSelectore.SceneSelected += save;
                     sceneSelectore.Show();
+                    break;
+                case 8:
+
+
+                    shade = ! shade;
+                    
                     break;
             }
         }
@@ -367,7 +380,7 @@ namespace EPQui.UserCon
                     gyzmo.type = GyzmoType.scale;
                     break;
                 case Key.Y:
-                    Texture tex = new Texture("Res/textures/planks.png", "diffuse", 0, PixelFormat.Rgba);
+                    Texture tex = new Texture("Res/textures/planks.png", "diffuse", PixelFormat.Rgba);
                     break;
             }
         }

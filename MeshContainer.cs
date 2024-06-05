@@ -64,7 +64,14 @@ namespace EPQui
             
             
         }
+        public override void PreUpdate()
+        {
 
+            objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
+
+        }
         public override void destroy() {
             shaderProgram.Delete();
             clickProgram.Delete();
@@ -72,10 +79,6 @@ namespace EPQui
         public override void Update(List<LightContainer> lights,Camera camera) {
 
 
-
-            objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
 
             shaderProgram.Activate();
               
@@ -100,18 +103,12 @@ namespace EPQui
                 GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
                 
 	        	ii = "lightProjection[" + i.ToString() + "]";
-                mt = lights[i].shadowModel.Inverted();
+                mt = lights[i].shadowModel;
                 GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
 
-             //   ii = "ShadowMap[" + i.ToString() + "]";
-             //   GL.BindTexture(TextureTarget.Texture2D, lights[i].FBO.framebufferTextureP);
-             //   GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].FBO.framebufferTextureP);
-                
-            
+               ii = "ShadowMap[" + i.ToString() + "]";
+               lights[i].FBO.BindT(shaderProgram,ii);
         }
-           string rii = "ShadowMapo";
-            GL.BindTexture(TextureTarget.Texture2D, lights[0].FBO.framebufferTextureP);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, rii), lights[0].FBO.framebufferTextureP);
 
             uint numDiffuse = 0;
            uint numSpecular = 0;
@@ -126,12 +123,12 @@ namespace EPQui
              else if (type == "specular")
              {
                  num = (numSpecular++).ToString();
-             }
-             mate.textures[i].Bind();
-             mate.textures[i].texUnit(shaderProgram, (type + num).ToString(), (uint)i);
-         }
+                }
+                mate.textures[i].texUnit(shaderProgram, (type + num).ToString());
+            }
 
-         GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
+
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
          GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
 
          GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
@@ -140,21 +137,12 @@ namespace EPQui
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camPos"), camera.Position);
             camera.Matrix(shaderProgram, "camMatrix");
             mesh.Draw();
-            for (int i = 0; i < mate.textures.Count(); i++)
-            {
-           
-                mate.textures[i].Unbind();
-            }
 
         }
        public override void UpdateClick(Camera camera,int value,int value2)
         {
 
 
-            objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-
-            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-            objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             clickProgram.Activate();
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
@@ -166,11 +154,6 @@ namespace EPQui
        public void UpdateShadow(Matrix4 cam)
         {
 
-
-          objectModel = Matrix4.CreateScale(objectScale + objectScaleAdded);
-         
-          rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-          objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             shadowABC.Activate();
           GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref objectModel);
           GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref cam);

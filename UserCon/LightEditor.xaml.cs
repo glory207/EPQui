@@ -67,7 +67,7 @@ namespace EPQui.UserCon
                 traS.BoundVector = clamp(traS.BoundVector, 0, 1);
                 target.lightColor.Xyz = traS.BoundVector;
                 target.intencity = traI.BoundVector;
-           float rX = clamp(traA.BoundVector.X, 0, 1.57f);
+           float rX = clamp(traA.BoundVector.X, 0.02f, 1.4f);
            float rY = clamp(traA.BoundVector.Y, 0, 1);
             traA.BoundVector = new Vector2(rX, rY);
                 target.angle = new Vector2(rX, rY);

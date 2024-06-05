@@ -19,8 +19,8 @@ namespace EPQui
         public Vector3 Position;
         public Vector3 objectScale;
         public Vector3 objectScaleAdded;
-     public Quaternion objectRotation;
-     public Quaternion objectRotationAdded;
+        public Quaternion objectRotation;
+        public Quaternion objectRotationAdded;
         public Vector4 lightColor;
         public Matrix4 objectModel;
         public Matrix4 rotationMatrix = Matrix4.Identity;
@@ -30,6 +30,7 @@ namespace EPQui
         public List<HierObj> children = new List<HierObj>();
         public HierObj parent;
         public string name = "new Obj"; 
+        public abstract void PreUpdate();
         public abstract void Update(List<LightContainer> lights, Camera camera);
         public abstract void UpdateClick(Camera camera, int value, int value2);
         public abstract void destroy();
@@ -38,7 +39,7 @@ namespace EPQui
     public class material:ICloneable
     {
        public List<Texture> textures = new List<Texture>() {
-                 new Texture("Res/textures/planks.png", "diffuse", 0, PixelFormat.Rgba)
+                 new Texture("Res/textures/planks.png", "diffuse", PixelFormat.Rgba)
             };
         public Vector2 texOff = new Vector2(0);
         public Vector2 texScale = new Vector2(1);

@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using Quaternion = OpenTK.Mathematics.Quaternion;
+using System.Windows.Documents;
 
 namespace EPQui
 {
@@ -159,7 +160,7 @@ namespace EPQui
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.mate.textures[0] = new Texture(line, "diffuse", 0, PixelFormat.Rgba);
+                    tempL.mate.textures[0] = new Texture(line, "diffuse", PixelFormat.Rgba);
 
                     children.Add(tempL);
                 }
@@ -345,6 +346,13 @@ namespace EPQui
             gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
             children.Add(new LightContainer(this));
         }
+        public override void PreUpdate()
+        {
+            foreach (HierObj ob in children)
+            {
+                ob.PreUpdate();
+            }
+        }
         public override void Update(List<LightContainer> lights, Camera camera)
         {
             foreach (HierObj ob in children)
@@ -378,13 +386,20 @@ namespace EPQui
                 ob.UpdateClick(camera, children.IndexOf(ob), children.Count);
             }
         }
-        public void UpdateShadow(Matrix4 lit)
+        public void UpdateShadow(Camera cam)
         {
-
-            foreach (HierObj ob in children)
+            foreach (HierObj obb in children)
             {
-                if (ob.GetType() == typeof(MeshContainer)) ((MeshContainer)ob).UpdateShadow(lit);
+                if (obb.GetType() == typeof(LightContainer)) { ((LightContainer)obb).setShadowModel(cam);
+
+                    foreach (HierObj ob in children)
+                    {
+                        if (ob.GetType() == typeof(MeshContainer)) ((MeshContainer)ob).UpdateShadow(((LightContainer)obb).shadowModel);
+                    }
+                }
             }
+            GL.Viewport(0,0,cam.width,cam.height);
+
         }
         public override void destroy()
         {

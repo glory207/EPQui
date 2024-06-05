@@ -42,43 +42,40 @@ namespace EPQui
             clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
             name = "light";
-            FBO = new FrameBuffer(2048,2048,PixelInternalFormat.Rgba,PixelFormat.Rgba,PixelType.UnsignedByte,0,false);
-            
-         //  FBO = GL.GenFramebuffer();
-         //  framebufferTexture = GL.GenTexture();
-         //  GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
-         //  GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent, width, width, 0, PixelFormat.DepthComponent, PixelType.UnsignedByte, IntPtr.Zero);
-         //
-         //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
-         //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
-         //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
-         //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
-         //  float[] clampColor = {1,1,1,1};
-         //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, clampColor);
-         //  GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-         //  GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, framebufferTexture, 0);
-         //  GL.DrawBuffer(DrawBufferMode.None);
-         //  GL.ReadBuffer(ReadBufferMode.None);
-         //  GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
+            FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, 0, false) { color = new Color4(0,0,0,0)};
             
         }
 
         public void setShadowModel(Camera camera)
         {
-            GL.Viewport(0,0, 2048/2, 2048/2);
-            Vector4 di = new Vector4(0, -1, 0,0) * rotationMatrix;
-            Matrix4 view = Matrix4.LookAt((Position + PositionAdded), (Position + PositionAdded) + di.Xyz, new Vector3(0, 1, 0));
-            Matrix4 projection = Matrix4.CreateOrthographic(-100, 100, -100, 100);
-           // Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((45f * MathF.PI / 180f), (2048 / (float)2048), 0.1f, 100f);
-          
-            shadowModel = view * projection;
-            FBO.Clear();
+          GL.Viewport(0,0, 2048, 2048);
+         Vector4 di = new Vector4(0, -1, 0,0) * rotationMatrix;
+         Matrix4 view;
+            // Matrix4 view = objectModel;
+            Matrix4 projection;
+        if(Type == LightType.dir)
+            {
+                projection = Matrix4.CreateOrthographic(50, 50, -25, 25);
+                view = Matrix4.LookAt(Vector3.Zero, di.Xyz * 20, new Vector3(0, 1, 0));
+            }
+            else
+            {
+                projection = Matrix4.CreatePerspectiveFieldOfView(angle.X * 2, (2048 / (float)2048), 0.01f, 50f);
+                view = Matrix4.LookAt(Position + PositionAdded,(Position + PositionAdded)+ di.Xyz * 20, new Vector3(0, 1, 0));
+            }
+         
+         shadowModel = view * projection;
+         FBO.Clear();
         }
         public void ShadowModel(int fb)
         {
             FBO.DeFrame = fb;
             FBO.update();
+        }
+        public override void PreUpdate()
+        {
+            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
+            objectModel = rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
         }
 
         public override void Update(List<LightContainer> lights, Camera camera) {
@@ -87,8 +84,7 @@ namespace EPQui
 
             shaderProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-            objectModel = rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
+           
             GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
             GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camUp"), camera.OrientationU);
@@ -105,8 +101,6 @@ namespace EPQui
 
             clickProgram.Activate();
 
-            rotationMatrix = Matrix4.CreateFromQuaternion(objectRotationAdded * objectRotation);
-            objectModel =  rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
             GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
             GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
@@ -122,25 +116,9 @@ namespace EPQui
         }
         public LightContainer()
         {
-            FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte, 0, false);
+            FBO = new FrameBuffer(500, 500, PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte, 0, false) { color = new Color4(0, 0, 0, 0) };
 
-            //   FBO = GL.GenFramebuffer();
-            //   framebufferTexture = GL.GenTexture();
-            //   GL.BindTexture(TextureTarget.Texture2D, framebufferTexture);
-            //   GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.DepthComponent, width, width, 0, PixelFormat.DepthComponent, PixelType.UnsignedByte, IntPtr.Zero);
-            //
-            //   GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
-            //   GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);
-            //   GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.ClampToEdge);
-            //   GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
-            //   float[] clampColor = { 1, 1, 1, 1 };
-            //   GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, clampColor);
-            //   GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-            //   GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, framebufferTexture, 0);
-            //   GL.DrawBuffer(DrawBufferMode.None);
-            //   GL.ReadBuffer(ReadBufferMode.None);
-            //   GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
+          
         }
         public object Clone()
         {

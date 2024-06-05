@@ -7,21 +7,21 @@ using System.Windows.Automation.Text;
 using StbImageSharp;
 using System.IO;
 using System.Windows.Shapes;
+using System.Reflection.Metadata;
 
 namespace EPQui
 {
     public class Texture
     {
         public int ID;
-        public int unit;
+        public long handle;
         public string type;
         ImageResult image;
         public string path;
-        public Texture(string path, string texType, int slot,PixelFormat pixelFormat)
+        public Texture(string path, string texType,PixelFormat pixelFormat)
         {
             this.path = path;
             type = texType;
- unit = slot;
            
 
 
@@ -46,21 +46,25 @@ namespace EPQui
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
        
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
+            handle = GL.Arb.GetTextureHandle(ID);
+            GL.Arb.MakeTextureHandleResident(handle);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
-        public void Bind() {
-            GL.ActiveTexture(TextureUnit.Texture0 + unit);
-            GL.BindTexture(TextureTarget.Texture2D, ID); }
-        public void Unbind() { GL.ActiveTexture(TextureUnit.Texture0); GL.BindTexture(TextureTarget.Texture2D,0); }
+        public void Bind()
+        {
+
+        }
+        public void Unbind() {
+        
+        }
         public void Delete() {
             GL.DeleteTexture(ID);
         }
 
-        public void texUnit(Shader shader, string uniform, uint unit){
-            int texUni = GL.GetUniformLocation(shader.ID, uniform);
+        public void texUnit(Shader shader, string uniform){
+            
             shader.Activate();
-	        GL.Uniform1(texUni, unit);
+	        GL.Arb.UniformHandle(GL.GetUniformLocation(shader.ID, uniform), handle);
         }
 
 }

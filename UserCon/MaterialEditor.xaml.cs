@@ -83,7 +83,7 @@ namespace EPQui.UserCon
                 string filename = dialog.FileName;
                 if (filename.EndsWith(".png")|| filename.EndsWith(".jpg"))
                 {
-                    target.textures = new List<Texture> { new Texture(filename, "diffuse", 0, PixelFormat.Rgba) };
+                    target.textures = new List<Texture> { new Texture(filename, "diffuse", PixelFormat.Rgba) };
                 }
             }
         }
