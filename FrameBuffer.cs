@@ -70,7 +70,6 @@ namespace EPQui
 
             framebufferProgram = new Shader("Res/framebuffer.vert", "Res/framebuffer.frag");
             framebufferProgram.Activate();
-            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture"), framebufferTexture);
             updateScreenSize(widthf, heightf);
 
         }
@@ -108,6 +107,32 @@ namespace EPQui
             //  GL.ActiveTexture(TextureUnit.Texture0);
             //  GL.BindTexture(textureTarget, framebufferTextureP);
             BindT(framebufferProgram, "screenTexture");
+            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "asd"), 0);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+
+
+        }
+        public void update2(Camera camera)
+        {
+            if (multisample)
+            {
+                GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, FBOP);
+                GL.BlitFramebuffer(0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
+            }
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, DeFrame);
+
+            framebufferProgram.Activate();
+            GL.BindVertexArray(rectVAO);
+            GL.Disable(EnableCap.DepthTest);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            //  GL.ActiveTexture(TextureUnit.Texture0);
+            //  GL.BindTexture(textureTarget, framebufferTextureP);
+            BindT(framebufferProgram, "screenTexture2");
+            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "asd"), 5);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
 
@@ -175,12 +200,12 @@ namespace EPQui
 
             framebufferTextureP = GL.GenTexture();
             GL.BindTexture(textureTarget, framebufferTextureP);
-            if (textureTarget == TextureTarget.Texture2D) GL.TexImage2D(textureTarget, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
+            if (textureTarget == TextureTarget.Texture2D) GL.TexImage2D(textureTarget, 0, pixelInternalFormat, width, height, 0, pixelFormat, pixelType, IntPtr.Zero);
             else if (textureTarget == TextureTarget.TextureCubeMap)
             {
                 for (int i = 0; i < 1; ++i)
                 {
-                    GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
+                    GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, pixelInternalFormat, width, height, 0, pixelFormat, pixelType, IntPtr.Zero);
                 }
 
                 GL.TexParameter(textureTarget, TextureParameterName.TextureWrapR, (float)TextureWrapMode.ClampToEdge);
@@ -191,14 +216,19 @@ namespace EPQui
             GL.TexParameter(textureTarget, TextureParameterName.TextureWrapT, (float)TextureWrapMode.ClampToEdge);
             framebufferTexturePHandle = GL.Arb.GetTextureHandle(framebufferTextureP);
             GL.Arb.MakeTextureHandleResident(framebufferTexturePHandle);
-
+            
 
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, textureTarget, framebufferTextureP, 0);
             RBOP = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBOP);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, width, height);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBOP);
+            if (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != FramebufferErrorCode.FramebufferComplete)
+            {
 
+                MessageBox.Show("Framebuffer is not complete!" + height.ToString());
+                throw new Exception("Framebuffer is not complete!");
+            }
         }
     }
 }

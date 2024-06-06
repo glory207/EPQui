@@ -44,19 +44,19 @@ namespace EPQui
             clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
             name = "light";
-            FBOC = new FrameBuffer(2048, 2048, PixelInternalFormat.Rgba, PixelFormat.Bgra, PixelType.Float, TextureTarget.TextureCubeMap, 0, false) { color = new Color4(0, 0, 0, 0) };
+            FBOC = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.TextureCubeMap, 0, false) { color = new Color4(0, 0, 0, 0) };
             FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.Texture2D, 0, false) { color = new Color4(0, 0, 0, 0) };
 
         }
 
         public void setShadowModel(Camera camera)
         {
-          GL.Viewport(0,0, 2048, 2048);
-         Vector4 di = new Vector4(0, -1, 0,0) * rotationMatrix;
-         Matrix4 view;
+            GL.Viewport(0, 0, 2048, 2048);
+            Vector4 di = new Vector4(0, -1, 0, 0) * rotationMatrix;
+            Matrix4 view;
             // Matrix4 view = objectModel;
             Matrix4 projection;
-        if(Type == LightType.dir)
+            if (Type == LightType.dir)
             {
                 projection = Matrix4.CreateOrthographic(50, 50, -25, 25);
                 view = Matrix4.LookAt(Vector3.Zero, di.Xyz * 20, new Vector3(0, 1, 0));
@@ -72,21 +72,22 @@ namespace EPQui
                 shadowModel = view * projection;
                 FBO.Clear();
             }
-            else if(Type == LightType.point)
+            else if (Type == LightType.point)
             {
 
-                projection = Matrix4.CreatePerspectiveFieldOfView(MathF.PI / 2f, 1f, 0.01f, 50f);
+                projection = Matrix4.CreatePerspectiveFieldOfView(MathF.PI / 2f, (2048 / (float)2048), 0.01f, 50f);
                 shadowCube = new Matrix4[6]{
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f)),
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f)),
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0, 0.0f,  1.0f )),
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0, 0.0f, -1.0f)),
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0, -1.0f, 0.0f)),
-                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0, -1.0f, 0.0f)),
-             };
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f))  * projection   ,
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f)) * projection      ,
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0, 0.0f,  1.0f )) * projection      ,
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0, 0.0f, -1.0f)) * projection    ,
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0, -1.0f, 0.0f))  * projection        ,
+                      Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0, -1.0f, 0.0f)) * projection          ,
+                };
+
                 FBOC.Clear();
             }
-         
+
         }
         public void ShadowModel(int fb)
         {

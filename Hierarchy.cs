@@ -368,6 +368,8 @@ namespace EPQui
             {
                 if(ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
             }
+
+
             gridshaderProgram.Activate();
             Matrix4 mat = Matrix4.Identity;
             GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
@@ -388,17 +390,38 @@ namespace EPQui
         }
         public void UpdateShadow(Camera cam)
         {
+
             foreach (HierObj obb in children)
             {
-                if (obb.GetType() == typeof(LightContainer)) { ((LightContainer)obb).setShadowModel(cam);
-
-                    foreach (HierObj ob in children)
+                if (obb.GetType() == typeof(LightContainer))
+                {
+                    ((LightContainer)obb).setShadowModel(cam);
+                    if (((LightContainer)obb).Type == LightType.point)
                     {
-                        if (ob.GetType() == typeof(MeshContainer)) ((MeshContainer)ob).UpdateShadow(((LightContainer)obb).shadowModel);
+                        foreach (HierObj ob in children)
+                        {
+                            if (ob.GetType() == typeof(MeshContainer))
+                            {
+
+                                ((MeshContainer)ob).UpdateShadowC(((LightContainer)obb));
+                            }
+                        }
                     }
+                    else
+                    {
+                        foreach (HierObj ob in children)
+                        {
+                            if (ob.GetType() == typeof(MeshContainer))
+                            {
+
+                                ((MeshContainer)ob).UpdateShadow(((LightContainer)obb).shadowModel);
+                            }
+                        }
+                    }
+
                 }
             }
-            GL.Viewport(0,0,cam.width,cam.height);
+            GL.Viewport(0, 0, cam.width, cam.height);
 
         }
         public override void destroy()

@@ -114,8 +114,12 @@ namespace EPQui
                 ii = "ShadowMap[" + i.ToString() + "]";
                 lights[i].FBO.BindT(shaderProgram, ii);
 
-                //    ii = "ShadowMapC[" + i.ToString() + "]";
-                //    lights[i].FBOC.BindT(shaderProgram,ii);
+                    ii = "ShadowMapC[" + i.ToString() + "]";
+
+                GL.ActiveTexture(TextureUnit.Texture0 + 2);
+                GL.BindTexture(TextureTarget.TextureCubeMap, lights[i].FBOC.framebufferTextureP);
+                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), 2);
+                lights[i].FBOC.BindT(shaderProgram,ii);
             }
 
             uint numDiffuse = 0;
@@ -168,15 +172,18 @@ namespace EPQui
             mesh.Draw();
 
         }
-        public void UpdateShadowC(Matrix4[] cam, Vector3 posL)
+        public void UpdateShadowC(LightContainer camL)
         {
 
             shadowC.Activate();
-            GL.Uniform3(GL.GetUniformLocation(shadowC.ID, "lightPos"), posL);
+
+
+            GL.Uniform3(GL.GetUniformLocation(shadowC.ID, "lightPos"), camL.Position + camL.PositionAdded);
             GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "model"), false, ref objectModel);
-            for (int i = 0; i < cam.Length; i++)
+            for (int i = 0; i < camL.shadowCube.Length; i++)
             {
-                GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref cam[i]);
+             //   GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref camL.shadowCube[i]);
+                GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref camL.shadowCube[i]);
             }
             mesh.Draw();
 
