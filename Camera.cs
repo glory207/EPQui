@@ -31,9 +31,9 @@ namespace EPQui
         {
             DeFrame = dframe;
 
-            frameC = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
-            frameE = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
-            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte, DeFrame,true);
+            frameC = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int,TextureTarget.Texture2D, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
+            frameE = new FrameBuffer(width, height, PixelInternalFormat.R32i, PixelFormat.RedInteger, PixelType.Int, TextureTarget.Texture2D, DeFrame,false) { color = new Color4(0, 0, 255, 255) };
+            frame = new FrameBuffer(width, height, PixelInternalFormat.Rgba, PixelFormat.Rgba, PixelType.UnsignedByte, TextureTarget.Texture2D, DeFrame,true);
             updateScreenSize(width, height);
             Position = position;
 

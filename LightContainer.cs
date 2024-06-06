@@ -29,6 +29,7 @@ namespace EPQui
         //  public int framebufferTexture;
         //  int width = 2048;
       public  FrameBuffer FBO;
+      public  FrameBuffer FBOC;
 
       public  Matrix4 shadowModel;
         public LightContainer(HierObj parent)
@@ -42,8 +43,9 @@ namespace EPQui
             clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
             name = "light";
-            FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, 0, false) { color = new Color4(0,0,0,0)};
-            
+            FBOC = new FrameBuffer(2048, 2048, PixelInternalFormat.Rgba, PixelFormat.Bgra, PixelType.Float, TextureTarget.TextureCubeMap, 0, false) { color = new Color4(0, 0, 0, 0) };
+            FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.Texture2D, 0, false) { color = new Color4(0, 0, 0, 0) };
+
         }
 
         public void setShadowModel(Camera camera)
@@ -116,9 +118,10 @@ namespace EPQui
         }
         public LightContainer()
         {
-            FBO = new FrameBuffer(500, 500, PixelInternalFormat.Rgb, PixelFormat.Rgb, PixelType.UnsignedByte, 0, false) { color = new Color4(0, 0, 0, 0) };
+            FBOC = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.TextureCubeMap, 0, false) { color = new Color4(0, 0, 0, 0) };
+            FBO = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.Texture2D, 0, false) { color = new Color4(0, 0, 0, 0) };
 
-          
+
         }
         public object Clone()
         {
