@@ -14,11 +14,13 @@ using System.Windows.Automation.Text;
 
 namespace EPQui
 {
-    internal class MeshContainer: HierObj,ICloneable
+    internal class MeshContainer : HierObj, ICloneable
     {
         public material mate;
         Shader shadowABC;
-        public MeshContainer(Vector3 pos,string path,HierObj parentt) {
+        Shader shadowC;
+        public MeshContainer(Vector3 pos, string path, HierObj parentt)
+        {
             parent = parentt;
             Position = pos;
             objectScale = new Vector3(1.0f);
@@ -27,7 +29,9 @@ namespace EPQui
 
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-             shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+            shadowC = new Shader("Res/shadowCubeMap.vert", "Res/shadowCubeMap.frag", "Res/shadowCubeMap.geomertry");
+            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+            // shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
 
             mate = new material();
             mesh = new Mesh(path);
@@ -37,6 +41,7 @@ namespace EPQui
         {
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            shadowC = new Shader("Res/shadowCubeMap.vert", "Res/shadowCubeMap.frag", "Res/shadowCubeMap.geomertry");
             shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
 
             objectRotationAdded = Quaternion.Identity;
@@ -48,19 +53,19 @@ namespace EPQui
             {
                 parent = this.parent,
                 Position = Position,
-            objectScale = objectScale,
-            objectRotation = objectRotation,
-            objectRotationAdded = objectRotationAdded,
+                objectScale = objectScale,
+                objectRotation = objectRotation,
+                objectRotationAdded = objectRotationAdded,
 
-            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry"),
-            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry"),
+                shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry"),
+                clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry"),
 
-            mate = (material)mate.Clone(),
-            mesh = mesh,
-            name = name + " copy"
+                mate = (material)mate.Clone(),
+                mesh = mesh,
+                name = name + " copy"
             };
-            
-            
+
+
         }
         public override void PreUpdate()
         {
@@ -70,74 +75,79 @@ namespace EPQui
             objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
 
         }
-        public override void destroy() {
+        public override void destroy()
+        {
             shaderProgram.Delete();
             clickProgram.Delete();
         }
-        public override void Update(List<LightContainer> lights,Camera camera) {
+        public override void Update(List<LightContainer> lights, Camera camera)
+        {
 
 
 
             shaderProgram.Activate();
-              
-	          GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"), false, ref objectModel);
-	          GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "lightnum"), lights.Count);
-	          for (int i = 0; i < lights.Count; i++)
-	        {
-	        	string ii = "lightType[" + i.ToString() + "]";
-	        	GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), (int)lights[i].Type);
 
-	            ii = "lightColor[" + i.ToString() + "]";
-	        	GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor.Normalized());
-	            ii = "lightIntensity[" + i.ToString() + "]";
-	        	GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].intencity);
-	        	ii = "lightPos[" + i.ToString() + "]";
-	        	GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].Position + lights[i].PositionAdded);
-	        	ii = "lightAng[" + i.ToString() + "]";
-	        	GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].angle);
-            
-	        	ii = "lightRot[" + i.ToString() + "]";
+            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"), false, ref objectModel);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "lightnum"), lights.Count);
+            for (int i = 0; i < lights.Count; i++)
+            {
+                string ii = "lightType[" + i.ToString() + "]";
+                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), (int)lights[i].Type);
+
+                ii = "lightColor[" + i.ToString() + "]";
+                GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor.Normalized());
+                ii = "lightIntensity[" + i.ToString() + "]";
+                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].intencity);
+                ii = "lightPos[" + i.ToString() + "]";
+                GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].Position + lights[i].PositionAdded);
+                ii = "lightAng[" + i.ToString() + "]";
+                GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].angle);
+
+                ii = "lightRot[" + i.ToString() + "]";
                 Matrix4 mt = lights[i].rotationMatrix.Inverted();
-                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
-                
-	        	ii = "lightProjection[" + i.ToString() + "]";
-                mt = lights[i].shadowModel;
-                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false ,ref mt);
+                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false, ref mt);
 
-               ii = "ShadowMap[" + i.ToString() + "]";
-               lights[i].FBO.BindT(shaderProgram,ii);
-        }
+                ii = "lightProjection[" + i.ToString() + "]";
+                mt = lights[i].shadowModel;
+                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false, ref mt);
+
+                ii = "ShadowMap[" + i.ToString() + "]";
+                lights[i].FBO.BindT(shaderProgram, ii);
+
+                //    ii = "ShadowMapC[" + i.ToString() + "]";
+                //    lights[i].FBOC.BindT(shaderProgram,ii);
+            }
 
             uint numDiffuse = 0;
-           uint numSpecular = 0;
-         for (int i = 0; i < mate.textures.Count(); i++)
-         {
-             string num = "";
-             string type = mate.textures[i].type;
-             if (type == "diffuse")
-             {
-                 num = (numDiffuse++).ToString();
-             }
-             else if (type == "specular")
-             {
-                 num = (numSpecular++).ToString();
+            uint numSpecular = 0;
+            for (int i = 0; i < mate.textures.Count(); i++)
+            {
+                string num = "";
+                string type = mate.textures[i].type;
+                if (type == "diffuse")
+                {
+                    num = (numDiffuse++).ToString();
+                }
+                else if (type == "specular")
+                {
+                    num = (numSpecular++).ToString();
                 }
                 mate.textures[i].texUnit(shaderProgram, (type + num).ToString());
             }
 
 
             GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
-         GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
 
-         GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
-         GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
+            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
+            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
             shaderProgram.Activate();
             GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camPos"), camera.Position);
             camera.Matrix(shaderProgram, "camMatrix");
             mesh.Draw();
 
         }
-       public override void UpdateClick(Camera camera,int value,int value2)
+        public override void UpdateClick(Camera camera, int value, int value2)
         {
 
 
@@ -149,13 +159,26 @@ namespace EPQui
             mesh.Draw();
 
         }
-       public void UpdateShadow(Matrix4 cam)
+        public void UpdateShadow(Matrix4 cam)
         {
 
             shadowABC.Activate();
-          GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref objectModel);
-          GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref cam);
-          mesh.Draw();
+            GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref objectModel);
+            GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref cam);
+            mesh.Draw();
+
+        }
+        public void UpdateShadowC(Matrix4[] cam, Vector3 posL)
+        {
+
+            shadowC.Activate();
+            GL.Uniform3(GL.GetUniformLocation(shadowC.ID, "lightPos"), posL);
+            GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "model"), false, ref objectModel);
+            for (int i = 0; i < cam.Length; i++)
+            {
+                GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref cam[i]);
+            }
+            mesh.Draw();
 
         }
 
