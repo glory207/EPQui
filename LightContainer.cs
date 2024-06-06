@@ -32,6 +32,7 @@ namespace EPQui
       public  FrameBuffer FBOC;
 
       public  Matrix4 shadowModel;
+      public  Matrix4[] shadowModelCube = new Matrix4[6];
         public LightContainer(HierObj parent)
         {
             this.parent = parent;
@@ -59,15 +60,16 @@ namespace EPQui
             {
                 projection = Matrix4.CreateOrthographic(50, 50, -25, 25);
                 view = Matrix4.LookAt(Vector3.Zero, di.Xyz * 20, new Vector3(0, 1, 0));
+
+                shadowModel = view * projection;
+                FBO.Clear();
             }
             else
             {
-                projection = Matrix4.CreatePerspectiveFieldOfView(angle.X * 2, (2048 / (float)2048), 0.01f, 50f);
-                view = Matrix4.LookAt(Position + PositionAdded,(Position + PositionAdded)+ di.Xyz * 20, new Vector3(0, 1, 0));
+              //  projection = Matrix4.CreatePerspectiveFieldOfView(ma, (2048 / (float)2048), 0.01f, 50f);
+              //  shadowModelCube
             }
          
-         shadowModel = view * projection;
-         FBO.Clear();
         }
         public void ShadowModel(int fb)
         {
