@@ -28,7 +28,6 @@ namespace EPQui
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
              shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
-           // shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
 
             mate = new material();
             mesh = new Mesh(path);
@@ -38,7 +37,6 @@ namespace EPQui
         {
             shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            //shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
             shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
 
             objectRotationAdded = Quaternion.Identity;

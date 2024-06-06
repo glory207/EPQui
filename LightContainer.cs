@@ -32,7 +32,7 @@ namespace EPQui
       public  FrameBuffer FBOC;
 
       public  Matrix4 shadowModel;
-      public  Matrix4[] shadowModelCube = new Matrix4[6];
+      public  Matrix4[] shadowCube = new Matrix4[6];
         public LightContainer(HierObj parent)
         {
             this.parent = parent;
@@ -64,10 +64,27 @@ namespace EPQui
                 shadowModel = view * projection;
                 FBO.Clear();
             }
-            else
+            else if (Type == LightType.spot)
             {
-              //  projection = Matrix4.CreatePerspectiveFieldOfView(ma, (2048 / (float)2048), 0.01f, 50f);
-              //  shadowModelCube
+                projection = Matrix4.CreatePerspectiveFieldOfView(angle.X, (2048 / (float)2048), 0.01f, 50f);
+                view = Matrix4.LookAt((Position + PositionAdded), (Position + PositionAdded) + di.Xyz * 20, new Vector3(0, 1, 0));
+
+                shadowModel = view * projection;
+                FBO.Clear();
+            }
+            else if(Type == LightType.point)
+            {
+
+                projection = Matrix4.CreatePerspectiveFieldOfView(MathF.PI / 2f, 1f, 0.01f, 50f);
+                shadowCube = new Matrix4[6]{
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f)),
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(-1.0f, 0.0f, 0.0f), new Vector3(0, -1.0f, 0.0f)),
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0, 0.0f,  1.0f )),
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, -1.0f, 0.0f), new Vector3(0, 0.0f, -1.0f)),
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0, -1.0f, 0.0f)),
+                 projection * Matrix4.LookAt(Position + PositionAdded, (Position + PositionAdded) + new Vector3(0.0f, 0.0f, -1.0f), new Vector3(0, -1.0f, 0.0f)),
+             };
+                FBOC.Clear();
             }
          
         }
