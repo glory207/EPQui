@@ -174,13 +174,13 @@ namespace EPQui.UserCon
             }
             camera.frame.update();
 
-            if (shift)
-            {
-
-               
-                lights[0].FBO.DeFrame = window.Framebuffer;
-                lights[0].FBO.update();
-            }
+         // if (shift)
+         // {
+         //
+         //    
+         //     lights[0].FBO.DeFrame = window.Framebuffer;
+         //     lights[0].FBO.update();
+         // }
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
