@@ -116,7 +116,7 @@ namespace EPQui
 
                     ii = "ShadowMapC[" + i.ToString() + "]";
 
-                GL.ActiveTexture(TextureUnit.Texture0 + 2);
+                GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.TextureCubeMap, lights[i].FBOC.framebufferTextureP);
                 GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), 2);
                 lights[i].FBOC.BindT(shaderProgram,ii);

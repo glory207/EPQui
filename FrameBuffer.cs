@@ -11,6 +11,7 @@ using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows;
 using System.Reflection;
+using System.IO;
 
 namespace EPQui
 {
@@ -72,6 +73,9 @@ namespace EPQui
             framebufferProgram.Activate();
             updateScreenSize(widthf, heightf);
 
+
+
+
         }
         public void Clear()
         {
@@ -112,15 +116,9 @@ namespace EPQui
 
 
         }
-        public void update2(Camera camera)
+        public void update2(int cubemapTexture)
         {
-            if (multisample)
-            {
-                GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, FBO);
-                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, FBOP);
-                GL.BlitFramebuffer(0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Nearest);
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, FBO);
-            }
+            
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, DeFrame);
 
@@ -129,9 +127,10 @@ namespace EPQui
             GL.Disable(EnableCap.DepthTest);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            //  GL.ActiveTexture(TextureUnit.Texture0);
-            //  GL.BindTexture(textureTarget, framebufferTextureP);
-            BindT(framebufferProgram, "screenTexture2");
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.TextureCubeMap, cubemapTexture);
+            GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "screenTexture2"), 0);
+           // BindT(framebufferProgram, "screenTexture2");
             GL.Uniform1(GL.GetUniformLocation(framebufferProgram.ID, "asd"), 5);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
@@ -152,7 +151,12 @@ namespace EPQui
         }
         public void updateScreenSize(int widthf, int heightf)
         {
-
+            GL.DeleteFramebuffer(FBO);
+            GL.DeleteFramebuffer(FBOP);
+            GL.DeleteRenderbuffer(RBO);
+            GL.DeleteRenderbuffer(RBOP);
+            GL.DeleteTexture(framebufferTexture);
+            GL.DeleteTexture(framebufferTextureP);
             this.width = widthf;
             this.height = heightf;
             if (multisample)
@@ -203,12 +207,12 @@ namespace EPQui
             if (textureTarget == TextureTarget.Texture2D) GL.TexImage2D(textureTarget, 0, pixelInternalFormat, width, height, 0, pixelFormat, pixelType, IntPtr.Zero);
             else if (textureTarget == TextureTarget.TextureCubeMap)
             {
-                for (int i = 0; i < 1; ++i)
+                for (int i = 0; i < 5; i++)
                 {
                     GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, pixelInternalFormat, width, height, 0, pixelFormat, pixelType, IntPtr.Zero);
                 }
 
-                GL.TexParameter(textureTarget, TextureParameterName.TextureWrapR, (float)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(textureTarget, TextureParameterName.TextureWrapR, (float)TextureWrapMode.ClampToEdge);
             }
             GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
             GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (float)TextureMagFilter.Nearest);

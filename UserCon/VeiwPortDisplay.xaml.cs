@@ -23,6 +23,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using StbImageSharp;
 
 namespace EPQui.UserCon
 {
@@ -31,6 +32,7 @@ namespace EPQui.UserCon
     /// </summary>
     public partial class VeiwPortDisplay : UserControl
     {
+        int cubemapTexture;
         public VeiwPortDisplay()
         {
 
@@ -47,6 +49,28 @@ namespace EPQui.UserCon
             window.Unloaded += Window_Unloaded;
 
 
+            cubemapTexture = GL.GenTexture();
+           GL.BindTexture(TextureTarget.TextureCubeMap, cubemapTexture);
+          
+          
+           for (int i = 0; i < 5; i++)
+           {
+          
+          
+               ImageResult image = ImageResult.FromStream(File.OpenRead("Res/textures/planks.png"), ColorComponents.RedGreenBlueAlpha);
+               GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0,
+                             PixelInternalFormat.Rgba, image.Width, image.Height, 0,
+                             PixelFormat.Bgra, PixelType.UnsignedByte, image.Data);
+          
+           }
+          
+           GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+           GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+           GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+           GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+           GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
+          
+           GL.BindTexture(TextureTarget.TextureCubeMap, 0);
 
         }
 
@@ -146,7 +170,6 @@ namespace EPQui.UserCon
             camera.frameC.Clear();
             scene.UpdateClick(camera, 0, 0);
             hoverObj = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
-            Debug.WriteLine(hoverObj.ToString());
             camera.frameC.update();
             camera.frameE.Clear();
             if (selectedObjj >= 0 && scene.children.Count > 0)
@@ -174,13 +197,13 @@ namespace EPQui.UserCon
             }
             camera.frame.update();
 
-          if (shift)
-          {
-         
-             
-              lights[0].FBOC.DeFrame = window.Framebuffer;
-              lights[0].FBOC.update2(camera);
-          }
+        // if (shift)
+        // {
+        //
+        //    
+        //     lights[0].FBOC.DeFrame = window.Framebuffer;
+        //     lights[0].FBOC.update2(cubemapTexture);
+        // }
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
