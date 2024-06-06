@@ -127,6 +127,7 @@ namespace EPQui
         }
         public void updateScreenSize(int widthf, int heightf)
         {
+
             this.width = widthf;
             this.height = heightf;
             if (multisample)
@@ -174,14 +175,14 @@ namespace EPQui
 
             framebufferTextureP = GL.GenTexture();
             GL.BindTexture(textureTarget, framebufferTextureP);
-            if(textureTarget == TextureTarget.Texture2D) GL.TexImage2D(textureTarget, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
+            if (textureTarget == TextureTarget.Texture2D) GL.TexImage2D(textureTarget, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
             else if (textureTarget == TextureTarget.TextureCubeMap)
             {
                 for (int i = 0; i < 1; ++i)
-                { 
-                    GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero); 
+                {
+                    GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, pixelInternalFormat, width, height, 0, pixelFormat, PixelType.UnsignedByte, IntPtr.Zero);
                 }
-           
+
                 GL.TexParameter(textureTarget, TextureParameterName.TextureWrapR, (float)TextureWrapMode.ClampToEdge);
             }
             GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (float)TextureMinFilter.Nearest);
@@ -197,6 +198,7 @@ namespace EPQui
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, RBOP);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, width, height);
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, RBOP);
+
         }
     }
 }
