@@ -33,6 +33,7 @@ namespace EPQui.UserCon
     public partial class VeiwPortDisplay : UserControl
     {
         int cubemapTexture;
+        long cubemapHandle;
         public VeiwPortDisplay()
         {
 
@@ -69,8 +70,9 @@ namespace EPQui.UserCon
            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
-          
-           GL.BindTexture(TextureTarget.TextureCubeMap, 0);
+            cubemapHandle = GL.Arb.GetTextureHandle(cubemapTexture);
+            GL.Arb.MakeTextureHandleResident(cubemapHandle);
+            GL.BindTexture(TextureTarget.TextureCubeMap, 0);
 
         }
 
@@ -92,7 +94,7 @@ namespace EPQui.UserCon
             
             window.Render += Window_Render;
             window.SizeChanged += Window_SizeChanged;
-            window.MouseMove += Window_MouseMove;
+            window.MouseWheel += Window_MouseWheel; ;
             window.KeyDown += Grid_KeyDown;
             window.KeyUp += Grid_KeyUp;
             window.MouseDown += window_MouseDown;
@@ -115,25 +117,18 @@ namespace EPQui.UserCon
 
         }
 
+        private void Window_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            camera.zoom += e.Delta/100f;
+        }
+
         private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
             mouseR = false;
         }
 
-        Vector2 mouseD, mouseA, mouseP, mouseS = new Vector2(0.005f);
+        Vector2 mouseD = Vector2.Zero, mouseA = Vector2.Zero, mouseLr = Vector2.Zero, mouseP = Vector2.Zero, mouseS = new Vector2(0.005f);
 
-        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            mouseD = (mouseP - new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y)) * new Vector2(-1, 1);
-            mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
-
-
-
-            if (mouseR) mouseA += mouseD * mouseS;
-            if (mouseA.Y <= -1.5f) mouseA.Y = -1.5f;
-            if (mouseA.Y >= 1.5f) mouseA.Y = 1.5f;
-
-        }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -168,7 +163,7 @@ namespace EPQui.UserCon
          if(shade)  scene.UpdateShadow(camera);
             
             camera.frameC.Clear();
-            scene.UpdateClick(camera, 0, 0);
+            scene.UpdateClick(camera, null);
             hoverObj = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
             camera.frameC.update();
             camera.frameE.Clear();
@@ -327,7 +322,7 @@ namespace EPQui.UserCon
                    Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
             
                    Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                   gyzmo.set(editObj, camera, scene.children[selectedObjj], point_world);
+                   gyzmo.set(editObj, camera.Orientation, camera.Position, scene.children[selectedObjj], point_world);
             
                }
                 break;
@@ -410,6 +405,12 @@ namespace EPQui.UserCon
 
         void update()
         {
+            mouseD = (mouseP - new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y)) * new Vector2(-1, 1);
+            mouseP = new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y);
+          
+            if (mouseR) mouseA += mouseD * mouseS;
+            if (mouseA.Y <= -1.5f) mouseA.Y = -1.5f;
+            if (mouseA.Y >= 1.5f) mouseA.Y = 1.5f;
 
             if (this.IsFocused)
             {
@@ -421,13 +422,15 @@ namespace EPQui.UserCon
                 if (Ctrl) camera.Position += -camera.OrientationU * speed;
                 if (space) camera.Position += camera.OrientationU * speed;
 
+                //mouseLr = Vector2.Lerp(mouseLr, mouseA, delta * 20f);
+                mouseLr = mouseA;
 
-                camera.Orientation = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseA.X) * new Vector3(1, 0, 0);
-                camera.OrientationU = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseA.X) * new Vector3(0, -1, 0);
-                camera.OrientationR = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseA.X) * new Vector3(0, 0, 1);
-                camera.Orientation = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.Orientation;
-                camera.OrientationU = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.OrientationU;
-                camera.OrientationR = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseA.Y) * -camera.OrientationR;
+                camera.Orientation = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseLr.X) * new Vector3(1, 0, 0);
+                camera.OrientationU = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseLr.X) * new Vector3(0, -1, 0);
+                camera.OrientationR = Matrix3.CreateFromAxisAngle(new Vector3(0, 1, 0), mouseLr.X) * new Vector3(0, 0, 1);
+                camera.Orientation = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseLr.Y) * -camera.Orientation;
+                camera.OrientationU = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseLr.Y) * -camera.OrientationU;
+                camera.OrientationR = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseLr.Y) * -camera.OrientationR;
 
 
                if (mouseL && editObj != 0)
@@ -447,7 +450,7 @@ namespace EPQui.UserCon
                    Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
               
                    Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                   gyzmo.edit(editObj, camera, scene.children[selectedObjj], point_world);
+                   gyzmo.edit(editObj, camera.Orientation, camera.Position, scene.children[selectedObjj], point_world);
                }
             }
         }

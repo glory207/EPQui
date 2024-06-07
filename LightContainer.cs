@@ -40,8 +40,6 @@ namespace EPQui
             lightColor = Vector4.One;
             objectRotation = Quaternion.Identity;
             objectRotationAdded = Quaternion.Identity;
-            shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
-            clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
             mesh = new Mesh();
             name = "light";
             FBOC = new FrameBuffer(2048, 2048, PixelInternalFormat.R32f, PixelFormat.Red, PixelType.Float, TextureTarget.TextureCubeMap, 0, false) { color = new Color4(0, 0, 0, 0) };
@@ -66,7 +64,7 @@ namespace EPQui
             }
             else if (Type == LightType.spot)
             {
-                projection = Matrix4.CreatePerspectiveFieldOfView(angle.X, (2048 / (float)2048), 0.01f, 50f);
+                projection = Matrix4.CreatePerspectiveFieldOfView(1.4f, (2048 / (float)2048), 0.01f, 50f);
                 view = Matrix4.LookAt((Position + PositionAdded), (Position + PositionAdded) + di.Xyz * 20, new Vector3(0, 1, 0));
 
                 shadowModel = view * projection;
@@ -104,37 +102,14 @@ namespace EPQui
 
             
 
-            shaderProgram.Activate();
-
-           
-            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"),false, ref objectModel);
-            GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, "lightColor"), lightColor);
-            GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camUp"), camera.OrientationU);
-            GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camRight"), camera.OrientationR);
-            shaderProgram.Activate();
-            GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camPos"), camera.Position);
-            camera.Matrix(shaderProgram, "camMatrix");
-            mesh.Draw();
-
 
         }
-       public override void UpdateClick(Camera camera, int value, int value2)
+       public override void UpdateClick(Camera camera, Shader shader)
         {
 
-            clickProgram.Activate();
-
-            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
-            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectLength"), value2);
-            GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
-            GL.Uniform4(GL.GetUniformLocation(clickProgram.ID, "lightColor"), lightColor);
-            GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camUp"), camera.OrientationU);
-            GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camRight"), camera.OrientationR);
-            GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camPos"), camera.Position);
-            camera.Matrix(clickProgram, "camMatrix");
             mesh.Draw();
         }
         public override void destroy() {
-            shaderProgram.Delete();
         }
         public LightContainer()
         {
@@ -152,8 +127,6 @@ namespace EPQui
                 objectScale = objectScale,
                 objectRotation = objectRotation,
                 objectRotationAdded = Quaternion.Identity,
-                shaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry"),
-                clickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry"),
                 mesh = new Mesh(),
                 name = "light",
                 lightColor = lightColor,

@@ -80,99 +80,99 @@ namespace EPQui
         {
             return MathF.Abs(Vector3.Dot(v1, v2));
         }
-        public void edit(int editObj, Camera camera, HierObj slected, Vector3 point_world)
+        public void edit(int editObj, Vector3 cameraOrientation, Vector3 cameraPosition, HierObj slected, Vector3 point_world)
         {
 
 
 
-            float ray_x = ray(camera.Orientation, Vector3.UnitX);
-            float ray_y = ray(camera.Orientation, Vector3.UnitY);
-            float ray_z = ray(camera.Orientation, Vector3.UnitZ);
+            float ray_x = ray(cameraOrientation, Vector3.UnitX);
+            float ray_y = ray(cameraOrientation, Vector3.UnitY);
+            float ray_z = ray(cameraOrientation, Vector3.UnitZ);
             float t = 0;
             Vector3 nrm;
             if (editObj == 1)
             {
                 if (ray_y > ray_x) nrm = Vector3.UnitY;
                 else nrm = Vector3.UnitX;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                slected.PositionAdded = new Vector3(0, 0, ((camera.Position + t * point_world) - mouseW).Z);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                slected.PositionAdded = new Vector3(0, 0, ((cameraPosition + t * point_world) - mouseW).Z);
             }
             else if (editObj == 2)
             {
                 if (ray_y > ray_z) nrm = Vector3.UnitY;
                 else nrm = Vector3.UnitZ;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                slected.PositionAdded = new Vector3(((camera.Position + t * point_world) - mouseW).X, 0, 0);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                slected.PositionAdded = new Vector3(((cameraPosition + t * point_world) - mouseW).X, 0, 0);
             }
             else if (editObj == 3)
             {
                 if (ray_z > ray_x) nrm = Vector3.UnitZ;
                 else nrm = Vector3.UnitX;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                slected.PositionAdded = new Vector3(0, ((camera.Position + t * point_world) - mouseW).Y, 0);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                slected.PositionAdded = new Vector3(0, ((cameraPosition + t * point_world) - mouseW).Y, 0);
             }
             else if (editObj == 4)
             {
-                if (ray(camera.Orientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz))
+                if (ray(cameraOrientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz))
                 {
                     nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3(0, 0, (new Vector4((Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).Z);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3(0, 0, (new Vector4((Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).Z);
 
                 }
                 else
                 {
                     nrm = (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3(0, 0, (new Vector4((Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).Z);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3(0, 0, (new Vector4((Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).Z);
 
                 }
             }
             else if (editObj == 5)
             {
-                if (ray(camera.Orientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz))
+                if (ray(cameraOrientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz))
                 {
                     nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3((new Vector4((Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).X, 0, 0);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3((new Vector4((Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).X, 0, 0);
 
                 }
                 else
                 {
                     nrm = (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3((new Vector4((Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).X, 0, 0);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3((new Vector4((Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).X, 0, 0);
 
                 }
             }
             else if (editObj == 6)
             {
-                if (ray(camera.Orientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz))
+                if (ray(cameraOrientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz))
                 {
                     nrm = (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3(0, (new Vector4((Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).Y, 0);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3(0, (new Vector4((Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).Y, 0);
 
                 }
                 else
                 {
                     nrm = (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz;
-                    t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                    slected.objectScaleAdded = new Vector3(0, (new Vector4((Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz * ((camera.Position + t * point_world) - mouseW)) * slected.rotationMatrix).Y, 0);
+                    t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                    slected.objectScaleAdded = new Vector3(0, (new Vector4((Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz * ((cameraPosition + t * point_world) - mouseW)) * slected.rotationMatrix).Y, 0);
 
                 }
             }
             else if (editObj == 7)
             {
-                nrm = camera.Orientation;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                slected.objectScaleAdded = new Vector3(Vector3.Distance(slected.Position, (camera.Position + t * point_world)) - Vector3.Distance(slected.Position, mouseW));
+                nrm = cameraOrientation;
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                slected.objectScaleAdded = new Vector3(Vector3.Distance(slected.Position, (cameraPosition + t * point_world)) - Vector3.Distance(slected.Position, mouseW));
             }
             else if (editObj == 8)
             {
                 nrm = Vector3.UnitZ;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                Vector3 newMouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                Vector3 newMouseW = (cameraPosition + t * point_world);
                 Vector3 v2 = newMouseW - slected.Position;
                 Vector3 v1 = mouseW - slected.Position;
                 float ang = (MathF.Atan2(Vector3.Dot(Vector3.Cross(v1, v2), nrm), Vector3.Dot(v1, v2)));
@@ -181,8 +181,8 @@ namespace EPQui
             else if (editObj == 9)
             {
                 nrm = Vector3.UnitX;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                Vector3 newMouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                Vector3 newMouseW = (cameraPosition + t * point_world);
                 Vector3 v2 = newMouseW - slected.Position;
                 Vector3 v1 = mouseW - slected.Position;
                 float ang = (MathF.Atan2(Vector3.Dot(Vector3.Cross(v1, v2), nrm), Vector3.Dot(v1, v2)));
@@ -191,8 +191,8 @@ namespace EPQui
             else if (editObj == 10)
             {
                 nrm = Vector3.UnitY;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                Vector3 newMouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                Vector3 newMouseW = (cameraPosition + t * point_world);
                 Vector3 v2 = newMouseW - slected.Position;
                 Vector3 v1 = mouseW - slected.Position;
                 float ang = (MathF.Atan2(Vector3.Dot(Vector3.Cross(v1, v2), nrm), Vector3.Dot(v1, v2)));
@@ -201,9 +201,9 @@ namespace EPQui
             }
             else if (editObj == 11)
             {
-                nrm = camera.Orientation;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                Vector3 newMouseW = (camera.Position + t * point_world);
+                nrm = cameraOrientation;
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                Vector3 newMouseW = (cameraPosition + t * point_world);
                 Vector3 v2 = newMouseW - slected.Position;
                 Vector3 v1 = mouseW - slected.Position;
                 float ang = (MathF.Atan2(Vector3.Dot(Vector3.Cross(v1, v2), nrm), Vector3.Dot(v1, v2)));
@@ -212,23 +212,23 @@ namespace EPQui
             }
             else if (editObj == 12)
             {
-                t = Vector3.Dot(Vector3.UnitZ, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitZ, point_world);
-                slected.PositionAdded = (camera.Position + t * point_world) - mouseW;
+                t = Vector3.Dot(Vector3.UnitZ, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitZ, point_world);
+                slected.PositionAdded = (cameraPosition + t * point_world) - mouseW;
             }
             else if (editObj == 13)
             {
-                t = Vector3.Dot(Vector3.UnitX, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitX, point_world);
-                slected.PositionAdded = (camera.Position + t * point_world) - mouseW;
+                t = Vector3.Dot(Vector3.UnitX, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitX, point_world);
+                slected.PositionAdded = (cameraPosition + t * point_world) - mouseW;
             }
             else if (editObj == 14)
             {
-                t = Vector3.Dot(Vector3.UnitY, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitY, point_world);
-                slected.PositionAdded = (camera.Position + t * point_world) - mouseW;
+                t = Vector3.Dot(Vector3.UnitY, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitY, point_world);
+                slected.PositionAdded = (cameraPosition + t * point_world) - mouseW;
             }
 
 
         }
-        public void set(int editObj, Camera camera, HierObj slected, Vector3 point_world)
+        public void set(int editObj, Vector3 cameraOrientation, Vector3 cameraPosition, HierObj slected, Vector3 point_world)
         {
 
            // startRot = slected.rotationMatrix.Inverted();
@@ -242,69 +242,69 @@ namespace EPQui
             {
                 if (ray_y > ray_x) nrm = Vector3.UnitY;
                 else nrm = Vector3.UnitX;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = new Vector3(0, 0, ((camera.Position + t * point_world)).Z);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = new Vector3(0, 0, ((cameraPosition + t * point_world)).Z);
             }
             else if (editObj == 2)
             {
                 if (ray_y > ray_z) nrm = Vector3.UnitY;
                 else nrm = Vector3.UnitZ;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = new Vector3(((camera.Position + t * point_world)).X, 0, 0);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = new Vector3(((cameraPosition + t * point_world)).X, 0, 0);
             }
             else if (editObj == 3)
             {
                 if (ray_z > ray_x) nrm = Vector3.UnitZ;
                 else nrm = Vector3.UnitX;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = new Vector3(0, ((camera.Position + t * point_world)).Y, 0);
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = new Vector3(0, ((cameraPosition + t * point_world)).Y, 0);
             }
             else if (editObj == 4)
             {
-                if (ray(camera.Orientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
+                if (ray(cameraOrientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
                 else nrm = (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = ((camera.Position + t * point_world));
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = ((cameraPosition + t * point_world));
             }
             else if (editObj == 5)
             {
-                if (ray(camera.Orientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
+                if (ray(cameraOrientation, (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitY * slected.rotationMatrix.Inverted()).Xyz;
                 else nrm = (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = ((camera.Position + t * point_world));
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = ((cameraPosition + t * point_world));
             }
             else if (editObj == 6)
             {
-                if (ray(camera.Orientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz) > ray(camera.Orientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz;
+                if (ray(cameraOrientation, (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz) > ray(cameraOrientation, (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz)) nrm = (Vector4.UnitZ * slected.rotationMatrix.Inverted()).Xyz;
                 else nrm = (Vector4.UnitX * slected.rotationMatrix.Inverted()).Xyz;
-                t = Vector3.Dot(nrm, slected.Position - camera.Position) / Vector3.Dot(nrm, point_world);
-                mouseW = ((camera.Position + t * point_world));
+                t = Vector3.Dot(nrm, slected.Position - cameraPosition) / Vector3.Dot(nrm, point_world);
+                mouseW = ((cameraPosition + t * point_world));
             }
             else if (editObj == 7)
             {
-                t = Vector3.Dot(camera.Orientation, slected.Position - camera.Position) / Vector3.Dot(camera.Orientation, point_world);
-                mouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(cameraOrientation, slected.Position - cameraPosition) / Vector3.Dot(cameraOrientation, point_world);
+                mouseW = (cameraPosition + t * point_world);
 
             }
             else if (editObj == 8 || editObj == 12)
             {
-                t = Vector3.Dot(Vector3.UnitZ, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitZ, point_world);
-                mouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(Vector3.UnitZ, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitZ, point_world);
+                mouseW = (cameraPosition + t * point_world);
             }
             else if (editObj == 9 || editObj == 13)
             {
-                t = Vector3.Dot(Vector3.UnitX, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitX, point_world);
-                mouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(Vector3.UnitX, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitX, point_world);
+                mouseW = (cameraPosition + t * point_world);
             }
             else if (editObj == 10 || editObj == 14)
             {
-                t = Vector3.Dot(Vector3.UnitY, slected.Position - camera.Position) / Vector3.Dot(Vector3.UnitY, point_world);
-                mouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(Vector3.UnitY, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitY, point_world);
+                mouseW = (cameraPosition + t * point_world);
             }
             else if (editObj == 11)
             {
-                t = Vector3.Dot(camera.Orientation, slected.Position - camera.Position) / Vector3.Dot(camera.Orientation, point_world);
-                mouseW = (camera.Position + t * point_world);
+                t = Vector3.Dot(cameraOrientation, slected.Position - cameraPosition) / Vector3.Dot(cameraOrientation, point_world);
+                mouseW = (cameraPosition + t * point_world);
             }
 
         }

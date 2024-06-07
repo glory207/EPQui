@@ -11,14 +11,14 @@ using System.Net;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Automation.Text;
+using System.Windows.Media.Media3D;
+using Quaternion = OpenTK.Mathematics.Quaternion;
 
 namespace EPQui
 {
     internal class MeshContainer : HierObj, ICloneable
     {
         public material mate;
-        Shader shadowABC;
-        Shader shadowC;
         public MeshContainer(Vector3 pos, string path, HierObj parentt)
         {
             parent = parentt;
@@ -27,23 +27,12 @@ namespace EPQui
             objectRotation = Quaternion.Identity;
             objectRotationAdded = Quaternion.Identity;
 
-            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
-            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            shadowC = new Shader("Res/shadowCubeMap.vert", "Res/shadowCubeMap.frag", "Res/shadowCubeMap.geomertry");
-            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
-            // shadowABC = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-
             mate = new material();
             mesh = new Mesh(path);
             name = mesh.name;
         }
         public MeshContainer()
         {
-            shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
-            clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            shadowC = new Shader("Res/shadowCubeMap.vert", "Res/shadowCubeMap.frag", "Res/shadowCubeMap.geomertry");
-            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
-
             objectRotationAdded = Quaternion.Identity;
 
         }
@@ -56,9 +45,6 @@ namespace EPQui
                 objectScale = objectScale,
                 objectRotation = objectRotation,
                 objectRotationAdded = objectRotationAdded,
-
-                shaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry"),
-                clickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry"),
 
                 mate = (material)mate.Clone(),
                 mesh = mesh,
@@ -75,52 +61,16 @@ namespace EPQui
             objectModel = objectModel * rotationMatrix * Matrix4.CreateTranslation(Position + PositionAdded);
 
         }
-        public override void destroy()
-        {
-            shaderProgram.Delete();
-            clickProgram.Delete();
-        }
         public override void Update(List<LightContainer> lights, Camera camera)
         {
 
 
 
-            shaderProgram.Activate();
+        }
+        public void undate(Shader shader)
+        {
 
-            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, "model"), false, ref objectModel);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "lightnum"), lights.Count);
-            for (int i = 0; i < lights.Count; i++)
-            {
-                string ii = "lightType[" + i.ToString() + "]";
-                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), (int)lights[i].Type);
 
-                ii = "lightColor[" + i.ToString() + "]";
-                GL.Uniform4(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].lightColor.Normalized());
-                ii = "lightIntensity[" + i.ToString() + "]";
-                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].intencity);
-                ii = "lightPos[" + i.ToString() + "]";
-                GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].Position + lights[i].PositionAdded);
-                ii = "lightAng[" + i.ToString() + "]";
-                GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, ii), lights[i].angle);
-
-                ii = "lightRot[" + i.ToString() + "]";
-                Matrix4 mt = lights[i].rotationMatrix.Inverted();
-                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false, ref mt);
-
-                ii = "lightProjection[" + i.ToString() + "]";
-                mt = lights[i].shadowModel;
-                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram.ID, ii), false, ref mt);
-
-                ii = "ShadowMap[" + i.ToString() + "]";
-                lights[i].FBO.BindT(shaderProgram, ii);
-
-                    ii = "ShadowMapC[" + i.ToString() + "]";
-
-                GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.TextureCubeMap, lights[i].FBOC.framebufferTextureP);
-                GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, ii), 2);
-                lights[i].FBOC.BindT(shaderProgram,ii);
-            }
 
             uint numDiffuse = 0;
             uint numSpecular = 0;
@@ -136,58 +86,34 @@ namespace EPQui
                 {
                     num = (numSpecular++).ToString();
                 }
-                mate.textures[i].texUnit(shaderProgram, (type + num).ToString());
+                mate.textures[i].texUnit(shader, (type + num).ToString());
             }
 
 
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "diffuseLight"), mate.diffuce);
-            GL.Uniform1(GL.GetUniformLocation(shaderProgram.ID, "specularLight"), mate.specular);
+            GL.Uniform1(GL.GetUniformLocation(shader.ID, "diffuseLight"), mate.diffuce);
+            GL.Uniform1(GL.GetUniformLocation(shader.ID, "specularLight"), mate.specular);
 
-            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureSca"), mate.texScale);
-            GL.Uniform2(GL.GetUniformLocation(shaderProgram.ID, "textureOff"), mate.texOff);
-            shaderProgram.Activate();
-            GL.Uniform3(GL.GetUniformLocation(shaderProgram.ID, "camPos"), camera.Position);
-            camera.Matrix(shaderProgram, "camMatrix");
+            GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureSca"), mate.texScale);
+            GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureOff"), mate.texOff);
+            GL.UniformMatrix4(GL.GetUniformLocation(shader.ID, "model"), false, ref objectModel);
             mesh.Draw();
-
         }
-        public override void UpdateClick(Camera camera, int value, int value2)
+        public override void UpdateClick(Camera camera, Shader shader)
         {
 
 
-            clickProgram.Activate();
-            GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
-            GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
-            GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camPos"), camera.Position);
-            camera.Matrix(clickProgram, "camMatrix");
+          //  clickProgram.Activate();
+          //  GL.Uniform1(GL.GetUniformLocation(clickProgram.ID, "objectId"), value);
+          //  GL.UniformMatrix4(GL.GetUniformLocation(clickProgram.ID, "model"), false, ref objectModel);
+          //  GL.Uniform3(GL.GetUniformLocation(clickProgram.ID, "camPos"), camera.Position);
+          //  camera.Matrix(clickProgram, "camMatrix");
             mesh.Draw();
 
         }
-        public void UpdateShadow(Matrix4 cam)
+
+        public override void destroy()
         {
-
-            shadowABC.Activate();
-            GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref objectModel);
-            GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref cam);
-            mesh.Draw();
-
+           
         }
-        public void UpdateShadowC(LightContainer camL)
-        {
-
-            shadowC.Activate();
-
-
-            GL.Uniform3(GL.GetUniformLocation(shadowC.ID, "lightPos"), camL.Position + camL.PositionAdded);
-            GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "model"), false, ref objectModel);
-            for (int i = 0; i < camL.shadowCube.Length; i++)
-            {
-             //   GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref camL.shadowCube[i]);
-                GL.UniformMatrix4(GL.GetUniformLocation(shadowC.ID, "lightProjection[" + i.ToString() + "]"), false, ref camL.shadowCube[i]);
-            }
-            mesh.Draw();
-
-        }
-
     }
 }

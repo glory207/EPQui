@@ -25,14 +25,12 @@ namespace EPQui
         public Matrix4 objectModel;
         public Matrix4 rotationMatrix = Matrix4.Identity;
         public Mesh mesh;
-        public Shader shaderProgram;
-        public Shader clickProgram;
         public List<HierObj> children = new List<HierObj>();
         public HierObj parent;
         public string name = "new Obj"; 
         public abstract void PreUpdate();
         public abstract void Update(List<LightContainer> lights, Camera camera);
-        public abstract void UpdateClick(Camera camera, int value, int value2);
+        public abstract void UpdateClick(Camera camera,Shader shader);
         public abstract void destroy();
 
     }

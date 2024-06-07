@@ -41,6 +41,7 @@ namespace EPQui.UserCon
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
 
+            wrpPan.Children.Clear();
             string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
             Button buttonL = new Button();
             buttonL.Padding = new Thickness(20, 20, 20, 20);
@@ -58,30 +59,9 @@ namespace EPQui.UserCon
 
                 wrpPan.Children.Add(button);
             }
-            meshDir = Directory.GetFiles("Res/textures/", "*.png");
-            foreach (string str in meshDir)
-            {
-                Button button = new Button();
-                button.Padding = new Thickness(20, 20, 20, 20);
-                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
-                button.Tag = str;
-                button.Content = str.Substring(13, str.Substring(13).Length - 4);
-                button.Click += Button_Click1;
 
-                wrpPan.Children.Add(button);
-            }
-            meshDir = Directory.GetFiles("Res/textures/", "*.jpg");
-            foreach (string str in meshDir)
-            {
-                Button button = new Button();
-                button.Padding = new Thickness(20, 20, 20, 20);
-                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
-                button.Tag = str;
-                button.Content = str.Substring(13, str.Substring(13).Length - 4);
-                button.Click += Button_Click1;
 
-                wrpPan.Children.Add(button);
-            }
+
         }
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
@@ -213,6 +193,55 @@ namespace EPQui.UserCon
             setHir();
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            wrpPan.Children.Clear();
+           string[] meshDir = Directory.GetFiles("Res/textures/", "*.png");
+            foreach (string str in meshDir)
+            {
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
+                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
+                button.Tag = str;
+                button.Content = str.Substring(13, str.Substring(13).Length - 4);
+                button.Click += Button_Click1;
+
+                wrpPan.Children.Add(button);
+            }
+            meshDir = Directory.GetFiles("Res/textures/", "*.jpg");
+            foreach (string str in meshDir)
+            {
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
+                button.Background = new SolidColorBrush(Color.FromRgb(112, 130, 250));
+                button.Tag = str;
+                button.Content = str.Substring(13, str.Substring(13).Length - 4);
+                button.Click += Button_Click1;
+
+                wrpPan.Children.Add(button);
+            }
+        }
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            wrpPan.Children.Clear();
+            string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
+            Button buttonL = new Button();
+            buttonL.Padding = new Thickness(20, 20, 20, 20);
+            buttonL.Content = "light";
+            buttonL.Click += Button_Click3;
+
+            wrpPan.Children.Add(buttonL);
+            foreach (string str in meshDir)
+            {
+                Button button = new Button();
+                button.Padding = new Thickness(20, 20, 20, 20);
+                button.Tag = str;
+                button.Content = str.Substring(11, str.Substring(11).Length - 4);
+                button.Click += Button_Click2;
+
+                wrpPan.Children.Add(button);
+            }
+        }
     }
 
 

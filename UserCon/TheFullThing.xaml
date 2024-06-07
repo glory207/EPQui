@@ -57,15 +57,23 @@
 
         </Grid>
         <GridSplitter Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="1" Background="White"/>
-
-        <ScrollViewer Grid.Column="1" Grid.Row="2" Background="Gray">
-            <WrapPanel Name="wrpPan">
-
-                <Button Height="100"  Width="100" Click="Button_Click" >
-                    add new obj
+        <Grid  Grid.Column="1" Grid.Row="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Height="18"  Width="50" Click="Button_Click_1" >
+                    meshes
                 </Button>
-            </WrapPanel>
-        </ScrollViewer>
+                <Button Height="18"  Width="50" Click="Button_Click_4" >
+                    textures
+                </Button>
+            </StackPanel>
+            <ScrollViewer Background="Gray" Grid.Row="1">
+                <WrapPanel Name="wrpPan"/>
+            </ScrollViewer>
+        </Grid>
         <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="1" Background="White"/>
 
     </Grid>

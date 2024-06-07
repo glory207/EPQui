@@ -18,7 +18,16 @@ namespace EPQui
 
         public Mesh gridMesh;
         Shader gridshaderProgram;
-       public string path;
+        List<MeshContainer> meshContainers = new List<MeshContainer>();
+        List<LightContainer> lightContainers = new List<LightContainer>();
+
+        Shader LightClickProgram;
+        Shader MeshClickProgram;
+        Shader shadowABC;
+        Shader LightShaderProgram;
+        Shader MeshShaderProgram;
+        public string path;
+        
         public void save()
         {
             StreamWriter str = new StreamWriter(path);
@@ -73,6 +82,11 @@ namespace EPQui
         }
         public Hierarchy(string path)
         {
+            LightClickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
+            MeshClickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+            LightShaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
+            MeshShaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             this.path = path;
             StreamReader str = new StreamReader(path);
             
@@ -344,6 +358,11 @@ namespace EPQui
 
             gridMesh = new Mesh();
             gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
+            LightClickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
+            MeshClickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
+            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
+            LightShaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
+            MeshShaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
             children.Add(new LightContainer(this));
         }
         public override void PreUpdate()
@@ -351,22 +370,68 @@ namespace EPQui
             foreach (HierObj ob in children)
             {
                 ob.PreUpdate();
+                if (ob.GetType() == typeof(LightContainer)) lightContainers.Add((LightContainer)ob);
+                if (ob.GetType() == typeof(MeshContainer)) meshContainers.Add((MeshContainer)ob);
             }
         }
         public override void Update(List<LightContainer> lights, Camera camera)
         {
+            LightShaderProgram.Activate();
+            GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camUp"), camera.OrientationU);
+            GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camRight"), camera.OrientationR);
+            GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(LightShaderProgram, "camMatrix");
             foreach (HierObj ob in children)
             {
                 if (ob.GetType() == typeof(LightContainer))
                 {
-                    ob.Update(lights, camera);
+                    GL.UniformMatrix4(GL.GetUniformLocation(LightShaderProgram.ID, "model"), false, ref ob.objectModel);
+                    GL.Uniform4(GL.GetUniformLocation(LightShaderProgram.ID, "lightColor"), ob.lightColor);
+                    ob.mesh.Draw();
+
                     lights.Add(((LightContainer)ob));
                 }
             }
+            MeshShaderProgram.Activate();
 
+            GL.Uniform1(GL.GetUniformLocation(MeshShaderProgram.ID, "lightnum"), lights.Count);
+            for (int i = 0; i < lights.Count; i++)
+            {
+                string ii = "lightType[" + i.ToString() + "]";
+                GL.Uniform1(GL.GetUniformLocation(MeshShaderProgram.ID, ii), (int)lights[i].Type);
+
+                ii = "lightColor[" + i.ToString() + "]";
+                GL.Uniform4(GL.GetUniformLocation(MeshShaderProgram.ID, ii), lights[i].lightColor.Normalized());
+                ii = "lightIntensity[" + i.ToString() + "]";
+                GL.Uniform1(GL.GetUniformLocation(MeshShaderProgram.ID, ii), lights[i].intencity);
+                ii = "lightPos[" + i.ToString() + "]";
+                GL.Uniform3(GL.GetUniformLocation(MeshShaderProgram.ID, ii), lights[i].Position + lights[i].PositionAdded);
+                ii = "lightAng[" + i.ToString() + "]";
+                GL.Uniform2(GL.GetUniformLocation(MeshShaderProgram.ID, ii), lights[i].angle);
+
+                ii = "lightRot[" + i.ToString() + "]";
+                Matrix4 mt = lights[i].rotationMatrix.Inverted();
+                GL.UniformMatrix4(GL.GetUniformLocation(MeshShaderProgram.ID, ii), false, ref mt);
+
+                ii = "lightProjection[" + i.ToString() + "]";
+                mt = lights[i].shadowModel;
+                GL.UniformMatrix4(GL.GetUniformLocation(MeshShaderProgram.ID, ii), false, ref mt);
+
+                ii = "ShadowMap[" + i.ToString() + "]";
+                lights[i].FBO.BindT(MeshShaderProgram, ii);
+
+                  ii = "ShadowMapC[" + i.ToString() + "]";
+                
+                  GL.ActiveTexture(TextureUnit.Texture0);
+                  GL.BindTexture(TextureTarget.TextureCubeMap, lights[i].FBOC.framebufferTextureP);
+                  GL.Uniform1(GL.GetUniformLocation(MeshShaderProgram.ID, ii), 2);
+                  lights[i].FBOC.BindT(MeshShaderProgram, ii);
+            }
+            GL.Uniform3(GL.GetUniformLocation(MeshShaderProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(MeshShaderProgram, "camMatrix");
             foreach (HierObj ob in children)
             {
-                if(ob.GetType() == typeof(MeshContainer)) ob.Update(lights, camera);
+                if(ob.GetType() == typeof(MeshContainer)) ((MeshContainer)ob).undate(MeshShaderProgram);
             }
 
 
@@ -381,11 +446,47 @@ namespace EPQui
 
 
         }
-        public override void UpdateClick(Camera camera, int value, int value2)
+        public override void UpdateClick(Camera camera,Shader shader)
         {
-            foreach (HierObj ob in children)
+            LightClickProgram.Activate();
+            GL.Uniform3(GL.GetUniformLocation(LightClickProgram.ID, "camUp"), camera.OrientationU);
+            GL.Uniform3(GL.GetUniformLocation(LightClickProgram.ID, "camRight"), camera.OrientationR);
+            GL.Uniform3(GL.GetUniformLocation(LightClickProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(LightClickProgram, "camMatrix");
+            foreach (HierObj obb in children)
             {
-                ob.UpdateClick(camera, children.IndexOf(ob), children.Count);
+                   
+                if (obb.GetType() == typeof(LightContainer))
+                {
+                    LightContainer ob = (LightContainer)obb;
+
+
+
+                    GL.Uniform1(GL.GetUniformLocation(LightClickProgram.ID, "objectId"), children.IndexOf(ob));
+                    GL.UniformMatrix4(GL.GetUniformLocation(LightClickProgram.ID, "model"), false, ref ob.objectModel);
+                    GL.Uniform4(GL.GetUniformLocation(LightClickProgram.ID, "lightColor"), ob.lightColor);
+                    ob.mesh.Draw();
+                }
+            }
+            MeshClickProgram.Activate();
+            GL.Uniform3(GL.GetUniformLocation(MeshClickProgram.ID, "camUp"), camera.OrientationU);
+            GL.Uniform3(GL.GetUniformLocation(MeshClickProgram.ID, "camRight"), camera.OrientationR);
+            GL.Uniform3(GL.GetUniformLocation(MeshClickProgram.ID, "camPos"), camera.Position);
+            camera.Matrix(MeshClickProgram, "camMatrix");
+
+            foreach (HierObj obb in children)
+            {
+                   
+                if (obb.GetType() == typeof(MeshContainer))
+                {
+                    MeshContainer ob = (MeshContainer)obb;
+
+
+                    GL.Uniform1(GL.GetUniformLocation(MeshClickProgram.ID, "objectId"), children.IndexOf(ob));
+                    GL.UniformMatrix4(GL.GetUniformLocation(MeshClickProgram.ID, "model"), false, ref ob.objectModel);
+                    GL.Uniform4(GL.GetUniformLocation(MeshClickProgram.ID, "lightColor"), ob.lightColor);
+                    ob.mesh.Draw();
+                }
             }
         }
         public void UpdateShadow(Camera cam)
@@ -398,23 +499,26 @@ namespace EPQui
                     ((LightContainer)obb).setShadowModel(cam);
                     if (((LightContainer)obb).Type == LightType.point)
                     {
-                        foreach (HierObj ob in children)
-                        {
-                            if (ob.GetType() == typeof(MeshContainer))
-                            {
-
-                                ((MeshContainer)ob).UpdateShadowC(((LightContainer)obb));
-                            }
-                        }
+                     //   foreach (HierObj ob in children)
+                     //   {
+                     //       if (ob.GetType() == typeof(MeshContainer))
+                     //       {
+                     //
+                     //           ((MeshContainer)ob).UpdateShadowC(((LightContainer)obb));
+                     //       }
+                     //   }
                     }
                     else
                     {
+                        shadowABC.Activate();
+                        GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "lightProjection"), false, ref ((LightContainer)obb).shadowModel);
                         foreach (HierObj ob in children)
                         {
                             if (ob.GetType() == typeof(MeshContainer))
                             {
 
-                                ((MeshContainer)ob).UpdateShadow(((LightContainer)obb).shadowModel);
+                                GL.UniformMatrix4(GL.GetUniformLocation(shadowABC.ID, "model"), false, ref ob.objectModel);
+                                ((MeshContainer)ob).mesh.Draw();
                             }
                         }
                     }

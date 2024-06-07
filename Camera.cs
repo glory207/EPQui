@@ -26,6 +26,7 @@ namespace EPQui
         public bool firstClick = true;
         public float speed = 0.1f;
         public float sensitivity = 100.0f;
+        public float zoom = 1f;
         int DeFrame;
         public Camera(int width, int height, Vector3 position,int dframe)
         {
@@ -48,7 +49,7 @@ namespace EPQui
             // update view matrix
             view = Matrix4.LookAt(Position, Position + Orientation, Up);
             if (perspective) projection = Matrix4.CreatePerspectiveFieldOfView((FOVdeg * MathF.PI / 180f), (width / (float)height), nearPlane, farPlane);
-            else projection = Matrix4.CreateOrthographic(width/10f, height/10f, -farPlane, farPlane );
+            else projection = Matrix4.CreateOrthographic(width/ zoom, height/ zoom, -farPlane, farPlane );
             cameraMatrix = view *projection ;
             
         }
