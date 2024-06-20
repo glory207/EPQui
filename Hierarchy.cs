@@ -75,18 +75,19 @@ namespace EPQui
                     str.WriteLine("mate diffuce:");
                     str.WriteLine(((MeshContainer)children[i]).mate.diffuce.ToString());
                     str.WriteLine("mate path:");
-                    str.WriteLine(((MeshContainer)children[i]).mate.textures[0].path.ToString());
+                    if (((MeshContainer)children[i]).mate.textures.Count == 0) str.WriteLine("emp");
+                    else str.WriteLine(((MeshContainer)children[i]).mate.textures[0].path.ToString());
                 }
             }
             str.Close();
         }
         public Hierarchy(string path)
         {
-            LightClickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
-            MeshClickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
-            LightShaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
-            MeshShaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
+            LightClickProgram = new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/Clicks.frag", "Res/shaders/light.geomertry");
+            MeshClickProgram = new Shader("Res/shaders/default.vert", "Res/shaders/Clicks.frag", "Res/shaders/default.geometry");
+            shadowABC = new Shader("Res/shaders/shadowMap.vert", "Res/shaders/shadowMap.frag");
+            LightShaderProgram = new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/light.geomertry");
+            MeshShaderProgram = new Shader("Res/shaders/default.vert", "Res/shaders/default.frag", "Res/shaders/default.geometry");
             this.path = path;
             StreamReader str = new StreamReader(path);
             
@@ -174,7 +175,8 @@ namespace EPQui
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.mate.textures[0] = new Texture(line, "diffuse", PixelFormat.Rgba);
+                    if (line == "emp") tempL.mate.textures = new List<Texture>();
+                    else tempL.mate.textures = new List<Texture>() { new Texture(line, "diffuse", PixelFormat.Rgba) };
 
                     children.Add(tempL);
                 }
@@ -182,7 +184,7 @@ namespace EPQui
             str.Close();
 
                 gridMesh = new Mesh();
-            gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
+            gridshaderProgram = new Shader("Res/shaders/grid.vert", "Res/shaders/grid.frag", "Res/shaders/grid.geomertry");
 
         }
         Vector4 parse4(string line)
@@ -357,12 +359,12 @@ namespace EPQui
             } while (valid == false);
 
             gridMesh = new Mesh();
-            gridshaderProgram = new Shader("Res/grid.vert", "Res/grid.frag", "Res/grid.geomertry");
-            LightClickProgram = new Shader("Res/Gyzmo.vert", "Res/Clicks.frag", "Res/light.geomertry");
-            MeshClickProgram = new Shader("Res/default.vert", "Res/Clicks.frag", "Res/default.geometry");
-            shadowABC = new Shader("Res/shadowMap.vert", "Res/shadowMap.frag");
-            LightShaderProgram = new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/light.geomertry");
-            MeshShaderProgram = new Shader("Res/default.vert", "Res/default.frag", "Res/default.geometry");
+            gridshaderProgram = new Shader("Res/shaders/grid.vert", "Res/shaders/grid.frag", "Res/shaders/grid.geomertry");
+            LightClickProgram = new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/Clicks.frag", "Res/shaders/light.geomertry");
+            MeshClickProgram = new Shader("Res/shaders/default.vert", "Res/shaders/Clicks.frag", "Res/shaders/default.geometry");
+            shadowABC = new Shader("Res/shaders/shadowMap.vert", "Res/shaders/shadowMap.frag");
+            LightShaderProgram = new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/light.geomertry");
+            MeshShaderProgram = new Shader("Res/shaders/default.vert", "Res/shaders/default.frag", "Res/shaders/default.geometry");
             children.Add(new LightContainer(this));
         }
         public override void PreUpdate()

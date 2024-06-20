@@ -41,10 +41,10 @@ namespace EPQui
             return new MeshContainer()
             {
                 parent = this.parent,
-                Position = Position,
-                objectScale = objectScale,
-                objectRotation = objectRotation,
-                objectRotationAdded = objectRotationAdded,
+                Position = Position + PositionAdded,
+                objectScale = objectScale + objectScaleAdded,
+                objectRotation = objectRotation + objectRotationAdded,
+                objectRotationAdded = Quaternion.Identity,
 
                 mate = (material)mate.Clone(),
                 mesh = mesh,
@@ -89,9 +89,9 @@ namespace EPQui
                 mate.textures[i].texUnit(shader, (type + num).ToString());
             }
 
-
             GL.Uniform1(GL.GetUniformLocation(shader.ID, "diffuseLight"), mate.diffuce);
             GL.Uniform1(GL.GetUniformLocation(shader.ID, "specularLight"), mate.specular);
+            GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), mate.textures.Count());
 
             GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureSca"), mate.texScale);
             GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureOff"), mate.texOff);

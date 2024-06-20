@@ -37,7 +37,7 @@ namespace EPQui
     public class material:ICloneable
     {
        public List<Texture> textures = new List<Texture>() {
-                 new Texture("Res/textures/planks.png", "diffuse", PixelFormat.Rgba)
+               //  new Texture("Res/textures/planks.png", "diffuse", PixelFormat.Rgba)
             };
         public Vector2 texOff = new Vector2(0);
         public Vector2 texScale = new Vector2(1);

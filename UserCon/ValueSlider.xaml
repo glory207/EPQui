@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:EPQui.UserCon"
              mc:Ignorable="d" 
-             xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DesignHeight="62.738" d:DesignWidth="175.125" >
+             xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DesignHeight="62.738" d:DesignWidth="77.795" >
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition />

@@ -64,7 +64,7 @@ namespace EPQui
             }
             else if (Type == LightType.spot)
             {
-                projection = Matrix4.CreatePerspectiveFieldOfView(1.4f, (2048 / (float)2048), 0.01f, 50f);
+                projection = Matrix4.CreatePerspectiveFieldOfView(angle.X * 2f, (2048 / (float)2048), 0.01f, 50f);
                 view = Matrix4.LookAt((Position + PositionAdded), (Position + PositionAdded) + di.Xyz * 20, new Vector3(0, 1, 0));
 
                 shadowModel = view * projection;
@@ -123,9 +123,9 @@ namespace EPQui
             return new LightContainer()
             {
                 parent = parent,
-                Position = Position,
-                objectScale = objectScale,
-                objectRotation = objectRotation,
+                Position = Position + PositionAdded,
+                objectScale = objectScale + objectScaleAdded,
+                objectRotation = objectRotation + objectRotationAdded,
                 objectRotationAdded = Quaternion.Identity,
                 mesh = new Mesh(),
                 name = "light",

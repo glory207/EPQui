@@ -207,7 +207,7 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true;
+        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true, firstC;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -360,6 +360,9 @@ namespace EPQui.UserCon
                 case Key.LeftCtrl:
                     Ctrl = false;
                     break;
+                case Key.C:
+                    firstC = true;
+                    break;
             }
         }
 
@@ -400,9 +403,29 @@ namespace EPQui.UserCon
                 case Key.Y:
                     Texture tex = new Texture("Res/textures/planks.png", "diffuse", PixelFormat.Rgba);
                     break;
+                case Key.C:
+                    if (firstC) TraE_duped();
+                    firstC = false;
+                   
+                    break;
+
             }
         }
+        private void TraE_duped()
+        {
+            if (scene.children[selectedObjj].GetType() == typeof(MeshContainer))
+            {
+                var ms = (MeshContainer)((MeshContainer)scene.children[selectedObjj]).Clone();
+                scene.children.Add(ms);
+            }
+            else if (scene.children[selectedObjj].GetType() == typeof(LightContainer))
+            {
+                var ms = (LightContainer)((LightContainer)scene.children[selectedObjj]).Clone();
+                scene.children.Add(ms);
+            }
+         //   setHir();
 
+        }
         void update()
         {
             mouseD = (mouseP - new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y)) * new Vector2(-1, 1);

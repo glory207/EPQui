@@ -69,7 +69,7 @@ namespace EPQui
             GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (2 * sizeof(float)));
 
 
-            framebufferProgram = new Shader("Res/framebuffer.vert", "Res/framebuffer.frag");
+            framebufferProgram = new Shader("Res/shaders/framebuffer.vert", "Res/shaders/framebuffer.frag");
             framebufferProgram.Activate();
             updateScreenSize(widthf, heightf);
 

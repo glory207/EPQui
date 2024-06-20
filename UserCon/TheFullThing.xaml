@@ -63,10 +63,10 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Height="18"  Width="50" Click="Button_Click_1" >
+                <Button Height="18"  Width="50" Click="Button_Click_4" >
                     meshes
                 </Button>
-                <Button Height="18"  Width="50" Click="Button_Click_4" >
+                <Button Height="18"  Width="50" Click="Button_Click_1" >
                     textures
                 </Button>
             </StackPanel>

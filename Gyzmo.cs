@@ -31,14 +31,14 @@ namespace EPQui
         {
             mesh = new Mesh();
            shaderProgram = new Shader[] {
-               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/TransGyzmo.geomertry"),
-               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/RotationGyzmo .geomertry"),
-               new Shader("Res/Gyzmo.vert", "Res/light.frag", "Res/ScaleGyzmo.geomertry")
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/TransGyzmo.geomertry"),
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/RotationGyzmo .geomertry"),
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/ScaleGyzmo.geomertry")
          };
          clickProgram = new Shader[] { 
-               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/TransGyzmo.geomertry"),
-               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/RotationGyzmo .geomertry"),
-               new Shader("Res/Gyzmo.vert", "Res/ClicksGyz.frag", "Res/ScaleGyzmo.geomertry")
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/ClicksGyz.frag", "Res/shaders/TransGyzmo.geomertry"),
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/ClicksGyz.frag", "Res/shaders/RotationGyzmo .geomertry"),
+               new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/ClicksGyz.frag", "Res/shaders/ScaleGyzmo.geomertry")
            };
         }
         public void UpdateClick(Camera camera, HierObj slected)
@@ -48,7 +48,7 @@ namespace EPQui
                 if (i == (int)type)
                 {
                     clickProgram[i].Activate();
-                    Matrix4 mod = slected.rotationMatrix * Matrix4.CreateTranslation(slected.Position + slected.PositionAdded);
+                    Matrix4 mod = slected.rotationMatrix * Matrix4.CreateTranslation((slected.Position + slected.PositionAdded - camera.Position).Normalized() * 6f + camera.Position);
                     GL.UniformMatrix4(GL.GetUniformLocation(clickProgram[i].ID, "model"), false, ref mod);
                     GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camUp"), camera.OrientationU);
                     GL.Uniform3(GL.GetUniformLocation(clickProgram[i].ID, "camRight"), camera.OrientationR);
@@ -65,7 +65,7 @@ namespace EPQui
                 if (i == (int)type)
                 {
                     shaderProgram[i].Activate();
-                    Matrix4 mod = slected.rotationMatrix * Matrix4.CreateTranslation(slected.Position + slected.PositionAdded);
+                    Matrix4 mod = slected.rotationMatrix * Matrix4.CreateTranslation((slected.Position + slected.PositionAdded - camera.Position).Normalized() * 6f + camera.Position);
                     GL.UniformMatrix4(GL.GetUniformLocation(clickProgram[i].ID, "model"), false, ref mod);
                     GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camUp"), camera.OrientationU);
                     GL.Uniform3(GL.GetUniformLocation(shaderProgram[i].ID, "camRight"), camera.OrientationR);

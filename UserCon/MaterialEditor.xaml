@@ -20,9 +20,6 @@
             <local:Vec2Editor x:Name="traSca"/>
             <local:FloatEditor x:Name="traDif"/>
             <local:FloatEditor x:Name="traSpec"/>
-            <Button Click="Button_Click">
-                Texture
-            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

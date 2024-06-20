@@ -189,7 +189,8 @@ namespace EPQui
                             temp += line[i];
                         }
                     }
-                    y = int.Parse(temp);
+                    if (temp == "") y = 0;
+                   else y = int.Parse(temp);
                     temp = "";
 
                     for (int i = start; i < line.Length; i++)
