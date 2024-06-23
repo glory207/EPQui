@@ -44,10 +44,9 @@ namespace EPQui
                 parent = this.parent,
                 Position = Position + PositionAdded,
                 objectScale = objectScale + objectScaleAdded,
-                objectRotation = objectRotation + objectRotationAdded,
-                objectRotationAdded = Quaternion.Identity,
-
-                mate = (material)mate.Clone(),
+                objectRotation = objectRotation,
+                objectRotationAdded = objectRotationAdded,
+            mate = (material)mate.Clone(),
                // mesh = new Mesh(mesh.vertices.ToArray(), mesh.indices.ToArray(),mesh.name),
                mesh = (Mesh)mesh.Clone(),
                 name = name
@@ -105,9 +104,9 @@ namespace EPQui
         public override void destroy()
         {
            mesh.delete();
-          //  mesh = null;
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+           mesh = null;
+            mate.texture.Delete();
+            mate = null;
         }
     }
 }

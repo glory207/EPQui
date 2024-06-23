@@ -102,8 +102,19 @@ namespace EPQui.UserCon
         private void TraE_deleted()
         {
             theList2.Children.Clear();
-            window.scene.children.Remove(scene.children[window.selectedObjj]);
+
+
+            if (window.selectedObjj > -1 && window.selectedObjj < scene.children.Count)
+            {
+                scene.children[window.selectedObjj].destroy();
+                scene.children[window.selectedObjj] = null;
+                scene.children.Remove(scene.children[window.selectedObjj]);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
             window.selectedObjj = -1;
+            scene.InvokeReload();
+
             window.scene.InvokeReload();
         }
 

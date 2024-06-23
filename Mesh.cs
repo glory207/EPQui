@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 using OpenTK.Windowing.Desktop;
+using System.Reflection;
 
 namespace EPQui
 {
@@ -57,6 +58,7 @@ namespace EPQui
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            VBO.Delete();
             EBO.Delete();
 
         }
@@ -328,6 +330,7 @@ namespace EPQui
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            VBO.Delete();
             EBO.Delete();
 
         }
@@ -347,6 +350,7 @@ namespace EPQui
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            VBO.Delete();
             EBO.Delete();
         }
         public Mesh(int i) { }
@@ -359,31 +363,11 @@ namespace EPQui
 
         public object Clone()
         {
-            // Step 1: Generate a new buffer
-            int newVAO = GL.GenBuffer();
+          
 
-            // Step 2: Bind the original buffer
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VAO.ID);
-
-            // Step 3: Get the size of the original buffer
-            int bufferSize;
-            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out bufferSize);
-
-            // Step 4: Allocate memory for the new buffer
-            GL.BindBuffer(BufferTarget.ArrayBuffer, newVAO);
-            GL.BufferData(BufferTarget.ArrayBuffer, bufferSize, IntPtr.Zero, BufferUsageHint.StaticDraw);
-
-            // Step 5: Copy data from the original buffer to the new buffer
-            GL.BindBuffer(BufferTarget.CopyReadBuffer, VAO.ID);
-            GL.BindBuffer(BufferTarget.CopyWriteBuffer, newVAO);
-            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer, IntPtr.Zero, IntPtr.Zero, bufferSize);
-
-
-            return new Mesh(1)
+            return new Mesh(path)
             {
-                VAO = new VAO(newVAO),
-                lengthA = lengthA,
-                lengthI = lengthI,
+
             };
         }
         int DuplicateBuffer(int a, int b)

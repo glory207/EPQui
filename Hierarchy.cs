@@ -540,11 +540,9 @@ namespace EPQui
         {
             for (int i = 0; i < children.Count;i++)
             {
-                children[i] = null;
                 children[i].destroy();
             }
             gridMesh.delete();
-            gridMesh = null;
             gridshaderProgram.Delete();
         }
 

@@ -72,8 +72,8 @@ namespace EPQui.UserCon
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-         target.destroy();
-         deleted.Invoke();
+        
+            deleted.Invoke();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

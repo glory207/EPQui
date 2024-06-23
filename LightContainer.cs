@@ -110,6 +110,11 @@ namespace EPQui
             mesh.Draw();
         }
         public override void destroy() {
+
+            mesh.delete();
+            mesh = null;
+
+
         }
         public LightContainer()
         {
