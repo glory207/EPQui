@@ -18,8 +18,15 @@ namespace EPQui
         public string type;
         ImageResult image;
         public string path;
+       public bool empyty;
+        public Texture()
+        {
+            
+            empyty = true;
+        }
         public Texture(string path, string texType,PixelFormat pixelFormat)
         {
+            empyty = false;
             this.path = path;
             type = texType;
            
@@ -59,6 +66,7 @@ namespace EPQui
         }
         public void Delete() {
             GL.DeleteTexture(ID);
+            
         }
 
         public void texUnit(Shader shader, string uniform){

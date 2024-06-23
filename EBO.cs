@@ -13,11 +13,15 @@ namespace EPQui
     {
         
         public int ID;
-        public EBO(List<uint> indices)
+        public EBO(int a )
+        {
+            ID = a; 
+        }
+        public EBO(uint[] indices)
         {
             ID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Count * sizeof(float), indices.ToArray(), BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Count() * sizeof(float), indices, BufferUsageHint.StaticDraw);
 
         }
         public void Bind() {
@@ -29,5 +33,7 @@ namespace EPQui
         public void Delete() {
             GL.DeleteBuffer(ID);
         }
+
+
     }
 }

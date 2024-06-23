@@ -16,6 +16,9 @@ namespace EPQui
         public VAO() {
             ID = GL.GenVertexArray();
         }
+        public VAO(int i) {
+            ID = i;
+        }
         public void LinkAttrib(VBO VBO, uint layout, int numComponents, int stride, int offset) {
             VBO.Bind();
 
@@ -35,5 +38,6 @@ namespace EPQui
         {
             GL.DeleteVertexArray(ID);
         }
+
     }
 }

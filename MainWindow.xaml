@@ -10,12 +10,7 @@
         Title="MainWindow" Height="720" Width="1256" 
         Background="Gray"
         >
-    <Grid  x:Name="grid">
-        <TextBlock HorizontalAlignment="Center" Margin="0,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="327" Width="1162" FontSize="100">
-            select scene
-        </TextBlock>
-        <WrapPanel Name="wrpPan">
-
-        </WrapPanel>
+    <Grid x:Name="grid">
+        
     </Grid>
 </Window>

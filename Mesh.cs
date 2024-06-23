@@ -14,6 +14,8 @@ namespace EPQui
 {
     public struct Vertex
     {
+       
+        
         public Vertex(Vector3 a, Vector2 b)
         {
             position = a;
@@ -21,32 +23,41 @@ namespace EPQui
         }
         public Vector3 position;
         public Vector2 texUV;
+
     }
-    public class Mesh
+    public class Mesh : ICloneable
     {
-       
+
 
 
         public string name = "empty";
         public string path = "empty";
-        public List<Vertex> vertices = new List<Vertex>();
-        public List<uint> indices = new List<uint>();
+        // public List<Vertex> vertices;
+        // public List<uint> indices;
         VAO VAO = new VAO();
-
-        public Mesh(List<Vertex> vertices, List<uint> indices, string name) {
+        EBO EBO;
+        public void delete()
+        {
+            // vertices = new List<Vertex>();
+            // indices = new List<uint>();
+           VAO.Delete();
+        }
+        public Mesh(Vertex[] vertices, uint[] indices, string name) {
             this.name = name;
-            this.vertices = vertices;
-            this.indices = indices;
-
+            //  this.vertices = vertices.ToList();
+            //  this.indices = indices.ToList();
+            lengthI = indices.Length;
+            lengthA = vertices.Length;
             VAO.Bind();
             VBO VBO = new VBO(vertices);
-            EBO EBO = new EBO(indices);
-            VAO.LinkAttrib(VBO, 0, 3,5 * sizeof(float), 0);
+            EBO = new EBO(indices);
+            VAO.LinkAttrib(VBO, 0, 3, 5 * sizeof(float), 0);
             VAO.LinkAttrib(VBO, 1, 2, 5 * sizeof(float), 3);
 
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            EBO.Delete();
 
         }
         public Mesh(string path) {
@@ -56,7 +67,7 @@ namespace EPQui
             int num = 0;
             List<Vector3> verts = new List<Vector3>();
             List<Vector2> verTex = new List<Vector2>();
-            List<Vertex> vertex = new List<Vertex>();
+            List<Vertex> vertices = new List<Vertex>();
             List<uint> indices = new List<uint>();
             Vector3 offset = new Vector3(0);
             name = path.Substring(11, path.Substring(11).Length - 4);
@@ -67,7 +78,7 @@ namespace EPQui
                 {
 
 
-                   // name = line.Substring(2);
+                    // name = line.Substring(2);
 
 
                     num++;
@@ -190,7 +201,7 @@ namespace EPQui
                         }
                     }
                     if (temp == "") y = 0;
-                   else y = int.Parse(temp);
+                    else y = int.Parse(temp);
                     temp = "";
 
                     for (int i = start; i < line.Length; i++)
@@ -207,8 +218,8 @@ namespace EPQui
                     z = int.Parse(temp);
                     temp = "";
 
-                    vertex.Add(new Vertex( verts[(int)(x - 1 - offset.X)],verTex[(int)(y - 1 - offset.Y)] ));
-                    indices.Add((uint)vertex.Count() - 1);
+                    vertices.Add(new Vertex(verts[(int)(x - 1 - offset.X)], verTex[(int)(y - 1 - offset.Y)]));
+                    indices.Add((uint)vertices.Count() - 1);
 
                     for (int i = start; i < line.Length; i++)
                     {
@@ -251,8 +262,8 @@ namespace EPQui
                     z = int.Parse(temp);
                     temp = "";
 
-                    vertex.Add(new Vertex( verts[(int)(x - 1 - offset.X)],verTex[(int)(y - 1 - offset.Y)] ));
-                    indices.Add((uint)vertex.Count() - 1);
+                    vertices.Add(new Vertex(verts[(int)(x - 1 - offset.X)], verTex[(int)(y - 1 - offset.Y)]));
+                    indices.Add((uint)vertices.Count() - 1);
 
                     for (int i = start; i < line.Length; i++)
                     {
@@ -294,46 +305,106 @@ namespace EPQui
                     }
                     z = int.Parse(temp);
                     temp = "";
-                    vertex.Add(new Vertex( verts[(int)(x - 1 - offset.X)],verTex[(int)(y - 1 - offset.Y)] ));
-                    indices.Add((uint)vertex.Count() - 1);
+                    vertices.Add(new Vertex(verts[(int)(x - 1 - offset.X)], verTex[(int)(y - 1 - offset.Y)]));
+                    indices.Add((uint)vertices.Count() - 1);
                 }
 
             }
 
             str.Close();
-            this.indices = indices;
-            this.vertices = vertex;
+            lengthI = indices.Count;
+            lengthA = vertices.Count;
+            verts = new List<Vector3>();
+            verTex = new List<Vector2>();
             //bind stuff
             VAO.Bind();
-            VBO VBO = new VBO(vertices);
-            EBO EBO = new EBO(indices);
+            VBO VBO = new VBO(vertices.ToArray());
             VAO.LinkAttrib(VBO, 0, 3, 5 * sizeof(float), 0);
             VAO.LinkAttrib(VBO, 1, 2, 5 * sizeof(float), 3);
+            EBO = new EBO(indices.ToArray());
+            vertices = new List<Vertex>();
+            indices = new List<uint>();
 
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            EBO.Delete();
 
         }
         public Mesh() {
             name = "empty";
-            vertices = new List<Vertex>() { new Vertex(new Vector3(0), new Vector2(0)) ,new Vertex(new Vector3(0), new Vector2(0)) ,new Vertex(new Vector3(0), new Vector2(0)) };
-            indices = new List<uint>() { 0,1,2};
+            List<Vertex> vertices = new List<Vertex>() { new Vertex(new Vector3(0), new Vector2(0)), new Vertex(new Vector3(0), new Vector2(0)), new Vertex(new Vector3(0), new Vector2(0)) };
+            List<uint> indices = new List<uint> { 0, 1, 2 };
 
+            lengthI = indices.Count;
+            lengthA = vertices.Count;
             VAO.Bind();
-            VBO VBO = new VBO(vertices);
-            EBO EBO = new EBO(indices);
+            VBO VBO = new VBO(vertices.ToArray());
+            EBO = new EBO(indices.ToArray());
             VAO.LinkAttrib(VBO, 0, 3, 5 * sizeof(float), 0);
             VAO.LinkAttrib(VBO, 1, 2, 5 * sizeof(float), 3);
 
             VAO.Unbind();
             VBO.Unind();
             EBO.Unind();
+            EBO.Delete();
         }
+        public Mesh(int i) { }
+        int lengthA;
+        int lengthI;
         public void Draw() {
             VAO.Bind();
-            GL.DrawElements(BeginMode.Triangles, indices.Count, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(BeginMode.Triangles, lengthI, DrawElementsType.UnsignedInt, 0);
         }
 
+        public object Clone()
+        {
+            // Step 1: Generate a new buffer
+            int newVAO = GL.GenBuffer();
+
+            // Step 2: Bind the original buffer
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VAO.ID);
+
+            // Step 3: Get the size of the original buffer
+            int bufferSize;
+            GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out bufferSize);
+
+            // Step 4: Allocate memory for the new buffer
+            GL.BindBuffer(BufferTarget.ArrayBuffer, newVAO);
+            GL.BufferData(BufferTarget.ArrayBuffer, bufferSize, IntPtr.Zero, BufferUsageHint.StaticDraw);
+
+            // Step 5: Copy data from the original buffer to the new buffer
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, VAO.ID);
+            GL.BindBuffer(BufferTarget.CopyWriteBuffer, newVAO);
+            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer, IntPtr.Zero, IntPtr.Zero, bufferSize);
+
+
+            return new Mesh(1)
+            {
+                VAO = new VAO(newVAO),
+                lengthA = lengthA,
+                lengthI = lengthI,
+            };
+        }
+        int DuplicateBuffer(int a, int b)
+        {
+
+            int newBuffer = GL.GenBuffer();
+
+            // Bind the original buffer for reading
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, a);
+
+            // Bind the new buffer for writing
+            GL.BindBuffer(BufferTarget.CopyWriteBuffer, newBuffer);
+
+            // Allocate memory for the new buffer and copy the data from the original buffer
+            GL.BufferData(BufferTarget.CopyWriteBuffer, b, IntPtr.Zero, BufferUsageHint.StaticDraw);
+            GL.CopyBufferSubData(BufferTarget.CopyReadBuffer, BufferTarget.CopyWriteBuffer, IntPtr.Zero, IntPtr.Zero, b);
+
+            // Unbind the buffers
+            GL.BindBuffer(BufferTarget.CopyReadBuffer, 0);
+            GL.BindBuffer(BufferTarget.CopyWriteBuffer, 0);
+            return newBuffer;
+        }
     }
 }

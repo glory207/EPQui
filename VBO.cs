@@ -13,18 +13,22 @@ namespace EPQui
         
 
         public int ID;
-        public VBO(List<Vertex> vertices)
+        public VBO(int a)
+        {
+            ID = a;
+        }
+        public VBO(Vertex[] vertices)
         {
             ID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count * sizeof(float) * 5, vertices.ToArray(), BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count() * sizeof(float) * 5, vertices, BufferUsageHint.StaticDraw);
           
         }
-        public VBO(List<float> vertices)
+        public VBO(float[] vertices)
         {
             ID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count * sizeof(float), vertices.ToArray(), BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Count() * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
         }
         public void Bind() {
@@ -36,5 +40,7 @@ namespace EPQui
         public void Delete() {
             GL.DeleteBuffer(ID);
         }
+
+       
     }
 }

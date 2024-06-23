@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:EPQui.UserCon" xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="638.405">
-    <Grid MinHeight="100" MinWidth="100">
+    <Grid MinHeight="100" MinWidth="100" Background="Transparent">
 
         <glWpfControl:GLWpfControl x:Name="window"/>
         <Button Tag ="1" Click="Button_Click" Width="80" Content="Translation" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top"/>

@@ -20,14 +20,18 @@ namespace EPQui
         Shader gridshaderProgram;
         List<MeshContainer> meshContainers = new List<MeshContainer>();
         List<LightContainer> lightContainers = new List<LightContainer>();
-
+        public delegate void EventArgs();
+       public event EventArgs Reload;
         Shader LightClickProgram;
         Shader MeshClickProgram;
         Shader shadowABC;
         Shader LightShaderProgram;
-        Shader MeshShaderProgram;
+       public Shader MeshShaderProgram;
         public string path;
-        
+        public void InvokeReload()
+        {
+            Reload.Invoke();
+        }
         public void save()
         {
             StreamWriter str = new StreamWriter(path);
@@ -75,8 +79,8 @@ namespace EPQui
                     str.WriteLine("mate diffuce:");
                     str.WriteLine(((MeshContainer)children[i]).mate.diffuce.ToString());
                     str.WriteLine("mate path:");
-                    if (((MeshContainer)children[i]).mate.textures.Count == 0) str.WriteLine("emp");
-                    else str.WriteLine(((MeshContainer)children[i]).mate.textures[0].path.ToString());
+                    if (((MeshContainer)children[i]).mate.texture.empyty) str.WriteLine("emp");
+                    else str.WriteLine(((MeshContainer)children[i]).mate.texture.path.ToString());
                 }
             }
             str.Close();
@@ -90,51 +94,50 @@ namespace EPQui
             MeshShaderProgram = new Shader("Res/shaders/default.vert", "Res/shaders/default.frag", "Res/shaders/default.geometry");
             this.path = path;
             StreamReader str = new StreamReader(path);
-            
             string line;
             while (!str.EndOfStream)
             {
                 line = str.ReadLine();
                 if (line == "<LightContainer>")
                 {
-                    
+
                     LightContainer tempL = new LightContainer(this);
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.angle = parse2(line); 
+                    tempL.angle = parse2(line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.intencity = float.Parse(line); 
+                    tempL.intencity = float.Parse(line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.lightColor = parse4(line); 
+                    tempL.lightColor = parse4(line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.name = (line); 
+                    tempL.name = (line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.objectRotation = Quaternion.FromEulerAngles(parse3(line)); 
+                    tempL.objectRotation = Quaternion.FromEulerAngles(parse3(line));
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.objectScale = parse3(line); 
+                    tempL.objectScale = parse3(line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.Position = parse3(line); 
+                    tempL.Position = parse3(line);
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    tempL.Type =(LightType) int.Parse(line); 
+                    tempL.Type = (LightType)int.Parse(line);
                     children.Add(tempL);
                 }
-                else if(line == "<MeshContainer>")
+                else if (line == "<MeshContainer>")
                 {
-                    MeshContainer tempL = new MeshContainer() { parent = this};
+                    MeshContainer tempL = new MeshContainer() { parent = this };
                     str.ReadLine();
                     line = str.ReadLine();
                     tempL.name = (line);
@@ -175,15 +178,16 @@ namespace EPQui
 
                     str.ReadLine();
                     line = str.ReadLine();
-                    if (line == "emp") tempL.mate.textures = new List<Texture>();
-                    else tempL.mate.textures = new List<Texture>() { new Texture(line, "diffuse", PixelFormat.Rgba) };
+                    if (line == "emp") tempL.mate.texture = new Texture();
+                    else tempL.mate.texture = new Texture(line, "diffuse", PixelFormat.Rgba);
 
                     children.Add(tempL);
                 }
             }
             str.Close();
 
-                gridMesh = new Mesh();
+
+            gridMesh = new Mesh();
             gridshaderProgram = new Shader("Res/shaders/grid.vert", "Res/shaders/grid.frag", "Res/shaders/grid.geomertry");
 
         }
@@ -378,6 +382,15 @@ namespace EPQui
         }
         public override void Update(List<LightContainer> lights, Camera camera)
         {
+
+         //  gridshaderProgram.Activate();
+         //  Matrix4 mat = Matrix4.Identity;
+         //  GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
+         //  GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
+         //  GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camPos"), camera.Position);
+         //  camera.Matrix(gridshaderProgram, "camMatrix");
+         //  gridMesh.Draw();
+
             LightShaderProgram.Activate();
             GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camUp"), camera.OrientationU);
             GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camRight"), camera.OrientationR);
@@ -437,19 +450,12 @@ namespace EPQui
             }
 
 
-            gridshaderProgram.Activate();
-            Matrix4 mat = Matrix4.Identity;
-            GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
-            GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
-            gridshaderProgram.Activate();
-            GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camPos"), camera.Position);
-            camera.Matrix(gridshaderProgram, "camMatrix");
-            gridMesh.Draw();
 
 
         }
         public override void UpdateClick(Camera camera,Shader shader)
         {
+            
             LightClickProgram.Activate();
             GL.Uniform3(GL.GetUniformLocation(LightClickProgram.ID, "camUp"), camera.OrientationU);
             GL.Uniform3(GL.GetUniformLocation(LightClickProgram.ID, "camRight"), camera.OrientationR);
@@ -532,10 +538,13 @@ namespace EPQui
         }
         public override void destroy()
         {
-            foreach (HierObj ob in children)
+            for (int i = 0; i < children.Count;i++)
             {
-                ob.destroy();
+                children[i] = null;
+                children[i].destroy();
             }
+            gridMesh.delete();
+            gridMesh = null;
             gridshaderProgram.Delete();
         }
 

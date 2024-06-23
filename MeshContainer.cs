@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Automation.Text;
 using System.Windows.Media.Media3D;
 using Quaternion = OpenTK.Mathematics.Quaternion;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace EPQui
 {
@@ -34,7 +35,7 @@ namespace EPQui
         public MeshContainer()
         {
             objectRotationAdded = Quaternion.Identity;
-
+            mate = new material();
         }
         public object Clone()
         {
@@ -47,8 +48,9 @@ namespace EPQui
                 objectRotationAdded = Quaternion.Identity,
 
                 mate = (material)mate.Clone(),
-                mesh = mesh,
-                name = name + " copy"
+               // mesh = new Mesh(mesh.vertices.ToArray(), mesh.indices.ToArray(),mesh.name),
+               mesh = (Mesh)mesh.Clone(),
+                name = name
             };
 
 
@@ -71,27 +73,16 @@ namespace EPQui
         {
 
 
-
-            uint numDiffuse = 0;
-            uint numSpecular = 0;
-            for (int i = 0; i < mate.textures.Count(); i++)
             {
-                string num = "";
-                string type = mate.textures[i].type;
-                if (type == "diffuse")
-                {
-                    num = (numDiffuse++).ToString();
-                }
-                else if (type == "specular")
-                {
-                    num = (numSpecular++).ToString();
-                }
-                mate.textures[i].texUnit(shader, (type + num).ToString());
-            }
+                mate.texture.texUnit(shader, ("diffuse" + 0).ToString());
+                if (mate.texture.empyty) GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), 0);
+                 GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), 1);
 
+            }
             GL.Uniform1(GL.GetUniformLocation(shader.ID, "diffuseLight"), mate.diffuce);
             GL.Uniform1(GL.GetUniformLocation(shader.ID, "specularLight"), mate.specular);
-            GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), mate.textures.Count());
+          if(mate.texture.empyty)  GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), 0);
+          else  GL.Uniform1(GL.GetUniformLocation(shader.ID, "noTex"), 1);
 
             GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureSca"), mate.texScale);
             GL.Uniform2(GL.GetUniformLocation(shader.ID, "textureOff"), mate.texOff);
@@ -113,7 +104,10 @@ namespace EPQui
 
         public override void destroy()
         {
-           
+           mesh.delete();
+          //  mesh = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 }

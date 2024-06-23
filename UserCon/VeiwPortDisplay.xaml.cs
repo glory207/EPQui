@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using StbImageSharp;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EPQui.UserCon
 {
@@ -34,6 +35,8 @@ namespace EPQui.UserCon
     {
         int cubemapTexture;
         long cubemapHandle;
+        MeshContainer mouseMesh;
+        bool dragging = false;
         public VeiwPortDisplay()
         {
 
@@ -43,6 +46,12 @@ namespace EPQui.UserCon
                 MajorVersion = 4,
                 MinorVersion = 6
             };
+            AllowDrop = true;
+
+            DragLeave += VeiwPortDisplay_DragLeave; 
+            DragEnter += VeiwPortDisplay_DragEnter; 
+            Drop += VeiwPortDisplay_Drop;
+            DragOver += VeiwPortDisplay_DragOver;
             window.Start(settings);
 
             
@@ -74,6 +83,108 @@ namespace EPQui.UserCon
             GL.Arb.MakeTextureHandleResident(cubemapHandle);
             GL.BindTexture(TextureTarget.TextureCubeMap, 0);
 
+        }
+        int CrntOver;
+        int LastOver;
+        private void VeiwPortDisplay_DragOver(object sender, DragEventArgs e)
+        {
+            mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
+
+
+            Matrix4 ProjectionInv = camera.projection.Inverted();
+
+            float mouse_x = (float)mouseP.X;
+            float mouse_y = (float)mouseP.Y;
+
+            float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+            float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+
+            Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+            Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+
+
+            Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+
+            Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+            if (mouseL && editObj != 0)
+            {
+
+                if (selectedObjj > -1 && selectedObjj < scene.children.Count) gyzmo.edit(editObj, camera.Orientation, camera.Position, scene.children[selectedObjj], point_world);
+            }
+            float t = Vector3.Dot(Vector3.UnitY, -camera.Position) / Vector3.Dot(Vector3.UnitY, point_world);
+            Vector3 mouseW = (camera.Position + t * point_world);
+
+            mouseMesh.Position = mouseW;
+
+            CrntOver = camera.frameC.update((int)mouseP.X, SCR_HEIGHT - (int)mouseP.Y);
+            if (LastOver != CrntOver)
+            {
+
+                if (e.Data.GetDataPresent("texture"))
+                {
+                    dragging = false;
+                    string text = (string)e.Data.GetData("texture");
+
+                  
+                }
+
+
+            }
+            LastOver = CrntOver;
+
+        }
+
+        private void VeiwPortDisplay_DragLeave(object sender, DragEventArgs e)
+        {
+            Debug.WriteLine("leave");
+            if (e.Data.GetDataPresent("mesh"))
+            {
+                dragging = false;
+                string text = (string)e.Data.GetData("mesh");
+            }
+            LastOver = -1;
+
+
+        }
+
+        private void VeiwPortDisplay_DragEnter(object sender, DragEventArgs e)
+        {
+            Debug.WriteLine("enter");
+            if (e.Data.GetDataPresent("mesh"))
+            {
+                dragging = true;
+                string text = (string)e.Data.GetData("mesh");
+
+                mouseMesh.mesh = new Mesh(text);
+                mouseMesh.name = mouseMesh.mesh.name;
+            }
+            LastOver = -1;
+
+        }
+
+        private void VeiwPortDisplay_Drop(object sender, DragEventArgs e)
+        {
+            Debug.WriteLine("drop");
+            if (e.Data.GetDataPresent("mesh"))
+            {
+                dragging = false;
+                string text = (string)e.Data.GetData("mesh");
+                scene.children.Add((MeshContainer)mouseMesh.Clone());
+                scene.InvokeReload();
+            }
+            if (e.Data.GetDataPresent("texture"))
+            {
+                dragging = false;
+                string text = (string)e.Data.GetData("texture");
+                if (scene.children[CrntOver].GetType() == typeof(MeshContainer))
+                {
+
+                    ((MeshContainer)scene.children[CrntOver]).mate.texture = new Texture(text, "diffuse", PixelFormat.Rgba);
+                    ((MeshContainer)scene.children[CrntOver]).mate.temp = false;
+                }
+                LastOver = -1;
+                scene.InvokeReload();
+            }
         }
 
         public Gyzmo gyzmo;
@@ -113,6 +224,8 @@ namespace EPQui.UserCon
            // scene = new Hierarchy();
             this.Focusable = true;
 
+            mouseMesh = new MeshContainer(Vector3.Zero, "C:/Users/gloto/Documents/Code3/EPQui/Res/meshes/cube.obj", scene);
+           
             gyzmo = new Gyzmo();
 
         }
@@ -160,7 +273,8 @@ namespace EPQui.UserCon
            
 
             scene.PreUpdate();
-         if(shade)  scene.UpdateShadow(camera);
+            mouseMesh.PreUpdate();
+         if (shade)  scene.UpdateShadow(camera);
             
             camera.frameC.Clear();
             scene.UpdateClick(camera, null);
@@ -181,6 +295,7 @@ namespace EPQui.UserCon
             camera.frame.Clear();
             lights = new List<LightContainer>();
             scene.Update(lights, camera);
+           if(dragging) mouseMesh.undate(scene.MeshShaderProgram);
             if (selectedObjj >= 0 && scene.children.Count > 0)
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -207,7 +322,7 @@ namespace EPQui.UserCon
             scene.destroy();
         }
 
-        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true, firstC;
+        bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true, firstC = true, firstX = true;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -275,15 +390,19 @@ namespace EPQui.UserCon
            switch (e.ChangedButton)
            {
                case System.Windows.Input.MouseButton.Left:
+
                    mouseL = false;
-                   scene.children[selectedObjj].Position += scene.children[selectedObjj].PositionAdded;
-                   scene.children[selectedObjj].PositionAdded = Vector3.Zero;
-                   scene.children[selectedObjj].objectScale += scene.children[selectedObjj].objectScaleAdded;
-                   scene.children[selectedObjj].objectScaleAdded = Vector3.Zero;
-                   scene.children[selectedObjj].objectRotation = scene.children[selectedObjj].objectRotationAdded * scene.children[selectedObjj].objectRotation;
-                   scene.children[selectedObjj].objectRotationAdded = Quaternion.Identity;
-                   editObj = 0;
-                   SampleEvent.Invoke();
+                    if (selectedObjj > -1 && selectedObjj < scene.children.Count)
+                    {
+                        scene.children[selectedObjj].Position += scene.children[selectedObjj].PositionAdded;
+                        scene.children[selectedObjj].PositionAdded = Vector3.Zero;
+                        scene.children[selectedObjj].objectScale += scene.children[selectedObjj].objectScaleAdded;
+                        scene.children[selectedObjj].objectScaleAdded = Vector3.Zero;
+                        scene.children[selectedObjj].objectRotation = scene.children[selectedObjj].objectRotationAdded * scene.children[selectedObjj].objectRotation;
+                        scene.children[selectedObjj].objectRotationAdded = Quaternion.Identity;
+                        editObj = 0;
+                        SampleEvent.Invoke();
+                    }
                    break;
                case System.Windows.Input.MouseButton.Right:
                    mouseR = false;
@@ -363,6 +482,9 @@ namespace EPQui.UserCon
                 case Key.C:
                     firstC = true;
                     break;
+                case Key.X:
+                    firstX = true;
+                    break;
             }
         }
 
@@ -408,8 +530,26 @@ namespace EPQui.UserCon
                     firstC = false;
                    
                     break;
+                case Key.X:
+                    if (firstX) TraE_deleted();
+                    firstX = false;
+
+                    break;
 
             }
+        }
+
+
+        private void TraE_deleted()
+        {
+            if (selectedObjj > -1 && selectedObjj < scene.children.Count) 
+            {
+                scene.children[selectedObjj].destroy();
+                scene.children.Remove(scene.children[selectedObjj]);
+                
+            }
+            selectedObjj = -1;
+            scene.InvokeReload();
         }
         private void TraE_duped()
         {
@@ -423,12 +563,14 @@ namespace EPQui.UserCon
                 var ms = (LightContainer)((LightContainer)scene.children[selectedObjj]).Clone();
                 scene.children.Add(ms);
             }
-         //   setHir();
+            scene.InvokeReload();
 
         }
         void update()
         {
-            mouseD = (mouseP - new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y)) * new Vector2(-1, 1);
+           
+
+            mouseD = (mouseP - new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y)) * new Vector2(-0.5f, 0.5f);
             mouseP = new Vector2((float)Mouse.GetPosition(window).X, (float)Mouse.GetPosition(window).Y);
           
             if (mouseR) mouseA += mouseD * mouseS;
@@ -456,25 +598,28 @@ namespace EPQui.UserCon
                 camera.OrientationR = Matrix3.CreateFromAxisAngle(camera.OrientationR, mouseLr.Y) * -camera.OrientationR;
 
 
-               if (mouseL && editObj != 0)
-               {
-                   Matrix4 ProjectionInv = camera.projection.Inverted();
-              
-                   float mouse_x = (float)mouseP.X;
-                   float mouse_y = (float)mouseP.Y;
-              
-                   float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
-                   float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
-              
-                   Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
-                   Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
-              
-              
-                   Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
-              
-                   Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
-                   gyzmo.edit(editObj, camera.Orientation, camera.Position, scene.children[selectedObjj], point_world);
-               }
+                Matrix4 ProjectionInv = camera.projection.Inverted();
+
+                float mouse_x = (float)mouseP.X;
+                float mouse_y = (float)mouseP.Y;
+
+                float ndc_x = (2.0f * mouse_x) / SCR_WIDTH - 1.0f;
+                float ndc_y = 1.0f - (2.0f * mouse_y) / SCR_HEIGHT;
+
+                Vector4 ray_ndc_4d = new Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
+                Vector4 ray_view_4d = ProjectionInv * ray_ndc_4d;
+
+
+                Vector4 view_space_intersect = new Vector4(ray_view_4d.X, ray_view_4d.Y, -1, 1);
+
+                Vector3 point_world = (camera.view * view_space_intersect).Xyz.Normalized();
+                if (mouseL && editObj != 0)
+                {
+
+                    if (selectedObjj > -1 && selectedObjj < scene.children.Count) gyzmo.edit(editObj, camera.Orientation, camera.Position, scene.children[selectedObjj], point_world);
+                }
+                
+
             }
         }
     }

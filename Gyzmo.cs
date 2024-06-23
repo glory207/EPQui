@@ -300,6 +300,7 @@ namespace EPQui
             {
                 t = Vector3.Dot(Vector3.UnitY, slected.Position - cameraPosition) / Vector3.Dot(Vector3.UnitY, point_world);
                 mouseW = (cameraPosition + t * point_world);
+                
             }
             else if (editObj == 11)
             {

@@ -32,38 +32,14 @@ namespace EPQui
     /// </summary>
     public partial class MainWindow
     {
+        StartScreen startScreen;
         public MainWindow()
         {
-            
             InitializeComponent();
-            
-            string[] meshDir = Directory.GetFiles("Res/scenes/", "*.sce");
-
-            foreach (string str in meshDir)
-            {
-                Button button = new Button();
-                button.Padding = new Thickness(20, 20, 20, 20);
-                button.Tag = str;
-                button.Content = str.Substring(11, str.Substring(11).Length - 4);
-                button.Click += Button_Click; 
-
-                wrpPan.Children.Add(button);
-            }
-            string strr = "new scene";
-            Button buttonn = new Button();
-            buttonn.Padding = new Thickness(20, 20, 20, 20);
-            buttonn.Tag = "non";
-            buttonn.Content = strr;
-            buttonn.Click += Button_Click;
-
-            wrpPan.Children.Add(buttonn);
+            startScreen = new StartScreen(this);
+            grid.Children.Add(startScreen);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            grid.Children.Clear();
-            grid.Children.Add(new TheFullThing((string)((FrameworkElement)sender).Tag));
-        }
     }
 
 
