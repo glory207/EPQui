@@ -57,6 +57,7 @@ namespace EPQui
             if (Type == LightType.dir)
             {
                 projection = Matrix4.CreateOrthographic(50, 50, -25, 25);
+                if (di == new Vector4((0, -1, 0, 0))) di = new Vector4(0.001f, -1, 0.001f, 0);
                 view = Matrix4.LookAt(Vector3.Zero, di.Xyz * 20, new Vector3(0, 1, 0));
 
                 shadowModel = view * projection;
@@ -65,6 +66,7 @@ namespace EPQui
             else if (Type == LightType.spot)
             {
                 projection = Matrix4.CreatePerspectiveFieldOfView(angle.X * 2f, (2048 / (float)2048), 0.01f, 50f);
+                if (di == new Vector4((0, -1, 0, 0))) di = new Vector4(0.001f, -1, 0.001f, 0);
                 view = Matrix4.LookAt((Position + PositionAdded), (Position + PositionAdded) + di.Xyz * 20, new Vector3(0, 1, 0));
 
                 shadowModel = view * projection;

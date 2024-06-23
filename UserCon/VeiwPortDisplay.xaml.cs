@@ -135,13 +135,14 @@ namespace EPQui.UserCon
         private void VeiwPortDisplay_Drop(object sender, DragEventArgs e)
         {
             Debug.WriteLine("drop");
+            mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
+
             if (e.Data.GetDataPresent("mesh"))
             {
                 dragging = false;
 
                 {
-                    mouseP = new Vector2((float)e.GetPosition(window).X, (float)e.GetPosition(window).Y);
-
+                    
 
                     Matrix4 ProjectionInv = camera.projection.Inverted();
 
