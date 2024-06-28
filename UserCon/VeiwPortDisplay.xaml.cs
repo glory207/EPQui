@@ -36,24 +36,26 @@ namespace EPQui.UserCon
         int cubemapTexture;
         long cubemapHandle;
         bool dragging = false;
-        public VeiwPortDisplay()
+        public VeiwPortDisplay(bool set)
         {
-
-            InitializeComponent();
+            
             var settings = new GLWpfControlSettings
             {
                 MajorVersion = 4,
                 MinorVersion = 6
             };
+            
+            InitializeComponent();
+            if (set) window.Start(settings);
             AllowDrop = true;
 
             DragLeave += VeiwPortDisplay_DragLeave; 
             DragEnter += VeiwPortDisplay_DragEnter; 
             Drop += VeiwPortDisplay_Drop;
             DragOver += VeiwPortDisplay_DragOver;
-            window.Start(settings);
-
             
+
+
             window.Loaded += Window_Loaded1;
             window.Unloaded += Window_Unloaded;
 
@@ -209,14 +211,14 @@ namespace EPQui.UserCon
         private void Window_Loaded1(object sender, RoutedEventArgs e)
         {
             
-            window.Render += Window_Render;
-            window.SizeChanged += Window_SizeChanged;
-            window.MouseWheel += Window_MouseWheel; ;
-            window.KeyDown += Grid_KeyDown;
-            window.KeyUp += Grid_KeyUp;
-            window.MouseDown += window_MouseDown;
-            window.MouseUp += window_MouseUp;
-            window.MouseLeave += Window_MouseLeave;
+           window.Render += Window_Render;
+           window.SizeChanged += Window_SizeChanged;
+           window.MouseWheel += Window_MouseWheel;
+           window.KeyDown += Grid_KeyDown;
+           window.KeyUp += Grid_KeyUp;
+           window.MouseDown += window_MouseDown;
+           window.MouseUp += window_MouseUp;
+           window.MouseLeave += Window_MouseLeave;
             GL.DepthFunc(DepthFunction.Less);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Multisample);
@@ -319,6 +321,7 @@ namespace EPQui.UserCon
         {
             camera.destroy();
             scene.destroy();
+           
         }
 
         bool up, down, left, right, shift, Ctrl, space, mouseR, mouseL, shade = true, firstC = true, firstX = true;

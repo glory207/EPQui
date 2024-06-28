@@ -1,51 +1,40 @@
 ﻿using System;
-using OpenTK.Graphics.OpenGL4;
 using System.Windows;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.Common;
-using System.Threading;
 using System.Windows.Controls;
-using System.Windows.Media.Media3D;
-using System.Timers;
-using Timer = System.Timers.Timer;
-using OpenTK.Wpf;
-using System.Reflection;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK;
-using System.Diagnostics;
-using Key = System.Windows.Input.Key;
-using System.Windows.Input;
-using OpenTK.Windowing.Common.Input;
-using Quaternion = OpenTK.Mathematics.Quaternion;
-using EPQui.UserCon;
-using System.Collections.Generic;
-using System.Windows.Controls.Primitives;
-using System.IO;
 using System.Windows.Media;
+using OpenTK.Mathematics;
+using System.IO;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
-using static System.Formats.Asn1.AsnWriter;
+using Window = System.Windows.Window;
+using OpenTK.Wpf;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace EPQui.UserCon
 {
     /// <summary>
-    /// Interaction logic for TheFullThing.xaml
+    /// Interaction logic for TheFullWindow.xaml
     /// </summary>
-    public partial class TheFullThing : UserControl
+    public partial class TheFullWindow : Window
     {
-        public TheFullThing(string hie)
+        VeiwPortDisplay window;
+        public TheFullWindow(string hie,bool set)
         {
+            
             InitializeComponent();
+            window = new VeiwPortDisplay(set);
+            Grid.SetColumn(window,1);
+            Grid.SetRow(window,0);
+            theVeiwG.Children.Add(window);
             if (hie == "non") scene = new Hierarchy();
             else scene = new Hierarchy(hie);
             scene.Reload += setHir;
             window.Loaded += Window_Loaded2;
             window.SampleEvent += Window_SampleEvent;
-            Button_Click_4(this,new RoutedEventArgs());
-
-
+            Button_Click_4(this, new RoutedEventArgs());
 
         }
+        
+
         private void Button_Click1(object sender, RoutedEventArgs e)
         {
             Texture tex = new Texture((string)((Button)sender).Tag, "diffuse", PixelFormat.Rgba);
@@ -96,7 +85,7 @@ namespace EPQui.UserCon
                 var ms = (LightContainer)((LightContainer)scene.children[window.selectedObjj]).Clone();
                 scene.children.Add(ms);
             }
-             scene.InvokeReload();
+            scene.InvokeReload();
         }
 
         private void TraE_deleted()
@@ -118,12 +107,12 @@ namespace EPQui.UserCon
             window.scene.InvokeReload();
         }
 
-       public Hierarchy scene;
+        public Hierarchy scene;
         private void Window_Loaded2(object sender, RoutedEventArgs e)
         {
             ((VeiwPortDisplay)sender).scene = scene;
 
-             scene.InvokeReload();
+            scene.InvokeReload();
 
         }
         void setHir()
@@ -180,28 +169,28 @@ namespace EPQui.UserCon
         {
 
             scene.children.Add(new MeshContainer(window.camera.Position, (string)((FrameworkElement)sender).Tag, scene));
-             scene.InvokeReload();
+            scene.InvokeReload();
         }
         private void Button_Click3(object sender, RoutedEventArgs e)
         {
-            scene.children.Add(new LightContainer(scene) { Position = window.camera.Position, lightColor = new Vector4(1, 1, 1, 1) });
-             scene.InvokeReload();
+            scene.children.Add(new LightContainer(scene) { Position = window.camera.Position + window.camera.Orientation, lightColor = new Vector4(1, 1, 1, 1) });
+            scene.InvokeReload();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             wrpPan.Children.Clear();
-           string[] meshDir = Directory.GetFiles("Res/textures/", "*.png");
+            string[] meshDir = Directory.GetFiles("Res/textures/", "*.png");
             foreach (string str in meshDir)
             {
                 DragButton button = new DragButton(str, "texture") { daName = str.Substring(13, str.Substring(13).Length - 4) };
-                
+
                 wrpPan.Children.Add(button);
             }
             meshDir = Directory.GetFiles("Res/textures/", "*.jpg");
             foreach (string str in meshDir)
             {
-                DragButton button = new DragButton(str,"texture") { daName = str.Substring(13, str.Substring(13).Length - 4) };
+                DragButton button = new DragButton(str, "texture") { daName = str.Substring(13, str.Substring(13).Length - 4) };
 
 
                 wrpPan.Children.Add(button);
@@ -211,22 +200,22 @@ namespace EPQui.UserCon
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-           wrpPan.Children.Clear();
-          string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
-         
-           Button buttonL = new Button();
-           buttonL.Padding = new Thickness(20, 20, 20, 20);
-           buttonL.Content = "light";
+            wrpPan.Children.Clear();
+            string[] meshDir = Directory.GetFiles("Res/meshes/", "*.obj");
+
+            Button buttonL = new Button();
+            buttonL.Padding = new Thickness(20, 20, 20, 20);
+            buttonL.Content = "light";
             buttonL.Click += Button_Click3;
-           wrpPan.Children.Add(buttonL);
-           foreach (string str in meshDir)
-           {
-               DragButton button = new DragButton(str,"mesh") { daName = str.Substring(11, str.Substring(11).Length - 4) };
-               wrpPan.Children.Add(button);
-           }
+            wrpPan.Children.Add(buttonL);
+            foreach (string str in meshDir)
+            {
+                DragButton button = new DragButton(str, "mesh") { daName = str.Substring(11, str.Substring(11).Length - 4) };
+                wrpPan.Children.Add(button);
+            }
         }
 
     }
 
-
 }
+

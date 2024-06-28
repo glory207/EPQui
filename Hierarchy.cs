@@ -369,7 +369,6 @@ namespace EPQui
             shadowABC = new Shader("Res/shaders/shadowMap.vert", "Res/shaders/shadowMap.frag");
             LightShaderProgram = new Shader("Res/shaders/Gyzmo.vert", "Res/shaders/light.frag", "Res/shaders/light.geomertry");
             MeshShaderProgram = new Shader("Res/shaders/default.vert", "Res/shaders/default.frag", "Res/shaders/default.geometry");
-            children.Add(new LightContainer(this));
         }
         public override void PreUpdate()
         {
@@ -383,13 +382,13 @@ namespace EPQui
         public override void Update(List<LightContainer> lights, Camera camera)
         {
 
-         //  gridshaderProgram.Activate();
-         //  Matrix4 mat = Matrix4.Identity;
-         //  GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
-         //  GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
-         //  GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camPos"), camera.Position);
-         //  camera.Matrix(gridshaderProgram, "camMatrix");
-         //  gridMesh.Draw();
+           gridshaderProgram.Activate();
+           Matrix4 mat = Matrix4.Identity;
+           GL.UniformMatrix4(GL.GetUniformLocation(gridshaderProgram.ID, "model"), false, ref mat);
+           GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camUp"), camera.Orientation);
+           GL.Uniform3(GL.GetUniformLocation(gridshaderProgram.ID, "camPos"), camera.Position);
+           camera.Matrix(gridshaderProgram, "camMatrix");
+           gridMesh.Draw();
 
             LightShaderProgram.Activate();
             GL.Uniform3(GL.GetUniformLocation(LightShaderProgram.ID, "camUp"), camera.OrientationU);
@@ -538,12 +537,18 @@ namespace EPQui
         }
         public override void destroy()
         {
-            for (int i = 0; i < children.Count;i++)
+            for (int i = children.Count -1; i >= 0;i--)
             {
                 children[i].destroy();
+                children[i] = null;
+                children.RemoveAt(i);
             }
             gridMesh.delete();
+            gridMesh = null;
             gridshaderProgram.Delete();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
     }

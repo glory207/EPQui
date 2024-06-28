@@ -21,7 +21,7 @@ namespace EPQui
 
     public class LightContainer : HierObj, ICloneable
     {
-        public LightType Type = LightType.point;
+        public LightType Type = LightType.spot;
         public Vector2 angle = new Vector2(0.9f, 0.1f);
         public float intencity = 1f;
 

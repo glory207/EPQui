@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,14 +58,20 @@ namespace EPQui.UserCon
 
             wrpPan.Children.Add(buttonn);
         }
-
+        bool Canset = true;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            par.grid.Children.Clear();
-            TheFullThing fullThing = new TheFullThing((string)((Button)sender).Tag);
-            par.grid.Children.Add(fullThing);
-            
-            
+           
+            par.Hide();
+            TheFullWindow fullThing = new TheFullWindow((string)((Button)sender).Tag, true);
+            fullThing.Title = "scene editor2";
+            fullThing.Closed += FullThing_Closed;
+            fullThing.Show();
+
+        }
+        private void FullThing_Closed(object? sender, EventArgs e)
+        {
+           par.Close();
         }
     }
 }
